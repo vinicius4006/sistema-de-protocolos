@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:protocolo_app/components/body/bodyPage.dart';
+import 'package:protocolo_app/components/body/criarProtocolo.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key, required this.title}) : super(key: key);
@@ -8,16 +9,8 @@ class HomePage extends StatelessWidget {
   final String title;
 
 
-  void _exibirDialogo(BuildContext context){
-    showDialog(context: context, builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Testando'),
-        content: const Text('Testando'),
-        actions: <Widget>[
-          ElevatedButton(onPressed: (){Navigator.of(context).pop();}, child: const Text("Fechar"))
-        ],
-      );
-    });
+  void _telaCriarProtocolo(BuildContext context){
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const CriarProtocolo()));
   }
 
   @override
@@ -25,8 +18,21 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: Builder(builder: (BuildContext context) {
-          return IconButton(onPressed: (){_exibirDialogo(context);}, icon: const Icon(Icons.add_outlined));
+          return IconButton(
+            onPressed: (){_telaCriarProtocolo(context);}, 
+            icon: const Icon(Icons.add_outlined)
+          
+            );
         }),
+        actions: <Widget>[
+           Builder(builder: (BuildContext context) {
+          return IconButton(
+            onPressed: (){}, 
+            icon: const Icon(Icons.refresh_outlined)
+          
+            );
+        }),
+        ],
         centerTitle: true,
         title: Text(title),
       ),
