@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:protocolo_app/components/body/formCarro.dart';
 import 'package:protocolo_app/components/models/protocolo_model.dart';
 import 'package:dropdownfield2/dropdownfield2.dart';
 
@@ -33,14 +34,14 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
     'HYW8452'
   ];
 
+
+
+
   final motoristaSelecionar = TextEditingController();
   String motoristaSelecionado = '';
 
   final veiculoSelecionar = TextEditingController();
   String veiculoSelecionado = '';
-
-  final observacoesDigitar = TextEditingController();
-  String observacoesDigitado = '';
 
   DateTime now = DateTime.now();
 
@@ -58,90 +59,83 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
           centerTitle: true,
           title: const Text('Criação de Protocolo'),
         ),
-        body: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children:  <Widget>[
-                  const SizedBox(height: 20.0,),
-                  const Text('Motoristas', 
-                  style: TextStyle(fontSize: 20.0),
-                  textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 20.0,),
-                  DropDownField(
-                    controller: motoristaSelecionar,
-                    hintText: 'Selecione o Motorista',
-                    enabled: true,
-                    items: motoristas,
-                    itemsVisibleInDropdown: 5,
-                    onValueChanged: (value){
-                      setState(() {
-                        motoristaSelecionado = value;
-                      });
-                    },
-                    required: true,
-                  ),
-                  const SizedBox(height: 20.0,),
-                  Text(motoristaSelecionado, style: const TextStyle(fontSize: 20.0), textAlign: TextAlign.center,),
-                  const Text('Veículos', 
-                  style: TextStyle(fontSize: 20.0),
-                  textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 20.0,),
-                  DropDownField(
-                    controller: veiculoSelecionar,
-                    hintText: 'Selecione o Veículo',
-                    enabled: true,
-                    required: true,
-                    items: veiculos,
-                    itemsVisibleInDropdown: 5,
-                    onValueChanged: (value){
-                      setState(() {
-                        veiculoSelecionado = value;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 20.0,),
-                  Text(veiculoSelecionado, style: const TextStyle(fontSize: 20.0), textAlign: TextAlign.center,),
-          
-                  Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: TextFormField(
-                    controller: observacoesDigitar,
-                    decoration: const InputDecoration(
-                      hintText: 'Observações',
-                      border: OutlineInputBorder()
-                      
-                    ),
-                    onChanged: (value){
-                      observacoesDigitado = value;
-                    },
-                              ),
-                  ),
-                 Text(observacoesDigitado, style: const TextStyle(fontSize: 20.0), textAlign: TextAlign.center,),
-          
-          
-                Padding(padding: const EdgeInsets.all(16.0),
-                child: ElevatedButton(
-                  style: const ButtonStyle(),
-                  onPressed: (){if(_formKey.currentState!.validate()){
-                    debugPrint('$motoristaSelecionado $veiculoSelecionado $observacoesDigitado $now');
-                  }},
-                  child: const Text('Criar'),
-                ),)
-          
-                ],
-              ),
+        body: Form(
+          key: _formKey,
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            child: ListView(
+             // mainAxisAlignment: MainAxisAlignment.start,
+              //crossAxisAlignment: CrossAxisAlignment.stretch,
+              children:  <Widget>[
+                const SizedBox(height: 20.0,),
+                const Text('Motoristas', 
+                style: TextStyle(fontSize: 20.0),
+                textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20.0,),
+                DropDownField(
+                  controller: motoristaSelecionar,
+                  hintText: 'Selecione o Motorista',
+                  enabled: true,
+                  items: motoristas,
+                  itemsVisibleInDropdown: 5,
+                  onValueChanged: (value){
+                    setState(() {
+                      motoristaSelecionado = value;
+                    });
+                  },
+                  required: true,
+                ),
+                const SizedBox(height: 20.0,),
+                Text(motoristaSelecionado, style: const TextStyle(fontSize: 20.0), textAlign: TextAlign.center,),
+                const Text('Veículos', 
+                style: TextStyle(fontSize: 20.0),
+                textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20.0,),
+                DropDownField(
+                  controller: veiculoSelecionar,
+                  hintText: 'Selecione o Veículo',
+                  enabled: true,
+                  required: true,
+                  items: veiculos,
+                  itemsVisibleInDropdown: 5,
+                  onValueChanged: (value){
+                    setState(() {
+                      veiculoSelecionado = value;
+                    });
+                  },
+                ),
+                const SizedBox(height: 20.0,),
+
+                Text(veiculoSelecionado, style: const TextStyle(fontSize: 20.0), textAlign: TextAlign.center,),
+                
+                const SizedBox(height: 20.0,),
+
+           
+            (veiculoSelecionado == 'NDR1600')  ? const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: CarroForm(),
+            ) : const Text(''),
+
+
+              Padding(padding: const EdgeInsets.all(16.0),
+              child: ElevatedButton(
+                style: const ButtonStyle(),
+                onPressed: (){if(_formKey.currentState!.validate()){
+                  debugPrint('$motoristaSelecionado $veiculoSelecionado $now');
+                }},
+                child: const Text('Criar'),
+              ),)
+        
+              ],
             ),
           ),
         ));
   }
+  
+
 
   // Widget _uiWidget() {
   //   return Form(

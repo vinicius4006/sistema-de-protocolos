@@ -39,6 +39,7 @@ dependencies:
   pull_to_refresh: ^2.0.0
   snippet_coder_utils: ^1.0.12
   dropdownfield2: ^1.0.6
+  multiselect: ^0.0.4
 
 dev_dependencies:
   flutter_test:
