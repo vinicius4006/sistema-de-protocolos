@@ -4,9 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:multiselect/multiselect.dart';
 
 class CardForm extends StatefulWidget {
-  const CardForm({ Key? key, required this.title }) : super(key: key);
+   const CardForm({ Key? key, 
+   required this.title, 
+   required this.op1,
+   required this.op2,
+   required this.op3,
+   required this.op4,  }) : super(key: key);
 
   final String title;
+  final String op1;
+  final String op2;
+  final String op3;
+  final String op4;
 
   @override
   State<CardForm> createState() => _CardFormState();
@@ -43,10 +52,10 @@ List<String> selected = [];
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  const ListTile(
+                   ListTile(
                    
-                    title: Text('title'),
-                    subtitle: Text('Status'),
+                    title: Text(widget.title),
+                    subtitle: const Text('Status'),
 
                   ),
                   Container(
@@ -56,11 +65,12 @@ List<String> selected = [];
                           selected = x;
                         });
                       },
-                      options: const ['Funcionando', 'Faltando elasticidade', 'Couro duro', 'Rasgado'],
+                      options:  [widget.op1, widget.op2, widget.op3, widget.op3],
                       selectedValues: selected,
                       whenEmpty: 'Selecione a opção',
                     ),
                   ),
+                  
                   
                   Container(
                     alignment: Alignment.center,

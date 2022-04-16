@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:multiselect/multiselect.dart';
+import 'package:protocolo_app/components/body/Card.dart';
 
 class CarroForm extends StatefulWidget {
   const CarroForm({ Key? key }) : super(key: key);
@@ -37,126 +38,22 @@ class _CarroFormState extends State<CarroForm> {
     return Container(
         margin: const EdgeInsets.all(10),
         child: Column(
-          children: <Widget>[
-            Card(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  const ListTile(
-                   
-                    title: Text('Buzina'),
-                    subtitle: Text('Status'),
-
-                  ),
-                  Container(
-                    child: DropDownMultiSelect(
-                      onChanged: (List<String> x) {
-                        setState(() {
-                          selected = x;
-                        });
-                      },
-                      options: const ['Funcionando', 'Pouco som', 'Nenhum som', 'Barulho de peixe'],
-                      selectedValues: selected,
-                      whenEmpty: 'Selecione a opção',
-                    ),
-                  ),
-                  
-                  Container(
-                    alignment: Alignment.center,
-                    child: FutureBuilder<Widget>(
-                      future: getImage(),
-                      builder: (context, snapshot){
-                        if(snapshot.hasData) {
-                          return Container(child: snapshot.data);
-                        } else {
-                          return const Text('Carregando...');
-                        }
-                      },
-                    ),
-                  ),
-                 
-                ]),
+          children: const <Widget>[
+            CardForm(
+              title: 'Buzina',
+              op1: 'Barulho Baixo',
+              op2: 'Som estranho',
+              op3: 'Som de animal',
+              op4: 'Não presta',
             ),
-            const SizedBox(height: 20.0,),
-            Card(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  const ListTile(
-                   
-                    title: Text('Cinto de Segurança'),
-                    subtitle: Text('Status'),
+            SizedBox(height: 20.0,),
 
-                  ),
-                  Container(
-                    child: DropDownMultiSelect(
-                      onChanged: (List<String> x) {
-                        setState(() {
-                          selected = x;
-                        });
-                      },
-                      options: const ['Funcionando', 'Faltando elasticidade', 'Couro duro', 'Rasgado'],
-                      selectedValues: selected,
-                      whenEmpty: 'Selecione a opção',
-                    ),
-                  ),
-                  
-                  Container(
-                    alignment: Alignment.center,
-                    child: FutureBuilder<Widget>(
-                      future: getImage(),
-                      builder: (context, snapshot){
-                        if(snapshot.hasData) {
-                          return Container(child: snapshot.data);
-                        } else {
-                          return const Text('Carregando...');
-                        }
-                      },
-                    ),
-                  ),
-                 
-                ]),
-            ),
-            const SizedBox(height: 20.0,),
-            Card(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  const ListTile(
-                   
-                    title: Text('Quebra Sol'),
-                    subtitle: Text('Status'),
-
-                  ),
-                  Container(
-                    child: DropDownMultiSelect(
-                      onChanged: (List<String> x) {
-                        setState(() {
-                          selected = x;
-                        });
-                      },
-                      options: const ['Funcionando', 'Sem sol', 'Danificado', 'Estragado'],
-                      selectedValues: selected,
-                      whenEmpty: 'Selecione a opção',
-                    ),
-                  ),
-                  
-                  Container(
-                    alignment: Alignment.center,
-                    child: FutureBuilder<Widget>(
-                      future: getImage(),
-                      builder: (context, snapshot){
-                        if(snapshot.hasData) {
-                          return Container(child: snapshot.data);
-                        } else {
-                          return const Text('Carregando...');
-                        }
-                      },
-                    ),
-                  ),
-                 
-                ]),
-            )
+            CardForm(title: 'Cinto de Segurança', 
+            op1: 'Rasgado', 
+            op2: 'Fino demais', 
+            op3: 'Couro duro', 
+            op4: 'Estranho')
+            
           ],
         ));
      
