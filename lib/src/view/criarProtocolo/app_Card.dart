@@ -1,7 +1,4 @@
 
-
-
-
 import 'dart:io' as io;
 
 import 'package:flutter/material.dart';
@@ -16,7 +13,6 @@ class CardForm extends StatefulWidget {
     required this.op2,
     required this.op3,
     required this.op4,
-    //required this.camera
   }) : super(key: key);
 
   final String title;
@@ -25,7 +21,7 @@ class CardForm extends StatefulWidget {
   final String op3;
   final String op4;
 
-  //final CameraDescription camera;
+
 
   @override
   State<CardForm> createState() => _CardFormState();
@@ -101,6 +97,7 @@ class _CardFormState extends State<CardForm> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Card(
+        
         child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
           ListTile(
             title: Text(widget.title),
@@ -116,6 +113,7 @@ class _CardFormState extends State<CardForm> {
               options: [widget.op1, widget.op2, widget.op3, widget.op4],
               selectedValues: selected,
               whenEmpty: 'Selecione a opção',
+              
             ),
           ),
           _path != null ? Image.file(io.File(_path.toString())

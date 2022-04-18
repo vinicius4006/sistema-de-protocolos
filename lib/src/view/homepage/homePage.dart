@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 
-class BodyPage extends StatefulWidget {
-  const BodyPage({Key? key}) : super(key: key);
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
 
   @override
-  State<BodyPage> createState() => _MainBodyState();
+  State<HomePage> createState() => _MainHomeState();
 }
 
-class _MainBodyState extends State<BodyPage> {
+class _MainHomeState extends State<HomePage> {
   final df = DateFormat('dd-MM-yyyy hh:mm a');
   int myvalue = 1558432747;
 

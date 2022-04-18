@@ -1,6 +1,5 @@
-
 import 'package:flutter/material.dart';
-import 'package:protocolo_app/components/body/Card.dart';
+import 'package:protocolo_app/src/view/criarProtocolo/app_Card.dart';
 
 class MotoForm extends StatefulWidget {
   const MotoForm({Key? key}) : super(key: key);
@@ -8,8 +7,6 @@ class MotoForm extends StatefulWidget {
   @override
   State<MotoForm> createState() => _MotoFormState();
 }
-
-
 
 List<String> selected = [];
 
@@ -21,7 +18,10 @@ class _MotoFormState extends State<MotoForm> {
           margin: const EdgeInsets.all(10),
           child: Column(
             children: const <Widget>[
-              Text('Formulário de Moto', style: TextStyle(height: 1, fontSize: 30), ),
+              Text(
+                'Formulário de Moto',
+                style: TextStyle(height: 1, fontSize: 30),
+              ),
               SizedBox(
                 height: 20.0,
               ),
@@ -44,9 +44,6 @@ class _MotoFormState extends State<MotoForm> {
               SizedBox(
                 height: 20.0,
               ),
-             
-              
-              
               CardForm(
                   title: 'Farol Baixo',
                   op1: 'op1',
@@ -65,7 +62,6 @@ class _MotoFormState extends State<MotoForm> {
               SizedBox(
                 height: 20.0,
               ),
-             
               CardForm(
                   title: 'Luz De Freio',
                   op1: 'op1',
@@ -75,8 +71,6 @@ class _MotoFormState extends State<MotoForm> {
               SizedBox(
                 height: 20.0,
               ),
-             
-             
               CardForm(
                   title: 'Luzes Do Painel',
                   op1: 'op1',
@@ -104,7 +98,6 @@ class _MotoFormState extends State<MotoForm> {
               SizedBox(
                 height: 20.0,
               ),
-              
               CardForm(
                   title: 'Velocímetro / Tacógrafo',
                   op1: 'op1',
@@ -123,9 +116,6 @@ class _MotoFormState extends State<MotoForm> {
               SizedBox(
                 height: 20.0,
               ),
-              
-             
-              
               CardForm(
                   title: 'Pneus (Estado)',
                   op1: 'op1',
@@ -135,7 +125,6 @@ class _MotoFormState extends State<MotoForm> {
               SizedBox(
                 height: 20.0,
               ),
-            
               CardForm(
                   title: 'Pneus (Calibragem)',
                   op1: 'op1',
@@ -145,7 +134,6 @@ class _MotoFormState extends State<MotoForm> {
               SizedBox(
                 height: 20.0,
               ),
-             
               CardForm(
                   title: 'Nível combustível',
                   op1: 'op1',
@@ -155,7 +143,6 @@ class _MotoFormState extends State<MotoForm> {
               SizedBox(
                 height: 20.0,
               ),
-              
             ],
           )),
     );

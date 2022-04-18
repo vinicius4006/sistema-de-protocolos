@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:protocolo_app/components/home.dart';
+import 'package:protocolo_app/src/appHome.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,11 +12,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Welcome to Flutter',
+      title: 'Bem-vindo ao Sistema de Protocolos',
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const HomePage(title: 'Sistema de Protocolos'),
+      home: const Home(title: 'Sistema de Protocolos'),
     );
   }
 }
