@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:protocolo_app/components/body/formCarro.dart';
+import 'package:protocolo_app/components/body/formMoto.dart';
 import 'package:protocolo_app/components/models/protocolo_model.dart';
 import 'package:dropdownfield2/dropdownfield2.dart';
 
@@ -80,6 +81,7 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                   enabled: true,
                   items: motoristas,
                   itemsVisibleInDropdown: 5,
+                  
                   onValueChanged: (value){
                     setState(() {
                       motoristaSelecionado = value;
@@ -117,6 +119,9 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
             (veiculoSelecionado == 'NDR1600')  ? const Padding(
               padding: EdgeInsets.all(16.0),
               child: CarroForm(),
+            ) : (veiculoSelecionado == 'CNH1981') ? const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: MotoForm(),
             ) : const Text(''),
 
 

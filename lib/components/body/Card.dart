@@ -1,15 +1,23 @@
-import 'dart:async';
+
+
+
+
+import 'dart:io' as io;
 
 import 'package:flutter/material.dart';
 import 'package:multiselect/multiselect.dart';
+import 'package:image_picker/image_picker.dart';
 
 class CardForm extends StatefulWidget {
-   const CardForm({ Key? key, 
-   required this.title, 
-   required this.op1,
-   required this.op2,
-   required this.op3,
-   required this.op4,  }) : super(key: key);
+  const CardForm({
+    Key? key,
+    required this.title,
+    required this.op1,
+    required this.op2,
+    required this.op3,
+    required this.op4,
+    //required this.camera
+  }) : super(key: key);
 
   final String title;
   final String op1;
@@ -17,76 +25,112 @@ class CardForm extends StatefulWidget {
   final String op3;
   final String op4;
 
+  //final CameraDescription camera;
+
   @override
   State<CardForm> createState() => _CardFormState();
 }
 
 class _CardFormState extends State<CardForm> {
+  List<String> selected = [];
+  String? _path;
 
-   Future<Widget> getImage() async {
-    final Completer<Widget> completer = Completer();
-    const url = 'https://picsum.photos/900/600';
-    const image = NetworkImage(url);
-    // final config = await image.obtainKey();
-    final load = image.resolve(const ImageConfiguration());
-
-    final listener = ImageStreamListener((ImageInfo info, isSync) async {
-      print(info.image.width);
-      print(info.image.height);
-
-      if (info.image.width == 80 && info.image.height == 160) {
-        completer.complete(Container(child: const Text('AZAZA')));
-      } else {
-        completer.complete(Container(child: const Image(image: image)));
-      }
-    });
-
-    load.addListener(listener);
-    return completer.future;
+  void _showOptions(BuildContext context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return SizedBox(
+            height: 150,
+            child: Column(children: <Widget>[
+               ListTile(
+                leading: const Icon(Icons.photo_camera),
+                title: const Text('Tire a foto com a câmera'),
+                onTap: (){
+                  Navigator.of(context).pop();
+                  _showCamera();
+                },
+              ),
+             
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Escolha uma da galeria'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _showPhotoLibrary();
+                },
+              )
+            ]),
+          );
+        });
   }
-List<String> selected = [];
-  
+
+  void _showPhotoLibrary() async {
+    try {
+      final file = await ImagePicker().pickImage(source: ImageSource.gallery);
+    
+      if (file == null) return;
+
+      setState(() {
+        _path = file.path;
+      });
+    } catch (e) {
+      print('Falha em pegar a imagem: $e');
+    }
+  }
+
+  void _showCamera() async{
+  //   final cameras = await availableCameras();
+  //   final camera = cameras.first;
+
+  //   final result = await Navigator.push(context,
+  //   MaterialPageRoute(builder: ((context) =>  Camera(camera: camera))));
+ try {
+      final file = await ImagePicker().pickImage(source: ImageSource.camera);
+    
+      if (file == null) return;
+
+      setState(() {
+        _path = file.path;
+      });
+    } catch (e) {
+      print('Falha em capturar a imagem: $e');
+    }
+   }
+
   @override
   Widget build(BuildContext context) {
-    return Card(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                   ListTile(
-                   
-                    title: Text(widget.title),
-                    subtitle: const Text('Status'),
-
-                  ),
-                  Container(
-                    child: DropDownMultiSelect(
-                      onChanged: (List<String> x) {
-                        setState(() {
-                          selected = x;
-                        });
-                      },
-                      options:  [widget.op1, widget.op2, widget.op3, widget.op3],
-                      selectedValues: selected,
-                      whenEmpty: 'Selecione a opção',
-                    ),
-                  ),
-                  
-                  
-                  Container(
-                    alignment: Alignment.center,
-                    child: FutureBuilder<Widget>(
-                      future: getImage(),
-                      builder: (context, snapshot){
-                        if(snapshot.hasData) {
-                          return Container(child: snapshot.data);
-                        } else {
-                          return const Text('Carregando...');
-                        }
-                      },
-                    ),
-                  ),
-                 
-                ]),
-            );
+    return SafeArea(
+      child: Card(
+        child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+          ListTile(
+            title: Text(widget.title),
+            subtitle: const Text('Status'),
+          ),
+          Container(
+            child: DropDownMultiSelect(
+              onChanged: (List<String> x) {
+                setState(() {
+                  selected = x;
+                });
+              },
+              options: [widget.op1, widget.op2, widget.op3, widget.op4],
+              selectedValues: selected,
+              whenEmpty: 'Selecione a opção',
+            ),
+          ),
+          _path != null ? Image.file(io.File(_path.toString())
+          ,) : const Text('Aguardando...'),
+          ElevatedButton(
+            onPressed: () {
+              _showOptions(context);
+            },
+            child: const Text(
+              'Tire a foto',
+              style: TextStyle(color: Colors.white),
+            ),
+          )
+        ]),
+      ),
+    );
   }
 }

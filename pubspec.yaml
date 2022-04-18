@@ -40,6 +40,8 @@ dependencies:
   snippet_coder_utils: ^1.0.12
   dropdownfield2: ^1.0.6
   multiselect: ^0.0.4
+  image_picker: ^0.8.5
+
 
 dev_dependencies:
   flutter_test:
