@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
+import 'package:protocolo_app/src/controllers/protocolo_controllerl.dart';
+import 'package:protocolo_app/src/view/app_menu.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -13,46 +15,15 @@ class _MainHomeState extends State<HomePage> {
   final df = DateFormat('dd-MM-yyyy hh:mm a');
   int myvalue = 1558432747;
 
-  static final List<Map<String, dynamic>> _allProtocolos = [
-    {
-      "id": 2589,
-      "dataInicio": DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.now()),
-      "dataFinal": DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.now()),
-      "motorista": 'Joziel',
-      "veiculo": 'CNH1817'
-    },
-    {
-      "id": 9854,
-      "dataInicio": DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.now()),
-      "dataFinal": DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.now()),
-      "motorista": 'Mauro',
-      "veiculo": 'CNH1817'
-    },
-    {
-      "id": 4578,
-      "dataInicio": DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.now()),
-      "dataFinal": DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.now()),
-      "motorista": 'Ronildo',
-      "veiculo": 'PTE2117'
-    },
-    {
-      "id": 3654,
-      "dataInicio": DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.now()),
-      "dataFinal": DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.now()),
-      "motorista": 'Jackson',
-      "veiculo": 'POO9874'
-    },
-  ];
+  static final List<Map<String, dynamic>> _allProtocolos = [];
 
   List<Map<String, dynamic>> _foundProtocolos = [];
-
- 
 
   @override
   void initState() {
     // TODO: implement initState
-    _foundProtocolos = _allProtocolos;
     super.initState();
+    _foundProtocolos = _allProtocolos;
   }
 
   void _protocoloFilter(String keyword) {
@@ -80,13 +51,13 @@ class _MainHomeState extends State<HomePage> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(children: [
+          Text('${context.watch<ProtocoloModelo>().listaProtocolo}'),
           const SizedBox(
             height: 20,
           ),
@@ -100,33 +71,54 @@ class _MainHomeState extends State<HomePage> {
           const SizedBox(
             height: 20,
           ),
+          context.watch<ProtocoloModelo>().listaProtocolo.isNotEmpty ?
           Expanded(
-              child: _foundProtocolos.isNotEmpty
-                  ? ListView.builder(
-                      itemCount: _foundProtocolos.length,
+              child: 
+                 ListView.builder(
+                      itemCount: context
+                          .watch<ProtocoloModelo>()
+                          .listaProtocolo
+                          .length,
                       itemBuilder: (context, index) => Card(
-                        key: ValueKey(_foundProtocolos[index]['id']),
+                        key: ValueKey(context
+                            .watch<ProtocoloModelo>()
+                            .listaProtocolo[index].id),
                         color: Colors.lightGreen,
                         elevation: 4,
                         margin: const EdgeInsets.symmetric(vertical: 10),
                         child: ListTile(
                           leading: Text(
-                            _foundProtocolos[index]['id'].toString(),
+                            context
+                                .watch<ProtocoloModelo>()
+                                .listaProtocolo[index].id
+                                .toString(),
                             style: const TextStyle(fontSize: 24),
                           ),
-                          title: Text(_foundProtocolos[index]['motorista']),
-                          subtitle: Text(_foundProtocolos[index]['veiculo']),
+                          title: Text(context
+                              .watch<ProtocoloModelo>()
+                              .listaProtocolo[index].motorista.toString()),
+                          subtitle: Text(context
+                              .watch<ProtocoloModelo>()
+                              .listaProtocolo[index].veiculo.toString()),
                           trailing: Text('Início: ' +
-                              _foundProtocolos[index]['dataInicio'].toString() +
+                              context
+                              .watch<ProtocoloModelo>()
+                              .listaProtocolo[index].dataInicio.toString() +
                               '\n\n' 'Final: ' +
-                              _foundProtocolos[index]['dataFinal'].toString()),
+                              context
+                              .watch<ProtocoloModelo>()
+                              .listaProtocolo[index].dataFinal.toString()),
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => const Menu()));
+                          },
                         ),
                       ),
                     )
-                  : const Text(
+                 )  : const Text(
                       'Protocolo não encontrado',
                       style: TextStyle(fontSize: 24),
-                    ))
+                    )
         ]),
       ),
     );

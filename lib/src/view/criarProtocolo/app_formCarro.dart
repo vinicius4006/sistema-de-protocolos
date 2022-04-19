@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:protocolo_app/src/shared/models/protocolo_model.dart';
+import 'package:protocolo_app/src/controllers/protocolo_controllerl.dart';
 
 import 'package:protocolo_app/src/view/criarProtocolo/app_Card.dart';
 import 'package:provider/provider.dart';

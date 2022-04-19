@@ -1,9 +1,10 @@
-
 import 'dart:io' as io;
 
 import 'package:flutter/material.dart';
 import 'package:multiselect/multiselect.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:protocolo_app/src/controllers/protocolo_controllerl.dart';
+import 'package:provider/provider.dart';
 
 class CardForm extends StatefulWidget {
   const CardForm({
@@ -21,8 +22,6 @@ class CardForm extends StatefulWidget {
   final String op3;
   final String op4;
 
-
-
   @override
   State<CardForm> createState() => _CardFormState();
 }
@@ -38,15 +37,14 @@ class _CardFormState extends State<CardForm> {
           return SizedBox(
             height: 150,
             child: Column(children: <Widget>[
-               ListTile(
+              ListTile(
                 leading: const Icon(Icons.photo_camera),
                 title: const Text('Tire a foto com a câmera'),
-                onTap: (){
+                onTap: () {
                   Navigator.of(context).pop();
                   _showCamera();
                 },
               ),
-             
               ListTile(
                 leading: const Icon(Icons.photo_library),
                 title: const Text('Escolha uma da galeria'),
@@ -63,7 +61,7 @@ class _CardFormState extends State<CardForm> {
   void _showPhotoLibrary() async {
     try {
       final file = await ImagePicker().pickImage(source: ImageSource.gallery);
-    
+
       if (file == null) return;
 
       setState(() {
@@ -74,30 +72,25 @@ class _CardFormState extends State<CardForm> {
     }
   }
 
-  void _showCamera() async{
-  //   final cameras = await availableCameras();
-  //   final camera = cameras.first;
-
-  //   final result = await Navigator.push(context,
-  //   MaterialPageRoute(builder: ((context) =>  Camera(camera: camera))));
- try {
+  void _showCamera() async {
+    try {
       final file = await ImagePicker().pickImage(source: ImageSource.camera);
-    
+
       if (file == null) return;
 
       setState(() {
         _path = file.path;
       });
+      debugPrint('$_path');
     } catch (e) {
       print('Falha em capturar a imagem: $e');
     }
-   }
+  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Card(
-        
         child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
           ListTile(
             title: Text(widget.title),
@@ -108,16 +101,23 @@ class _CardFormState extends State<CardForm> {
               onChanged: (List<String> x) {
                 setState(() {
                   selected = x;
+                  context.read<ProtocoloModelo>().addFormItens(
+                      ((widget.title).toLowerCase() + 'Status')
+                          .replaceAll(' ', ''),
+                      selected,
+                      _path.toString());
                 });
               },
               options: [widget.op1, widget.op2, widget.op3, widget.op4],
               selectedValues: selected,
               whenEmpty: 'Selecione a opção',
-              
             ),
           ),
-          _path != null ? Image.file(io.File(_path.toString())
-          ,) : const Text('Aguardando...'),
+          _path != null
+              ? Image.file(
+                  io.File(_path.toString()),
+                )
+              : const Text('Aguardando...'),
           ElevatedButton(
             onPressed: () {
               _showOptions(context);
