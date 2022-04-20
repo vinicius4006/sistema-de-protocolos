@@ -4,12 +4,14 @@ import 'package:protocolo_app/src/controllers/protocolo_controllerl.dart';
 
 import 'package:protocolo_app/src/view/criarProtocolo/app_formMoto.dart';
 
-import 'package:dropdownfield2/dropdownfield2.dart';
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/app_formCarro.dart';
 import 'package:provider/provider.dart';
 
 import '../../controllers/inc_controller.dart';
+
+import 'package:animated_custom_dropdown/custom_dropdown.dart';
+
 
 class CriarProtocolo extends StatefulWidget {
   const CriarProtocolo({Key? key}) : super(key: key);
@@ -33,24 +35,39 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
     super.initState();
   }
 
-  List<String> motoristas = [
-    'FERNANDO LIMA VIEIRA',
-    'CARLOS HENRIQUE MIRANDA LIMA',
-    'MAURO DA SILVA SOUSA',
-    'RONILDO MARTINS DE SOUZA',
-    'JACKSON AMORIM DA COSTA',
-    'LUCIANO INACIO GONÇALVES LIMA'
+   @override
+  void dispose() {
+    motoristaSelecionar.dispose();
+    veiculoSelecionar.dispose();
+    super.dispose();
+  }
+
+  List<Map<String, dynamic>> motoristas = [
+    {"motoristas" :'FERNANDO LIMA VIEIRA', "id" : 1},
+    {"motoristas": 'CARLOS HENRIQUE MIRANDA LIMA', "id": 2},
+    {"motoristas": 'MAURO DA SILVA SOUSA', "id":3},
+    {"motoristas" : 'RONILDO MARTINS DE SOUZA', "id": 4 },
+    {"motoristas":'JACKSON AMORIM DA COSTA', "id": 5},
+    {"motoristas":'LUCIANO INACIO GONÇALVES LIMA', "id" : 6}
   ];
 
-  List<String> veiculos = [
-    'CNH1981',
-    'MPM4776',
-    'NAT9582',
-    'NDR1600',
-    'MZZ6330',
-    'MTH0655',
-    'HYW8452'
+ final veiculos =  <Map<String, dynamic>>[
+    {"placa" : 'CNH1981', "tipo" : 1},
+    {"placa" : 'MPM4776', "tipo" : 2},
+    {"placa" : 'NAT9582', "tipo": 1},
+    {"placa" : 'NDR1600', "tipo": 2},
+   
   ];
+
+  loopVeiculo(List<Map<String, dynamic>> lista){
+
+      List<String> veiculo = [];
+    for (var item in lista) {
+      veiculo.add((item.values.first).toString());
+    }
+    
+    return veiculo;
+  }
 
   final motoristaSelecionar = TextEditingController();
   String motoristaSelecionado = '';
@@ -62,6 +79,8 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
 
   @override
   Widget build(BuildContext context) {
+   
+
     return Scaffold(
         appBar: AppBar(
           leading: Builder(builder: (BuildContext context) {
@@ -95,27 +114,25 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                 const SizedBox(
                   height: 20.0,
                 ),
-                DropDownField(
+                CustomDropdown.search(
                   controller: motoristaSelecionar,
                   hintText: 'Selecione o Motorista',
-                  enabled: true,
-                  items: motoristas,
-                  itemsVisibleInDropdown: 5,
-                  onValueChanged: (value) {
+                  excludeSelected: false,
+                  onChanged: (value){
                     setState(() {
                       motoristaSelecionado = value;
+                      debugPrint(motoristaSelecionado);
                     });
                   },
-                  required: true,
+                  items: loopVeiculo(motoristas),
+                 
+                 
+                 
                 ),
                 const SizedBox(
                   height: 20.0,
                 ),
-                Text(
-                  motoristaSelecionado,
-                  style: const TextStyle(fontSize: 20.0),
-                  textAlign: TextAlign.center,
-                ),
+                
                 const Text(
                   'Veículos',
                   style: TextStyle(fontSize: 20.0),
@@ -124,27 +141,23 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                 const SizedBox(
                   height: 20.0,
                 ),
-                DropDownField(
+                CustomDropdown.search(
                   controller: veiculoSelecionar,
                   hintText: 'Selecione o Veículo',
-                  enabled: true,
-                  required: true,
-                  items: veiculos,
-                  itemsVisibleInDropdown: 5,
-                  onValueChanged: (value) {
+                  excludeSelected: false,
+                  items: loopVeiculo(veiculos),
+                  onChanged: (value) {
                     setState(() {
                       veiculoSelecionado = value;
+                      debugPrint(veiculoSelecionado);
+                      //debugPrint(veiculos.toList(growable: false).elementAt(index));
                     });
                   },
                 ),
                 const SizedBox(
                   height: 20.0,
                 ),
-                Text(
-                  veiculoSelecionado,
-                  style: const TextStyle(fontSize: 20.0),
-                  textAlign: TextAlign.center,
-                ),
+               
                 const SizedBox(
                   height: 20.0,
                 ),

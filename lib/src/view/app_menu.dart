@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:protocolo_app/src/controllers/protocolo_controllerl.dart';
 import 'package:provider/provider.dart';
 
-import '../controllers/inc_controller.dart';
 
 class Menu extends StatelessWidget {
   const Menu({ Key? key }) : super(key: key);
@@ -14,21 +14,18 @@ class Menu extends StatelessWidget {
 
       body:    Center(child: Column(children:   [
         
-        Text('${context.watch<IncController>().cart.values}'),
-        Text('${context.watch<IncController>().cart.length}')
+    for(var i = 0; i < context.read<ProtocoloModelo>().listaProtocolo.length; i++ )
+Text('${context.watch<ProtocoloModelo>().listaProtocolo[i].toJson()}'),
+        
+        
+       
       //  ${context.watch<IncController>().number}
       ] ),)
       ,
-      floatingActionButton: FloatingActionButton(onPressed: () => context.read<IncController>().addItem('bola', 'que', 'po') 
-      //=> context.read<IncController>().incNumber()}
-        
-      ,
-      child: const Icon(Icons.plus_one),),
+      
     );
   }
 }
-
-
 
 
 

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io' as io;
 
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ class CardForm extends StatefulWidget {
     required this.op2,
     required this.op3,
     required this.op4,
+    this.numCat = 0,
   }) : super(key: key);
 
   final String title;
@@ -21,6 +23,7 @@ class CardForm extends StatefulWidget {
   final String op2;
   final String op3;
   final String op4;
+  final int numCat;
 
   @override
   State<CardForm> createState() => _CardFormState();
@@ -87,6 +90,18 @@ class _CardFormState extends State<CardForm> {
     }
   }
 
+  _showPhoto(BuildContext context) {
+    Timer(
+        const Duration(seconds: 1),
+        () => context
+            .read<ProtocoloModelo>()
+            .addFormItens(widget.numCat, selected, _path.toString()));
+
+    return Image.file(
+      io.File(_path.toString()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -101,11 +116,6 @@ class _CardFormState extends State<CardForm> {
               onChanged: (List<String> x) {
                 setState(() {
                   selected = x;
-                  context.read<ProtocoloModelo>().addFormItens(
-                      ((widget.title).toLowerCase() + 'Status')
-                          .replaceAll(' ', ''),
-                      selected,
-                      _path.toString());
                 });
               },
               options: [widget.op1, widget.op2, widget.op3, widget.op4],
@@ -113,11 +123,7 @@ class _CardFormState extends State<CardForm> {
               whenEmpty: 'Selecione a opção',
             ),
           ),
-          _path != null
-              ? Image.file(
-                  io.File(_path.toString()),
-                )
-              : const Text('Aguardando...'),
+          _path != null ? _showPhoto(context) : const Text('Aguardando...'),
           ElevatedButton(
             onPressed: () {
               _showOptions(context);

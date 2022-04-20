@@ -36,6 +36,7 @@ class _CarroFormState extends State<CarroForm> {
                     op2: 'Som estranho',
                     op3: 'Som de animal',
                     op4: 'Não presta',
+                    numCat: 0,
                   ),
                   SizedBox(
                     height: 20.0,
@@ -45,7 +46,9 @@ class _CarroFormState extends State<CarroForm> {
                       op1: 'Rasgado',
                       op2: 'Fino demais',
                       op3: 'Couro duro',
-                      op4: 'Estranho'),
+                      op4: 'Estranho',
+                      numCat: 1,
+                      ),
                   SizedBox(
                     height: 20.0,
                   ),
@@ -54,7 +57,9 @@ class _CarroFormState extends State<CarroForm> {
                       op1: 'op1',
                       op2: 'op2',
                       op3: 'op3',
-                      op4: 'op4'),
+                      op4: 'op4',
+                      numCat: 2,
+                      ),
                   SizedBox(
                     height: 20.0,
                   ),
@@ -63,7 +68,9 @@ class _CarroFormState extends State<CarroForm> {
                       op1: 'op1',
                       op2: 'op2',
                       op3: 'op3',
-                      op4: 'op4'),
+                      op4: 'op4',
+                      numCat: 3,
+                      ),
                   SizedBox(
                     height: 20.0,
                   ),
@@ -72,7 +79,9 @@ class _CarroFormState extends State<CarroForm> {
                       op1: 'op1',
                       op2: 'op2',
                       op3: 'op3',
-                      op4: 'op4'),
+                      op4: 'op4',
+                      numCat: 4,
+                      ),
                   SizedBox(
                     height: 20.0,
                   ),
