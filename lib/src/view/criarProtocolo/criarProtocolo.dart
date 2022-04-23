@@ -1,16 +1,17 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:protocolo_app/src/controllers/getApi_controller.dart';
 import 'package:protocolo_app/src/controllers/protocolo_controllerl.dart';
-
 import 'package:protocolo_app/src/view/criarProtocolo/app_formMoto.dart';
 
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/app_formCarro.dart';
 import 'package:provider/provider.dart';
 
-import '../../controllers/inc_controller.dart';
-
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
+
 
 
 class CriarProtocolo extends StatefulWidget {
@@ -21,52 +22,67 @@ class CriarProtocolo extends StatefulWidget {
 }
 
 class _CriarProtocoloState extends State<CriarProtocolo> {
+
+
+ List<String> motoristas = [''];
+ List<String> veiculos = [''];
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  final dataInicio = DateFormat('dd/MM/yyyy hh:mm a')
-                                  .format(DateTime.now());
+  final dataInicio = DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.now());
 
   GlobalKey<ArtDialogState>? _artDialogKey;
   ProtocoloModelo protocoloModelo = ProtocoloModelo();
 
+   
+
+ 
   @override
   void initState() {
     _artDialogKey = GlobalKey<ArtDialogState>();
+    
     super.initState();
+    
   }
 
-   @override
+  @override
   void dispose() {
     motoristaSelecionar.dispose();
     veiculoSelecionar.dispose();
     super.dispose();
   }
 
-  List<Map<String, dynamic>> motoristas = [
-    {"motoristas" :'FERNANDO LIMA VIEIRA', "id" : 1},
-    {"motoristas": 'CARLOS HENRIQUE MIRANDA LIMA', "id": 2},
-    {"motoristas": 'MAURO DA SILVA SOUSA', "id":3},
-    {"motoristas" : 'RONILDO MARTINS DE SOUZA', "id": 4 },
-    {"motoristas":'JACKSON AMORIM DA COSTA', "id": 5},
-    {"motoristas":'LUCIANO INACIO GONÇALVES LIMA', "id" : 6}
-  ];
+  // List<Map<String, dynamic>> motoristas = [
+  //   {"motoristas": 'FERNANDO LIMA VIEIRA', "id": 1},
+  //   {"motoristas": 'CARLOS HENRIQUE MIRANDA LIMA', "id": 2},
+  //   {"motoristas": 'MAURO DA SILVA SOUSA', "id": 3},
+  //   {"motoristas": 'RONILDO MARTINS DE SOUZA', "id": 4},
+  //   {"motoristas": 'JACKSON AMORIM DA COSTA', "id": 5},
+  //   {"motoristas": 'LUCIANO INACIO GONÇALVES LIMA', "id": 6}
+  // ];
 
- final veiculos =  <Map<String, dynamic>>[
-    {"placa" : 'CNH1981', "tipo" : 1},
-    {"placa" : 'MPM4776', "tipo" : 2},
-    {"placa" : 'NAT9582', "tipo": 1},
-    {"placa" : 'NDR1600', "tipo": 2},
+  // final veiculos = <Map<String, dynamic>>[
+  //   {"placa": 'CNH1981', "tipo": 1},
+  //   {"placa": 'MPM4776', "tipo": 2},
+  //   {"placa": 'NAT9582', "tipo": 1},
+  //   {"placa": 'NDR1600', "tipo": 2},
+  // ];
+
+  loopVeiculo(Future lista) async {
    
-  ];
-
-  loopVeiculo(List<Map<String, dynamic>> lista){
-
-      List<String> veiculo = [];
-    for (var item in lista) {
-      veiculo.add((item.values.first).toString());
+    for (var item in await lista) {
+      veiculos.add(item['placa'] + ' - ' + item['id']);
     }
-    
-    return veiculo;
+
+   
+  }
+
+  loopMotorista(Future lista) async {
+   
+   for(var item in await lista){
+     motoristas.add(item['nome']);
+   }
+
   }
 
   final motoristaSelecionar = TextEditingController();
@@ -79,8 +95,9 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
 
   @override
   Widget build(BuildContext context) {
-   
-
+    loopMotorista(MotoristaData().loadMotoristas());
+    loopVeiculo(VeiculoData().loadPlacas());
+    retornarSeMotoOuCarro('400');
     return Scaffold(
         appBar: AppBar(
           leading: Builder(builder: (BuildContext context) {
@@ -102,7 +119,6 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
               // mainAxisAlignment: MainAxisAlignment.start,
               //crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                Text('${context.watch<IncController>().cart}'),
                 const SizedBox(
                   height: 20.0,
                 ),
@@ -118,21 +134,17 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                   controller: motoristaSelecionar,
                   hintText: 'Selecione o Motorista',
                   excludeSelected: false,
-                  onChanged: (value){
+                  onChanged: (value) {
                     setState(() {
                       motoristaSelecionado = value;
                       debugPrint(motoristaSelecionado);
                     });
                   },
-                  items: loopVeiculo(motoristas),
-                 
-                 
-                 
+                  items: motoristas,
                 ),
                 const SizedBox(
                   height: 20.0,
                 ),
-                
                 const Text(
                   'Veículos',
                   style: TextStyle(fontSize: 20.0),
@@ -145,11 +157,11 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                   controller: veiculoSelecionar,
                   hintText: 'Selecione o Veículo',
                   excludeSelected: false,
-                  items: loopVeiculo(veiculos),
+                  items: veiculos,
                   onChanged: (value) {
                     setState(() {
                       veiculoSelecionado = value;
-                      debugPrint(veiculoSelecionado);
+                     
                       //debugPrint(veiculos.toList(growable: false).elementAt(index));
                     });
                   },
@@ -157,37 +169,40 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                 const SizedBox(
                   height: 20.0,
                 ),
-               
                 const SizedBox(
                   height: 20.0,
                 ),
-                (veiculoSelecionado == 'NDR1600')
-                    ? const Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: CarroForm(),
-                      )
-                    : (veiculoSelecionado == 'CNH1981')
+                (veiculoSelecionado.isNotEmpty)
+                    ? (retornarSeMotoOuCarro(veiculoSelecionado.substring(10)) == true)
                         ? const Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: CarroForm(),
+                          )
+                        : const Padding(
                             padding: EdgeInsets.all(16.0),
                             child: MotoForm(),
                           )
-                        : const Text(''),
+                    : const Text(''),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: ElevatedButton(
                     style: const ButtonStyle(),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        context.read<ProtocoloModelo>().addForm(
-                            motoristaSelecionado,
-                            veiculoSelecionado,
-                            dataInicio,
-                             ""     
-                            );
-                            
-                       
+                        if (int.parse(veiculoSelecionado[3]) <= 5) {
+                          context.read<ProtocoloModelo>().addFormCarro(
+                              motoristaSelecionado,
+                              veiculoSelecionado,
+                              dataInicio,
+                              "");
+                        } else {
+                          context.read<ProtocoloModelo>().addFormMoto(
+                              motoristaSelecionado,
+                              veiculoSelecionado,
+                              dataInicio,
+                              "");
+                        }
 
-                            
                         Navigator.of(context).pop();
                         ArtSweetAlert.show(
                             context: context,

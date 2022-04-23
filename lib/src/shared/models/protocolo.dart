@@ -20,8 +20,6 @@ class Protocolo {
       this.carro,
       this.moto});
 
-      
-
   Protocolo.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     motorista = json['motorista'];

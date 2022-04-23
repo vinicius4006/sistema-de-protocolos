@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:protocolo_app/src/view/app_menu.dart';
 
 import 'package:protocolo_app/src/view/criarProtocolo/criarProtocolo.dart';
 import 'package:protocolo_app/src/view/homepage/homePage.dart';
@@ -11,6 +12,10 @@ class Home extends StatelessWidget {
   void _telaCriarProtocolo(BuildContext context) {
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (context) => const CriarProtocolo()));
+  }
+
+  void _telaExtra(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  Menu()));
   }
 
   @override
@@ -28,7 +33,7 @@ class Home extends StatelessWidget {
         actions: <Widget>[
           Builder(builder: (BuildContext context) {
             return IconButton(
-                onPressed: () {}, icon: const Icon(Icons.refresh_outlined));
+                onPressed: () {_telaExtra(context);}, icon: const Icon(Icons.refresh_outlined));
           }),
         ],
         centerTitle: true,

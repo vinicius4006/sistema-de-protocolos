@@ -1,3 +1,4 @@
+import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:protocolo_app/src/controllers/protocolo_controllerl.dart';
@@ -51,13 +52,48 @@ class _MainHomeState extends State<HomePage> {
     });
   }
 
+  void menuProtocolo() async{
+    ArtDialogResponse response = await ArtSweetAlert.show(
+  barrierDismissible: false,
+  context: context,
+  artDialogArgs: ArtDialogArgs(
+    showCancelBtn: true,
+    denyButtonText: "Imprimir",
+    denyButtonColor: Colors.blueGrey,
+    cancelButtonText: 'Cancelar',
+    confirmButtonText: "Finalizar",
+  )
+);
+
+if(response==null) {
+  return;
+}
+
+if(response.isTapConfirmButton) {
+ Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) =>  Menu()));
+  return;
+}
+
+if(response.isTapDenyButton) {
+  ArtSweetAlert.show(
+    context: context,
+    artDialogArgs: ArtDialogArgs(
+      type: ArtSweetAlertType.info,
+      title: "Imprimindo através da Júpiter I.A!"
+    )
+  );
+  return;
+}
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(children: [
-          Text('${context.watch<ProtocoloModelo>().listaProtocolo}'),
+         
           const SizedBox(
             height: 20,
           ),
@@ -109,8 +145,7 @@ class _MainHomeState extends State<HomePage> {
                               .watch<ProtocoloModelo>()
                               .listaProtocolo[index].dataFinal.toString()),
                           onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => const Menu()));
+                            menuProtocolo();
                           },
                         ),
                       ),

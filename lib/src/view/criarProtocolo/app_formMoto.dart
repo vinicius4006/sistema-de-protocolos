@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:protocolo_app/src/controllers/protocolo_controllerl.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/app_Card.dart';
+import 'package:provider/provider.dart';
 
 class MotoForm extends StatefulWidget {
   const MotoForm({Key? key}) : super(key: key);
@@ -8,7 +10,7 @@ class MotoForm extends StatefulWidget {
   State<MotoForm> createState() => _MotoFormState();
 }
 
-List<String> selected = [];
+
 
 class _MotoFormState extends State<MotoForm> {
   @override
@@ -17,130 +19,168 @@ class _MotoFormState extends State<MotoForm> {
       child: Container(
           margin: const EdgeInsets.all(10),
           child: Column(
-            children: const <Widget>[
-              Text(
+            children:  <Widget>[
+              const Text(
                 'Formulário de Moto',
                 style: TextStyle(height: 1, fontSize: 30),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20.0,
               ),
-              CardForm(
+               CardForm(
                 title: 'Buzina',
                 op1: 'Barulho Baixo',
                 op2: 'Som estranho',
                 op3: 'Som de animal',
                 op4: 'Não presta',
+                numCat: 0,
+                classificacao: context.read<ProtocoloModelo>().titleMoto,
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20.0,
               ),
-              CardForm(
-                  title: 'Retrovisor - Direito/Esquerdo',
-                  op1: 'Rasgado',
-                  op2: 'Fino demais',
-                  op3: 'Couro duro',
-                  op4: 'Estranho'),
-              SizedBox(
+               CardForm(
+                title: 'Retrovisor - Direito/Esquerdo',
+                op1: 'Rasgado',
+                op2: 'Fino demais',
+                op3: 'Couro duro',
+                op4: 'Estranho',
+                numCat: 4,
+                classificacao: context.read<ProtocoloModelo>().titleMoto,
+              ),
+              const SizedBox(
                 height: 20.0,
               ),
-              CardForm(
-                  title: 'Farol Baixo',
-                  op1: 'op1',
-                  op2: 'op2',
-                  op3: 'op3',
-                  op4: 'op4'),
-              SizedBox(
+               CardForm(
+                title: 'Farol Baixo',
+                op1: 'op1',
+                op2: 'op2',
+                op3: 'op3',
+                op4: 'op4',
+                numCat: 7,
+                classificacao: context.read<ProtocoloModelo>().titleMoto
+              ),
+              const SizedBox(
                 height: 20.0,
               ),
-              CardForm(
-                  title: 'Farol Alto',
-                  op1: 'op1',
-                  op2: 'op2',
-                  op3: 'op3',
-                  op4: 'op4'),
-              SizedBox(
+               CardForm(
+                title: 'Farol Alto',
+                op1: 'op1',
+                op2: 'op2',
+                op3: 'op3',
+                op4: 'op4',
+                numCat: 8,
+                classificacao: context.read<ProtocoloModelo>().titleMoto
+              ),
+              const SizedBox(
                 height: 20.0,
               ),
-              CardForm(
-                  title: 'Luz De Freio',
-                  op1: 'op1',
-                  op2: 'op2',
-                  op3: 'op3',
-                  op4: 'op4'),
-              SizedBox(
+               CardForm(
+                title: 'Luz De Freio',
+                op1: 'op1',
+                op2: 'op2',
+                op3: 'op3',
+                op4: 'op4',
+                numCat: 10,
+                classificacao: context.read<ProtocoloModelo>().titleMoto
+              ),
+              const SizedBox(
                 height: 20.0,
               ),
-              CardForm(
-                  title: 'Luzes Do Painel',
-                  op1: 'op1',
-                  op2: 'op2',
-                  op3: 'op3',
-                  op4: 'op4'),
-              SizedBox(
+               CardForm(
+                title: 'Luzes Do Painel',
+                op1: 'op1',
+                op2: 'op2',
+                op3: 'op3',
+                op4: 'op4',
+                numCat: 13,
+                classificacao: context.read<ProtocoloModelo>().titleMoto
+              ),
+              const SizedBox(
                 height: 20.0,
               ),
-              CardForm(
-                  title: 'Setas Dianteiras',
-                  op1: 'op1',
-                  op2: 'op2',
-                  op3: 'op3',
-                  op4: 'op4'),
-              SizedBox(
+               CardForm(
+                title: 'Setas Dianteiras',
+                op1: 'op1',
+                op2: 'op2',
+                op3: 'op3',
+                op4: 'op4',
+                numCat: 14,
+                classificacao: context.read<ProtocoloModelo>().titleMoto
+              ),
+              const SizedBox(
                 height: 20.0,
               ),
-              CardForm(
-                  title: 'Setas Traseiras',
-                  op1: 'op1',
-                  op2: 'op2',
-                  op3: 'op3',
-                  op4: 'op4'),
-              SizedBox(
+               CardForm(
+                title: 'Setas Traseiras',
+                op1: 'op1',
+                op2: 'op2',
+                op3: 'op3',
+                op4: 'op4',
+                numCat: 15,
+                classificacao: context.read<ProtocoloModelo>().titleMoto
+              ),
+              const SizedBox(
                 height: 20.0,
               ),
-              CardForm(
-                  title: 'Velocímetro / Tacógrafo',
-                  op1: 'op1',
-                  op2: 'op2',
-                  op3: 'op3',
-                  op4: 'op4'),
-              SizedBox(
+               CardForm(
+                title: 'Velocímetro / Tacógrafo',
+                op1: 'op1',
+                op2: 'op2',
+                op3: 'op3',
+                op4: 'op4',
+                numCat: 18,
+                classificacao: context.read<ProtocoloModelo>().titleMoto
+              ),
+              const SizedBox(
                 height: 20.0,
               ),
-              CardForm(
-                  title: 'Freios',
-                  op1: 'op1',
-                  op2: 'op2',
-                  op3: 'op3',
-                  op4: 'op4'),
-              SizedBox(
+               CardForm(
+                title: 'Freios',
+                op1: 'op1',
+                op2: 'op2',
+                op3: 'op3',
+                op4: 'op4',
+                numCat: 19,
+                classificacao: context.read<ProtocoloModelo>().titleMoto
+              ),
+              const SizedBox(
                 height: 20.0,
               ),
-              CardForm(
-                  title: 'Pneus (Estado)',
-                  op1: 'op1',
-                  op2: 'op2',
-                  op3: 'op3',
-                  op4: 'op4'),
-              SizedBox(
+               CardForm(
+                title: 'Pneus (Estado)',
+                op1: 'op1',
+                op2: 'op2',
+                op3: 'op3',
+                op4: 'op4',
+                numCat: 28,
+                classificacao: context.read<ProtocoloModelo>().titleMoto
+              ),
+              const SizedBox(
                 height: 20.0,
               ),
-              CardForm(
-                  title: 'Pneus (Calibragem)',
-                  op1: 'op1',
-                  op2: 'op2',
-                  op3: 'op3',
-                  op4: 'op4'),
-              SizedBox(
+               CardForm(
+                title: 'Pneus (Calibragem)',
+                op1: 'op1',
+                op2: 'op2',
+                op3: 'op3',
+                op4: 'op4',
+                numCat: 30,
+                classificacao: context.read<ProtocoloModelo>().titleMoto
+              ),
+              const SizedBox(
                 height: 20.0,
               ),
-              CardForm(
-                  title: 'Nível combustível',
-                  op1: 'op1',
-                  op2: 'op2',
-                  op3: 'op3',
-                  op4: 'op4'),
-              SizedBox(
+               CardForm(
+                title: 'Nível combustível',
+                op1: 'op1',
+                op2: 'op2',
+                op3: 'op3',
+                op4: 'op4',
+                numCat: 35,
+                classificacao: context.read<ProtocoloModelo>().titleMoto
+              ),
+              const SizedBox(
                 height: 20.0,
               ),
             ],
