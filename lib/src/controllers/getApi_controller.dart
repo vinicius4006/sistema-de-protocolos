@@ -1,75 +1,66 @@
-
-
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
- String BASEURL = 'http://frota.jupiter.com.br/api/view/JSON';
+import 'package:flutter/cupertino.dart';
 
-class MotoristaData {
-  
-   Future<List<dynamic>> loadMotoristas() async {
-    
-    final response = await Dio().get('$BASEURL/retornarPessoas');
+String BASEURL = 'http://frota.jupiter.com.br/api/view/JSON';
 
-       if(response.statusCode == 200) {
+// class MotoristaData {
+//   Future<List<dynamic>> loadMotoristas() async {
+//     final response = await Dio().get('$BASEURL/retornarPessoas');
+
+//     if (response.statusCode == 200) {
+//       // final testeJson = jsonDecode(response.toString());
+//       // debugPrint('${testeJson[0]}');
+//       //Map<String, dynamic> comp = response.data;
+//       Map<String, dynamic> mapData = response.data;
+//       List<dynamic> data = mapData['results'];
+//       return data;
+//     } else {
+//       throw Exception('Falha ao carregar motorisas');
+//     }
+//   }
+
+//   String name(dynamic user) {
+//     return user['nome'];
+//   }
+// }
+
+class VeiculoData {
+  Future<List<dynamic>> loadPlacas() async {
+    final response =
+        await Dio().get('$BASEURL/retornarVeiculosNaoProtocolados');
+
+    if (response.statusCode == 200) {
       // final testeJson = jsonDecode(response.toString());
       // debugPrint('${testeJson[0]}');
-       //Map<String, dynamic> comp = response.data;
-       Map<String, dynamic> mapData =  response.data;
-       List<dynamic> data = mapData['results'];
-       return data;
-
+      //Map<String, dynamic> comp = response.data;
+      //Map<String, dynamic> mapData =  response.data;
+      List<dynamic> data = response.data;
+      return data;
     } else {
-      throw Exception('Falha ao carregar motorisas');
+      throw Exception('Falha ao carregar as placas');
     }
-  }
-  String name(dynamic user) {
-    return user['nome'];
   }
 }
 
-class VeiculoData{
- Future<List<dynamic>> loadPlacas() async {
-    
-    final response = await Dio().get('$BASEURL/retornarVeiculosNaoProtocolados');
+class retornarCarroOuMoto with ChangeNotifier {
+  Future<List<dynamic>> retornarSeMotoOuCarro(int id) async {
+    if (id != -1) {
+      final response = await Dio().get('$BASEURL/retornarVeiculoPorId?id=$id');
 
-       if(response.statusCode == 200) {
-      // final testeJson = jsonDecode(response.toString());
-      // debugPrint('${testeJson[0]}');
-       //Map<String, dynamic> comp = response.data;
-       //Map<String, dynamic> mapData =  response.data;
-       List<dynamic> data = response.data;
-       return data;
+      if (response.statusCode == 200) {
+        var tipo = response.data['tipo'];
 
-    } else {
-      throw Exception('Falha ao carregar motorisas');
-    }
-  }
-}
+        final responseTipo =
+            await Dio().get('$BASEURL/retornarItensVeiculo?tipo=$tipo');
 
+        //debugPrint('${responseTipo.data['results']}');
 
- Future<bool> retornarSeMotoOuCarro(String id) async {
-   final response = await Dio().get('$BASEURL/retornarVeiculoPorId?id=$id');
-   
-   //debugPrint(id);
-  if(response.statusCode == 200){
-    Map<String,dynamic> data = response.data;
-  debugPrint(data['tipo']);
-      if(data['tipo'] == 0){
-        return true;
+        return responseTipo.data['results'];
       } else {
-        return false;
+        throw Exception('Falha ao verificar dados do veículo');
       }
-    
-    
-
-  } else {
-    throw Exception('Falha ao verificar dados do veículo');
+    } else {
+      return [];
+    }
   }
-
 }
-
-
-
-
-
-

@@ -4,7 +4,6 @@ import 'dart:io' as io;
 
 import 'package:flutter/material.dart';
 
-
 import 'package:image_picker/image_picker.dart';
 
 import 'package:provider/provider.dart';
@@ -15,30 +14,26 @@ class CardForm extends StatefulWidget {
   const CardForm(
       {Key? key,
       required this.title,
-      required this.op1,
-      required this.op2,
-      required this.op3,
-      required this.op4,
+      required this.ops,
+      required this.input,
       this.numCat = 0,
-      this.classificacao = ''})
+      this.classificacao = false})
       : super(key: key);
 
   final String title;
-  final String op1;
-  final String op2;
-  final String op3;
-  final String op4;
+  final String ops;
+  final String input;
   final int numCat;
-  final String classificacao;
+  final bool classificacao;
 
   @override
   State<CardForm> createState() => _CardFormState();
 }
 
 class _CardFormState extends State<CardForm> {
-  List<String> selected = [];
-  bool selectedChange = false;
-  int rangeRemove = 0;
+  String select = '';
+  List<String> checkSelect = [];
+  List<bool> changeLista = [false];
 
   String? _path;
 
@@ -112,18 +107,18 @@ class _CardFormState extends State<CardForm> {
     //    name: 'my.app.photo',
     //    error: jsonEncode(base64Image),
     //  );
-    if (widget.classificacao == context.read<ProtocoloModelo>().titleMoto) {
+    if (widget.classificacao) {
       Timer(const Duration(seconds: 1), () async {
         context
             .read<ProtocoloModelo>()
-            .addFormItens(widget.numCat, selected, base64Image, true);
+            .addFormItens(widget.numCat, [select], base64Image, true);
       });
     } else {
       Timer(
           const Duration(seconds: 1),
           () => context
               .read<ProtocoloModelo>()
-              .addFormItens(widget.numCat, selected, base64Image, false));
+              .addFormItens(widget.numCat, [select], base64Image, false));
     }
 
     return Image.file(
@@ -131,10 +126,70 @@ class _CardFormState extends State<CardForm> {
     );
   }
 
+  showRadioOps(List<String> lista) {
+    return ListView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: lista.length,
+        itemBuilder: (context, index) {
+          return RadioListTile(
+            title: Text(lista[index]),
+            value: lista[index],
+            groupValue: select,
+            onChanged: (value) {
+              setState(() {
+                debugPrint('$value');
+                select = value.toString();
+                context.read<ProtocoloModelo>().addFormItens(
+                    widget.numCat, [select], '', widget.classificacao);
+              });
+            },
+          );
+        });
+  }
 
+  showCheckOps(List<String> lista) {
+    void itemChange(bool val, int index) {
+      setState(() {
+        changeLista[index] = val;
+        if (changeLista[index]) {
+          checkSelect.add(lista[index]);
+        } else {
+          checkSelect.remove(lista[index]);
+        }
+        context
+            .read<ProtocoloModelo>()
+            .addFormItens(widget.numCat, checkSelect, '', widget.classificacao);
+
+        debugPrint('$checkSelect');
+      });
+    }
+
+    return ListView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: lista.length,
+        itemBuilder: (context, index) {
+          changeLista.add(false);
+          return CheckboxListTile(
+            title: Text(lista[index]),
+            dense: true,
+            value: changeLista[index],
+            onChanged: (bool? val) {
+              itemChange(val!, index);
+            },
+          );
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
+    var separateString = widget.ops.replaceAll('[', '');
+    separateString = separateString.replaceAll(']', '');
+    separateString = separateString.replaceAll('"', '');
+
+    final listaParametros = separateString.split(',');
+
     return SafeArea(
       child: Card(
         child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
@@ -142,23 +197,10 @@ class _CardFormState extends State<CardForm> {
             title: Text(widget.title),
             subtitle: const Text('Status'),
           ),
-         
           Container(
-
-          )
-
-          // child: DropDownMultiSelect(
-          //   onChanged: (List<String> x) {
-          //     setState(() {
-          //       selected = x;
-          //     });
-          //     //final boolChange = selected.remove(base64Encode(io.File(_path.toString()).readAsBytesSync()));
-          //   },
-          //   options: [widget.op1, widget.op2, widget.op3, widget.op4],
-          //   selectedValues: selected,
-          //   whenEmpty: 'Selecione a opção',
-          // ),
-          ,
+              child: widget.input == 'radio'
+                  ? showRadioOps(listaParametros)
+                  : showCheckOps(listaParametros)),
           _path != null ? _showPhoto(context) : const Text('Aguardando...'),
           ElevatedButton(
             onPressed: () {
@@ -168,7 +210,7 @@ class _CardFormState extends State<CardForm> {
               'Tire a foto',
               style: TextStyle(color: Colors.white),
             ),
-          )
+          ),
         ]),
       ),
     );

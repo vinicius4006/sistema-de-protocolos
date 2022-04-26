@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:protocolo_app/src/appHome.dart';
-import 'package:protocolo_app/src/controllers/inc_controller.dart';
+import 'package:protocolo_app/src/controllers/getApi_controller.dart';
 import 'package:protocolo_app/src/controllers/protocolo_controllerl.dart';
 import 'package:provider/provider.dart';
 
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => IncController()),
+        ChangeNotifierProvider(create: (_) => retornarCarroOuMoto()),
         ChangeNotifierProvider(create: (_) => ProtocoloModelo())
       ],
       child: MaterialApp(

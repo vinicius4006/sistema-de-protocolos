@@ -2,6 +2,7 @@ import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:protocolo_app/src/controllers/protocolo_controllerl.dart';
+import 'package:protocolo_app/src/shared/models/protocolo.dart';
 import 'package:protocolo_app/src/view/app_menu.dart';
 import 'package:provider/provider.dart';
 
@@ -18,30 +19,30 @@ class _MainHomeState extends State<HomePage> {
 
   static final List<Map<String, dynamic>> _allProtocolos = [];
 
-  List<Map<String, dynamic>> _foundProtocolos = [];
+  List<Protocolo> _foundProtocolos = [];
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _foundProtocolos = _allProtocolos;
+
   }
 
   void _protocoloFilter(String keyword) {
-    List<Map<String, dynamic>> results = [];
+    List<Protocolo> results = [];
     if (keyword.isEmpty) {
-      results = _allProtocolos;
+      results = _foundProtocolos;
     } else {
-      results = _allProtocolos
-          .where((protocolo) => (protocolo['motorista'] +
+      results = _foundProtocolos
+          .where((protocolo) => (protocolo.motorista! +
                   ' - ' +
-                  protocolo['id'].toString() +
+                  protocolo.id.toString() +
                   ' - ' +
-                  protocolo['dataInicial'].toString() +
+                  protocolo.dataInicio.toString() +
                   ' - ' +
-                  protocolo['dataFinal'].toString() +
+                  protocolo.dataFinal.toString() +
                   ' - ' +
-                  protocolo['veiculo'])
+                  protocolo.veiculo.toString())
               .toLowerCase()
               .contains(keyword.toLowerCase()))
           .toList();
@@ -89,6 +90,9 @@ if(response.isTapDenyButton) {
 
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      _foundProtocolos = context.read<ProtocoloModelo>().listaProtocolo;
+    });
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(10),

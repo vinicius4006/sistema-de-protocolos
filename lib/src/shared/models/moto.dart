@@ -1,16 +1,16 @@
 class Moto {
-  List<String>? buzinaStatus;
-  List<String>? retroDireitoEsquerdoStatus;
-  List<String>? farolBaixoStatus;
-  List<String>? farolAltoStatus;
-  List<String>? luzFreioStatus;
-  List<String>? luzPainelStatus;
-  List<String>? setasDianStatus;
-  List<String>? setasTraStatus;
-  List<String>? velTacoStatus;
-  List<String>? freiosStatus;
-  List<String>? pneusCalibragemStatus;
-  List<String>? nivelCombStatus;
+ dynamic buzinaStatus;
+ dynamic retroDireitoEsquerdoStatus;
+ dynamic farolBaixoStatus;
+ dynamic farolAltoStatus;
+ dynamic luzFreioStatus;
+ dynamic luzPainelStatus;
+ dynamic setasDianStatus;
+ dynamic setasTraStatus;
+ dynamic velTacoStatus;
+ dynamic freiosStatus;
+ dynamic pneusCalibragemStatus;
+ dynamic nivelCombStatus;
 
   Moto(
       {this.buzinaStatus,
@@ -43,7 +43,7 @@ class Moto {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['buzinaStatus'] = buzinaStatus;
     data['retroDireitoEsquerdoStatus'] = retroDireitoEsquerdoStatus;
     data['farolBaixoStatus'] = farolBaixoStatus;

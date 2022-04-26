@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:protocolo_app/src/shared/models/carro.dart';
+import 'package:protocolo_app/src/shared/models/carro2.dart';
 import 'package:protocolo_app/src/shared/models/moto.dart';
 import 'dart:math';
 import 'package:protocolo_app/src/shared/models/protocolo.dart';
@@ -8,7 +9,8 @@ import 'package:protocolo_app/src/shared/models/protocolo.dart';
 class ProtocoloModelo with ChangeNotifier {
   final List<Protocolo> _listaProtocolo = [];
 
-  Carro _carro = Carro();
+   Carro _carro = Carro();
+   final Carro2 _carro2 = Carro2();
 
   Moto _moto = Moto();
 
@@ -55,39 +57,48 @@ class ProtocoloModelo with ChangeNotifier {
 
   addFormItens(int numCat, List<String> itens, String img, bool change) {
     switch (numCat) {
-      case 0:
+      case 1:
         {
           if (change) {
+            
             _moto.buzinaStatus = itens;
             if ((itens.where((element) => element == img)).isEmpty) {
-              _moto.buzinaStatus?.add(img);
+              _moto.buzinaStatus?.add('img');
             }
 
             debugPrint(img);
           } else {
             _carro.buzinaStatus = itens;
             if ((itens.where((element) => element == img)).isEmpty) {
-              _carro.buzinaStatus?.add(img);
+              _carro.buzinaStatus?.add('img');
             }
-          }
-        }
-        break;
-      case 1:
-        {
-          _carro.cintoSegurancaStatus = itens;
-          if ((itens.where((element) => element == img)).isEmpty) {
-            _carro.cintoSegurancaStatus?.add(img);
           }
         }
         break;
       case 2:
         {
-          _carro.quebraSol = itens;
+          _carro.cintoSegurancaStatus = itens;
           if ((itens.where((element) => element == img)).isEmpty) {
-            _carro.quebraSol?.add(img);
-          }
+              _carro.cintoSegurancaStatus?.add('img');
+            }
         }
         break;
+      case 3:
+        {
+           _carro.quebraSol = itens;
+          if ((itens.where((element) => element == img)).isEmpty) {
+              _carro.quebraSol?.add('img');
+            }
+        }
+        break;
+        case 32:
+        {
+          
+          _carro.bancosEncostoStatus = itens;
+          // if ((itens.where((element) => element == img)).isEmpty) {
+          //     _carro.bancosEncostoStatus?.add('img');
+          //   }
+        }
     }
 
     notifyListeners();

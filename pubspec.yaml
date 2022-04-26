@@ -37,7 +37,7 @@ dependencies:
   flutter_typeahead: ^3.2.4
   intl: ^0.17.0
   snippet_coder_utils: ^1.0.12
-  dropdownfield2: ^1.0.6
+
   multiselect: ^0.0.4
   image_picker: ^0.8.5
   art_sweetalert: ^0.0.5
@@ -45,6 +45,7 @@ dependencies:
   animated_custom_dropdown: ^1.2.0
   http: ^0.13.4
   dio: ^4.0.6
+
 
 
 dev_dependencies:
