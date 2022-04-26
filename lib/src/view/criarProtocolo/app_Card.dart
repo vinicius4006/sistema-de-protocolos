@@ -37,6 +37,8 @@ class _CardFormState extends State<CardForm> {
 
   String? _path;
 
+  //---------------------CAMERA
+
   void _showOptions(BuildContext context) {
     showModalBottomSheet(
         context: context,
@@ -102,11 +104,7 @@ class _CardFormState extends State<CardForm> {
   _showPhoto(BuildContext context) {
     List<int> imageBytes = io.File(_path!).readAsBytesSync();
     String base64Image = base64Encode(imageBytes);
-    //  developer.log(
-    //    'log me',
-    //    name: 'my.app.photo',
-    //    error: jsonEncode(base64Image),
-    //  );
+
     if (widget.classificacao) {
       Timer(const Duration(seconds: 1), () async {
         context
@@ -126,6 +124,9 @@ class _CardFormState extends State<CardForm> {
     );
   }
 
+  //-------------------------------EXIBICAO RADIO OU CHECKBOX
+
+  //--------------------RADIOBUTTON
   showRadioOps(List<String> lista) {
     return ListView.builder(
         physics: const NeverScrollableScrollPhysics(),
@@ -148,6 +149,7 @@ class _CardFormState extends State<CardForm> {
         });
   }
 
+  //----------------------CHECKBOX
   showCheckOps(List<String> lista) {
     void itemChange(bool val, int index) {
       setState(() {
@@ -171,19 +173,23 @@ class _CardFormState extends State<CardForm> {
         itemCount: lista.length,
         itemBuilder: (context, index) {
           changeLista.add(false);
-          return CheckboxListTile(
-            title: Text(lista[index]),
-            dense: true,
-            value: changeLista[index],
-            onChanged: (bool? val) {
-              itemChange(val!, index);
-            },
+          return Form(
+            child: CheckboxListTile(
+              title: Text(lista[index]),
+              dense: true,
+              value: changeLista[index],
+              onChanged: (bool? val) {
+                itemChange(val!, index);
+              },
+            ),
           );
         });
   }
 
+  //---------------------CORPO DO CARD
   @override
   Widget build(BuildContext context) {
+    //-----------SEPARACAO DO PARAMETRO PARA FICAR LEGIVEL
     var separateString = widget.ops.replaceAll('[', '');
     separateString = separateString.replaceAll(']', '');
     separateString = separateString.replaceAll('"', '');

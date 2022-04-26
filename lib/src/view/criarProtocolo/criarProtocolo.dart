@@ -155,7 +155,9 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                   child: ElevatedButton(
                     style: const ButtonStyle(),
                     onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
+                      if (_formKey.currentState!.validate() 
+                       ) {
+                         
                         data.then((value) => value[2]['tipo_veiculo'] == '0'
                             ? context.read<ProtocoloModelo>().addFormCarro(
                                 motoristaSelecionado,

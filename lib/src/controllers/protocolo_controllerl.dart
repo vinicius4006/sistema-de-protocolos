@@ -1,7 +1,5 @@
-
 import 'package:flutter/material.dart';
 import 'package:protocolo_app/src/shared/models/carro.dart';
-import 'package:protocolo_app/src/shared/models/carro2.dart';
 import 'package:protocolo_app/src/shared/models/moto.dart';
 import 'dart:math';
 import 'package:protocolo_app/src/shared/models/protocolo.dart';
@@ -9,8 +7,8 @@ import 'package:protocolo_app/src/shared/models/protocolo.dart';
 class ProtocoloModelo with ChangeNotifier {
   final List<Protocolo> _listaProtocolo = [];
 
-   Carro _carro = Carro();
-   final Carro2 _carro2 = Carro2();
+  Carro _carro = Carro();
+  Carro get verificarCarro => _carro;
 
   Moto _moto = Moto();
 
@@ -19,10 +17,8 @@ class ProtocoloModelo with ChangeNotifier {
   String get titleMoto => 'Moto';
   String get titleCarro => 'Carro';
 
-
-
-  addFormCarro(
-      String motorista, String veiculo, String dataInicio, String dataFinal) async {
+  addFormCarro(String motorista, String veiculo, String dataInicio,
+      String dataFinal) async {
     final protocolo = Protocolo(
         id: Random().nextInt(100),
         motorista: motorista,
@@ -60,40 +56,38 @@ class ProtocoloModelo with ChangeNotifier {
       case 1:
         {
           if (change) {
-            
             _moto.buzinaStatus = itens;
-            if ((itens.where((element) => element == img)).isEmpty) {
-              _moto.buzinaStatus?.add('img');
-            }
+            // if ((itens.where((element) => element == img)).isEmpty) {
+            //   _moto.buzinaStatus?.add('img');
+            // }
 
             debugPrint(img);
           } else {
             _carro.buzinaStatus = itens;
-            if ((itens.where((element) => element == img)).isEmpty) {
-              _carro.buzinaStatus?.add('img');
-            }
+            // if ((itens.where((element) => element == img)).isEmpty) {
+            //   _carro.buzinaStatus?.add('img');
+            // }
           }
         }
         break;
       case 2:
         {
           _carro.cintoSegurancaStatus = itens;
-          if ((itens.where((element) => element == img)).isEmpty) {
-              _carro.cintoSegurancaStatus?.add('img');
-            }
+          // if ((itens.where((element) => element == img)).isEmpty) {
+          //     _carro.cintoSegurancaStatus?.add('img');
+          //   }
         }
         break;
       case 3:
         {
-           _carro.quebraSol = itens;
-          if ((itens.where((element) => element == img)).isEmpty) {
-              _carro.quebraSol?.add('img');
-            }
+          _carro.quebraSol = itens;
+          // if ((itens.where((element) => element == img)).isEmpty) {
+          //     _carro.quebraSol?.add('img');
+          //   }
         }
         break;
-        case 32:
+      case 32:
         {
-          
           _carro.bancosEncostoStatus = itens;
           // if ((itens.where((element) => element == img)).isEmpty) {
           //     _carro.bancosEncostoStatus?.add('img');
@@ -103,22 +97,4 @@ class ProtocoloModelo with ChangeNotifier {
 
     notifyListeners();
   }
-
-//  addProtocolo(Map<String,dynamic> protocolo){
-//    print(protocolo);
-//    _listaProtocolo.add(protocolo);
-//  }
-
-  // Map<String, dynamic> toJson() {
-  //   final Map<String, dynamic> data = <String, dynamic>{};
-
-  //   data['Motorista'] = motorista;
-  //   data['Veículo'] = veiculo;
-  //   data['Carro'] = formCarro;
-  //   data['Moto'] = formMoto;
-  //   data['DataInicio'] = dataInicio;
-  //   data['DataFinal'] = dataFinal;
-
-  //   return data;
-  // }
 }

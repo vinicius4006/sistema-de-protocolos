@@ -25,7 +25,6 @@ class _MainHomeState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
   }
 
   void _protocoloFilter(String keyword) {
@@ -46,58 +45,59 @@ class _MainHomeState extends State<HomePage> {
               .toLowerCase()
               .contains(keyword.toLowerCase()))
           .toList();
+     
     }
 
     setState(() {
       _foundProtocolos = results;
+      debugPrint('$_foundProtocolos');
     });
   }
 
-  void menuProtocolo() async{
+  void menuProtocolo() async {
     ArtDialogResponse response = await ArtSweetAlert.show(
-  barrierDismissible: false,
-  context: context,
-  artDialogArgs: ArtDialogArgs(
-    showCancelBtn: true,
-    denyButtonText: "Imprimir",
-    denyButtonColor: Colors.blueGrey,
-    cancelButtonText: 'Cancelar',
-    confirmButtonText: "Finalizar",
-  )
-);
+        barrierDismissible: false,
+        context: context,
+        artDialogArgs: ArtDialogArgs(
+          showCancelBtn: true,
+          denyButtonText: "Imprimir",
+          denyButtonColor: Colors.blueGrey,
+          cancelButtonText: 'Cancelar',
+          confirmButtonText: "Finalizar",
+        ));
 
-if(response==null) {
-  return;
-}
+    if (response == null) {
+      return;
+    }
 
-if(response.isTapConfirmButton) {
- Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) =>  Menu()));
-  return;
-}
+    if (response.isTapConfirmButton) {
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => Menu()));
+      return;
+    }
 
-if(response.isTapDenyButton) {
-  ArtSweetAlert.show(
-    context: context,
-    artDialogArgs: ArtDialogArgs(
-      type: ArtSweetAlertType.info,
-      title: "Imprimindo através da Júpiter I.A!"
-    )
-  );
-  return;
-}
+    if (response.isTapDenyButton) {
+      ArtSweetAlert.show(
+          context: context,
+          artDialogArgs: ArtDialogArgs(
+              type: ArtSweetAlertType.info,
+              title: "Imprimindo através da Júpiter I.A!"));
+      return;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    //FocusScope.of(context).unfocus();
     setState(() {
       _foundProtocolos = context.read<ProtocoloModelo>().listaProtocolo;
     });
+    
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(children: [
-         
           const SizedBox(
             height: 20,
           ),
@@ -111,53 +111,37 @@ if(response.isTapDenyButton) {
           const SizedBox(
             height: 20,
           ),
-          context.watch<ProtocoloModelo>().listaProtocolo.isNotEmpty ?
-          Expanded(
-              child: 
-                 ListView.builder(
-                      itemCount: context
-                          .watch<ProtocoloModelo>()
-                          .listaProtocolo
-                          .length,
-                      itemBuilder: (context, index) => Card(
-                        key: ValueKey(context
-                            .watch<ProtocoloModelo>()
-                            .listaProtocolo[index].id),
-                        color: Colors.lightGreen,
-                        elevation: 4,
-                        margin: const EdgeInsets.symmetric(vertical: 10),
-                        child: ListTile(
-                          leading: Text(
-                            context
-                                .watch<ProtocoloModelo>()
-                                .listaProtocolo[index].id
-                                .toString(),
-                            style: const TextStyle(fontSize: 24),
-                          ),
-                          title: Text(context
-                              .watch<ProtocoloModelo>()
-                              .listaProtocolo[index].motorista.toString()),
-                          subtitle: Text(context
-                              .watch<ProtocoloModelo>()
-                              .listaProtocolo[index].veiculo.toString()),
-                          trailing: Text('Início: ' +
-                              context
-                              .watch<ProtocoloModelo>()
-                              .listaProtocolo[index].dataInicio.toString() +
-                              '\n\n' 'Final: ' +
-                              context
-                              .watch<ProtocoloModelo>()
-                              .listaProtocolo[index].dataFinal.toString()),
-                          onTap: () {
-                            menuProtocolo();
-                          },
-                        ),
+          _foundProtocolos.isNotEmpty
+              ? Expanded(
+                  child: ListView.builder(
+                  itemCount: _foundProtocolos.length,
+                  itemBuilder: (context, index) => Card(
+                    key: ValueKey(_foundProtocolos[index].id),
+                    color: Colors.lightGreen,
+                    elevation: 4,
+                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    child: ListTile(
+                      leading: Text(
+                        _foundProtocolos[index].id.toString(),
+                        style: const TextStyle(fontSize: 24),
                       ),
-                    )
-                 )  : const Text(
-                      'Protocolo não encontrado',
-                      style: TextStyle(fontSize: 24),
-                    )
+                      title: Text(_foundProtocolos[index].veiculo.toString()),
+                      subtitle: Text('\n' 'Início: ' +
+                          _foundProtocolos[index].dataInicio.toString() +
+                          '\n'
+                              '\n'
+                              'Final: ' +
+                          _foundProtocolos[index].dataFinal.toString()),
+                      onTap: () {
+                        menuProtocolo();
+                      },
+                    ),
+                  ),
+                ))
+              : const Text(
+                  'Protocolo não encontrado',
+                  style: TextStyle(fontSize: 24),
+                )
         ]),
       ),
     );
