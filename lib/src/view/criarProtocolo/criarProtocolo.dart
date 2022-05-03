@@ -2,8 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:protocolo_app/src/controllers/getApi_controller.dart';
-import 'package:protocolo_app/src/controllers/protocolo_controllerl.dart';
+import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
+import 'package:protocolo_app/src/controllers/login_controller.dart';
+import 'package:protocolo_app/src/controllers/protocolo_controller.dart';
 
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/app_formVeiculo.dart';
@@ -22,7 +23,7 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
   List<String> motoristas = [''];
   List<String> veiculos = [''];
 
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  
 
   final dataInicio = DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.now());
 
@@ -38,7 +39,6 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
 
   @override
   void dispose() {
-    motoristaSelecionar.dispose();
     veiculoSelecionar.dispose();
     super.dispose();
   }
@@ -48,15 +48,6 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
       veiculos.add(item['placa'] + ' - ' + item['id']);
     }
   }
-
-  loopMotorista(Future lista) async {
-    for (var item in await lista) {
-      motoristas.add(item['nome']);
-    }
-  }
-
-  final motoristaSelecionar = TextEditingController();
-  String motoristaSelecionado = '';
 
   final veiculoSelecionar = TextEditingController();
   String veiculoSelecionado = '';
@@ -75,6 +66,7 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
           leading: Builder(builder: (BuildContext context) {
             return IconButton(
                 onPressed: () {
+             
                   Navigator.of(context).pop();
                 },
                 icon: const Icon(Icons.arrow_back_outlined));
@@ -83,7 +75,7 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
           title: const Text('Criação de Protocolo'),
         ),
         body: Form(
-          key: _formKey,
+          key: context.read<ProtocoloModelo>().formKey,
           child: SizedBox(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
@@ -131,6 +123,11 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                   onChanged: (value) {
                     setState(() {
                       veiculoSelecionado = value;
+                      context
+                          .read<ProtocoloModelo>()
+                          .listaItensProtocolo
+                          .clear();
+                   
                       data = context
                           .read<retornarCarroOuMoto>()
                           .retornarSeMotoOuCarro(
@@ -155,29 +152,48 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                   child: ElevatedButton(
                     style: const ButtonStyle(),
                     onPressed: () async {
-                      if (_formKey.currentState!.validate() 
-                       ) {
-                         
-                        data.then((value) => value[2]['tipo_veiculo'] == '0'
-                            ? context.read<ProtocoloModelo>().addFormCarro(
-                                motoristaSelecionado,
-                                veiculoSelecionado,
-                                dataInicio,
-                                "")
-                            : context.read<ProtocoloModelo>().addFormMoto(
-                                motoristaSelecionado,
-                                veiculoSelecionado,
-                                dataInicio,
-                                ""));
-
-                        Navigator.of(context).pop();
-                        ArtSweetAlert.show(
-                            context: context,
-                            artDialogArgs: ArtDialogArgs(
-                              type: ArtSweetAlertType.success,
-                              title: 'Protocolo Criado',
-                            ));
-                      } else {
+                      
+                      try {
+                        var tamanhoVeiculo = await context
+                          .read<retornarCarroOuMoto>()
+                          .retornarSeMotoOuCarro(
+                              int.parse(veiculoSelecionado.substring(10)));
+                      var listaItensDoVeiculo =
+                          context.read<ProtocoloModelo>().listaItensProtocolo;
+                        if (context.read<ProtocoloModelo>().formKey.currentState!.validate() &&
+                           listaItensDoVeiculo.length ==
+                                tamanhoVeiculo.length
+                                ) {
+                          context.read<ProtocoloModelo>().addFormProtocolo(
+                              dataInicio,
+                              "",
+                              veiculoSelecionado.substring(10),
+                              veiculoSelecionado.substring(0, 7),
+                              "",
+                              "",
+                              "",
+                              "",
+                              context.read<LoginController>().username,
+                              "");
+                          
+                          
+                           
+                          Navigator.of(context).pop();
+                          ArtSweetAlert.show(
+                              context: context,
+                              artDialogArgs: ArtDialogArgs(
+                                type: ArtSweetAlertType.success,
+                                title: 'Protocolo Criado',
+                              ));
+                        } else {
+                          ArtSweetAlert.show(
+                              context: context,
+                              artDialogArgs: ArtDialogArgs(
+                                type: ArtSweetAlertType.info,
+                                title: "Verifique os dados",
+                              ));
+                        }
+                      } catch (e) {
                         ArtSweetAlert.show(
                             context: context,
                             artDialogArgs: ArtDialogArgs(

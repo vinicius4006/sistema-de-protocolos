@@ -1,10 +1,15 @@
+
+
 import 'package:flutter/material.dart';
-import 'package:protocolo_app/src/appHome.dart';
-import 'package:protocolo_app/src/controllers/getApi_controller.dart';
-import 'package:protocolo_app/src/controllers/protocolo_controllerl.dart';
+import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
+import 'package:protocolo_app/src/controllers/login_controller.dart';
+import 'package:protocolo_app/src/controllers/protocolo_controller.dart';
+import 'package:protocolo_app/src/view/login/login.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async {
+
+
   runApp(const MyApp());
 }
 
@@ -17,14 +22,15 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => retornarCarroOuMoto()),
-        ChangeNotifierProvider(create: (_) => ProtocoloModelo())
+        ChangeNotifierProvider(create: (_) => ProtocoloModelo()),
+        ChangeNotifierProvider(create: (_) => LoginController())
       ],
       child: MaterialApp(
         title: 'Bem-vindo ao Sistema de Protocolos',
         theme: ThemeData(
           primarySwatch: Colors.green,
         ),
-        home: const Home(title: 'Sistema de Protocolos'),
+        home: const LoginProtocolo()//const Home(title: 'Sistema de Protocolos'),
       ),
     );
   }

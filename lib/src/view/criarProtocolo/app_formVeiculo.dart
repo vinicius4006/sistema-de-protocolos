@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:protocolo_app/src/controllers/getApi_controller.dart';
+import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/app_Card.dart';
 import 'package:provider/provider.dart';
 
@@ -28,8 +28,8 @@ class _VeiculoFormState extends State<VeiculoForm> {
     try {
       return Column(children: [
         data[2]['tipo_veiculo'] == '0'
-            ? const Text('Carro')
-            : const Text('Moto'),
+            ? const Text('Carro',style: TextStyle(fontSize: 30, fontWeight: FontWeight.w400))
+            : const Text('Moto', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w400)),
         const SizedBox(
           height: 20.0,
         ),
@@ -44,8 +44,7 @@ class _VeiculoFormState extends State<VeiculoForm> {
                   title: data[index]['descricao'],
                   ops: data[index]['parametros'],
                   input: data[index]['input'],
-                  numCat: int.parse(data[index]['id']),
-                  classificacao: data[2]['tipo_veiculo'] == '0' ? false : true,
+                  numCat: data[index]['id'],
                 );
               }),
         ),
@@ -59,9 +58,13 @@ class _VeiculoFormState extends State<VeiculoForm> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: context
-            .read<retornarCarroOuMoto>()
-            .retornarSeMotoOuCarro(int.parse(widget.placa!.substring(10))),
+        future: widget.placa!.length > 1
+            ? context
+                .read<retornarCarroOuMoto>()
+                .retornarSeMotoOuCarro(int.parse(widget.placa!.substring(10)))
+            : context
+                .read<retornarCarroOuMoto>()
+                .retornarSeMotoOuCarroPorBooleano(widget.placa.toString()),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             var data = snapshot.data;

@@ -1,49 +1,56 @@
-import 'package:protocolo_app/src/shared/models/carro.dart';
-
-import 'moto.dart';
-
 class Protocolo {
-  int? id;
+  String? digitador;
+  String? digitadorFinal;
+  String? fim;
+  String? id;
+  String? inicio;
   String? motorista;
+  String? nomemotorista;
+  String? observacao;
+  String? observacaoFinal;
+  String? placa;
   String? veiculo;
-  String? dataInicio;
-  String? dataFinal;
-  Carro? carro;
-  Moto? moto;
 
   Protocolo(
-      {this.id,
+      {this.digitador,
+      this.digitadorFinal,
+      this.fim,
+      this.id,
+      this.inicio,
       this.motorista,
-      this.veiculo,
-      this.dataInicio,
-      this.dataFinal,
-      this.carro,
-      this.moto});
+      this.nomemotorista,
+      this.observacao,
+      this.observacaoFinal,
+      this.placa,
+      this.veiculo});
 
   Protocolo.fromJson(Map<String, dynamic> json) {
+    digitador = json['digitador'];
+    digitadorFinal = json['digitador_final'];
+    fim = json['fim'];
     id = json['id'];
+    inicio = json['inicio'];
     motorista = json['motorista'];
+    nomemotorista = json['nomemotorista'];
+    observacao = json['observacao'];
+    observacaoFinal = json['observacao_final'];
+    placa = json['placa'];
     veiculo = json['veiculo'];
-    dataInicio = json['dataInicio'];
-    dataFinal = json['dataFinal'];
-    carro = json['carro'] != null ? Carro.fromJson(json['carro']) : null;
-    moto = json['moto'] != null ? Moto.fromJson(json['moto']) : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
+    data['digitador'] = digitador;
+    data['digitador_final'] = digitadorFinal;
+    data['fim'] = fim;
     data['id'] = id;
+    data['inicio'] = inicio;
     data['motorista'] = motorista;
+    data['nomemotorista'] = nomemotorista;
+    data['observacao'] = observacao;
+    data['observacao_final'] = observacaoFinal;
+    data['placa'] = placa;
     data['veiculo'] = veiculo;
-    data['dataInicio'] = dataInicio;
-    data['dataFinal'] = dataFinal;
-    if (carro != null) {
-      data['carro'] = carro!.toJson();
-    }
-
-    if (moto != null) {
-      data['moto'] = moto!.toJson();
-    }
     return data;
   }
 }

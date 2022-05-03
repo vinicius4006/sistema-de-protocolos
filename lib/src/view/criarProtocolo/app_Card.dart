@@ -8,7 +8,7 @@ import 'package:image_picker/image_picker.dart';
 
 import 'package:provider/provider.dart';
 
-import '../../controllers/protocolo_controllerl.dart';
+import '../../controllers/protocolo_controller.dart';
 
 class CardForm extends StatefulWidget {
   const CardForm(
@@ -16,24 +16,37 @@ class CardForm extends StatefulWidget {
       required this.title,
       required this.ops,
       required this.input,
-      this.numCat = 0,
-      this.classificacao = false})
+      this.numCat = ''})
       : super(key: key);
 
   final String title;
   final String ops;
   final String input;
-  final int numCat;
-  final bool classificacao;
+  final String numCat;
 
   @override
   State<CardForm> createState() => _CardFormState();
 }
 
 class _CardFormState extends State<CardForm> {
-  String select = '';
-  List<String> checkSelect = [];
+  int select = -1;
+  int indexRadio = 0;
+  List<int> checkSelect = [];
   List<bool> changeLista = [false];
+
+  @override
+  void initState() {
+    super.initState();
+    select = -1;
+    context.read<ProtocoloModelo>().listaItensProtocolo.clear();
+  }
+
+  @override
+  void dispose() {
+    checkSelect;
+    changeLista;
+    super.dispose();
+  }
 
   String? _path;
 
@@ -95,32 +108,54 @@ class _CardFormState extends State<CardForm> {
       setState(() {
         _path = file.path;
       });
-      debugPrint('$_path');
     } catch (e) {
       print('Falha em capturar a imagem: $e');
     }
   }
 
-  _showPhoto(BuildContext context) {
+  _showPhoto(BuildContext context, String input) {
     List<int> imageBytes = io.File(_path!).readAsBytesSync();
     String base64Image = base64Encode(imageBytes);
 
-    if (widget.classificacao) {
+    if (input == 'radio') {
       Timer(const Duration(seconds: 1), () async {
         context
             .read<ProtocoloModelo>()
-            .addFormItens(widget.numCat, [select], base64Image, true);
+            .addFormItensProtocolo(widget.numCat, indexRadio, '', base64Image);
       });
     } else {
-      Timer(
-          const Duration(seconds: 1),
-          () => context
-              .read<ProtocoloModelo>()
-              .addFormItens(widget.numCat, [select], base64Image, false));
+      Timer(const Duration(seconds: 1), () async {
+        context
+            .read<ProtocoloModelo>()
+            .addFormItensProtocolo(widget.numCat, checkSelect, '', base64Image);
+      });
     }
 
-    return Image.file(
-      io.File(_path.toString()),
+    return Column(
+      children: [
+        ElevatedButton.icon(
+            onPressed: () {
+              setState(() {
+                _path = null;
+                if (input == 'radio') {
+                  Timer(const Duration(seconds: 1), () async {
+                    context.read<ProtocoloModelo>().addFormItensProtocolo(
+                        widget.numCat, indexRadio, '', '');
+                  });
+                } else {
+                  Timer(const Duration(seconds: 1), () async {
+                    context.read<ProtocoloModelo>().addFormItensProtocolo(
+                        widget.numCat, checkSelect, '', '');
+                  });
+                }
+              });
+            },
+            icon: const Icon(Icons.delete),
+            label: const Text('Excluir Foto')),
+        Image.file(
+          io.File(_path.toString()),
+        ),
+      ],
     );
   }
 
@@ -135,15 +170,16 @@ class _CardFormState extends State<CardForm> {
         itemBuilder: (context, index) {
           return RadioListTile(
             title: Text(lista[index]),
-            value: lista[index],
+            value: index,
             groupValue: select,
             onChanged: (value) {
               setState(() {
-                debugPrint('$value');
-                select = value.toString();
-                context.read<ProtocoloModelo>().addFormItens(
-                    widget.numCat, [select], '', widget.classificacao);
+                select = int.parse(value.toString());
+                indexRadio = index;
               });
+              context
+                  .read<ProtocoloModelo>()
+                  .addFormItensProtocolo(widget.numCat, index, '', '');
             },
           );
         });
@@ -151,19 +187,15 @@ class _CardFormState extends State<CardForm> {
 
   //----------------------CHECKBOX
   showCheckOps(List<String> lista) {
+    //Verifico e excluo do array
     void itemChange(bool val, int index) {
       setState(() {
         changeLista[index] = val;
         if (changeLista[index]) {
-          checkSelect.add(lista[index]);
+          checkSelect.add(index);
         } else {
-          checkSelect.remove(lista[index]);
+          checkSelect.remove(index);
         }
-        context
-            .read<ProtocoloModelo>()
-            .addFormItens(widget.numCat, checkSelect, '', widget.classificacao);
-
-        debugPrint('$checkSelect');
       });
     }
 
@@ -173,15 +205,17 @@ class _CardFormState extends State<CardForm> {
         itemCount: lista.length,
         itemBuilder: (context, index) {
           changeLista.add(false);
-          return Form(
-            child: CheckboxListTile(
-              title: Text(lista[index]),
-              dense: true,
-              value: changeLista[index],
-              onChanged: (bool? val) {
-                itemChange(val!, index);
-              },
-            ),
+          return CheckboxListTile(
+            title: Text(lista[index]),
+            dense: true,
+            value: changeLista[index],
+            onChanged: (bool? val) {
+              itemChange(val!, index);
+
+              context
+                  .read<ProtocoloModelo>()
+                  .addFormItensProtocolo(widget.numCat, checkSelect, '', '');
+            },
           );
         });
   }
@@ -194,20 +228,21 @@ class _CardFormState extends State<CardForm> {
     separateString = separateString.replaceAll(']', '');
     separateString = separateString.replaceAll('"', '');
 
-    final listaParametros = separateString.split(',');
+    var listaParametros = separateString.split(',');
 
     return SafeArea(
       child: Card(
         child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
           ListTile(
             title: Text(widget.title),
-            subtitle: const Text('Status'),
           ),
           Container(
               child: widget.input == 'radio'
                   ? showRadioOps(listaParametros)
                   : showCheckOps(listaParametros)),
-          _path != null ? _showPhoto(context) : const Text('Aguardando...'),
+          _path != null
+              ? _showPhoto(context, widget.input)
+              : const Text('Aguardando...'),
           ElevatedButton(
             onPressed: () {
               _showOptions(context);
@@ -217,6 +252,7 @@ class _CardFormState extends State<CardForm> {
               style: TextStyle(color: Colors.white),
             ),
           ),
+          const SizedBox(height: 20,)
         ]),
       ),
     );
