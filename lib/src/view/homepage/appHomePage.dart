@@ -1,7 +1,13 @@
+import 'dart:async';
+
 import 'package:art_sweetalert/art_sweetalert.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:protocolo_app/src/controllers/protocolo_controller.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
+import 'package:protocolo_app/src/controllers/login_controller.dart';
+import 'package:protocolo_app/src/controllers/startProtocolo_controller.dart';
 import 'package:protocolo_app/src/view/finalizacaoProtocolo/finalizacaoProtocolo.dart';
 import 'package:provider/provider.dart';
 
@@ -10,6 +16,7 @@ import '../../shared/models/protocolo.dart';
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
+
   @override
   State<HomePage> createState() => _MainHomeState();
 }
@@ -17,22 +24,51 @@ class HomePage extends StatefulWidget {
 class _MainHomeState extends State<HomePage> {
   final df = DateFormat('dd-MM-yyyy hh:mm a');
   List<Protocolo> protocoloFiltroLista = [];
-  bool filtroAtivado = false;
+  List<Protocolo> listaProtocolo = [];
+
+FutureOr onGoBack(dynamic value) {
+    debugPrint('VOLTOU');
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+refreshPage();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  refreshPage() {
+    retornarProtocolos().then((value) {
+      setState(() {
+        protocoloFiltroLista = value.reversed.toList();
+        listaProtocolo = value.reversed.toList();
+      });
+      debugPrint('Refresh');
+      debugPrint('$value');
+    }).catchError((onError) =>
+        debugPrint('Dados do protocolo não vieram, motivo do erro: $onError'));
+  }
+
+  Future<List<Protocolo>> retornarProtocolos() async {
+    final responseTodosOsProtocolos = await Dio().get('$URLSERVER/protocolos');
+
+    return (responseTodosOsProtocolos.data as List).map((item) {
+      return Protocolo.fromJson(item);
+    }).toList();
   }
 
   void _protocoloFilter(String keyword) async {
-    List<Protocolo> results = context.read<ProtocoloModelo>().listaProtocolo;
+    List<Protocolo> results;
     if (keyword.isEmpty) {
-      results = context.read<ProtocoloModelo>().listaProtocolo;
+      results = listaProtocolo.toList();
     } else {
-      results = context
-          .read<ProtocoloModelo>()
-          .listaProtocolo
+      results = listaProtocolo
+          .toList()
           .where((protocolo) => (protocolo.id.toString() +
                   ' - ' +
                   protocolo.inicio.toString() +
@@ -49,7 +85,7 @@ class _MainHomeState extends State<HomePage> {
       try {
         //debugPrint('${results[0].placa}');
         protocoloFiltroLista = results;
-        filtroAtivado = true;
+        //filtroAtivado = true;
       } catch (e) {
         debugPrint('Motivo do erro no filtro: $e');
       }
@@ -57,24 +93,59 @@ class _MainHomeState extends State<HomePage> {
   }
 
   void menuProtocolo(String id) async {
+    var protocoloCheck =
+        listaProtocolo.where((element) => element.id == id).toList();
+    debugPrint('${protocoloCheck[0].fim}');
     ArtDialogResponse response = await ArtSweetAlert.show(
         barrierDismissible: false,
         context: context,
         artDialogArgs: ArtDialogArgs(
           showCancelBtn: true,
-          denyButtonText: "Imprimir",
+          denyButtonText: "Exibir",
           denyButtonColor: Colors.blueGrey,
           cancelButtonText: 'Cancelar',
-          confirmButtonText: "Finalizar",
+          confirmButtonText:
+              protocoloCheck[0].fim != null ? 'Imprimir' : 'Finalizar',
         ));
 
     if (response == null) {
       return;
     }
 
-    if (response.isTapConfirmButton) {
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => Finalizacao(id: id,)));
+    if (response.isTapConfirmButton && protocoloCheck[0].fim == null) {
+      showDialog(
+          context: context,
+          builder: (_) {
+            return Center(
+              child: LoadingAnimationWidget.discreteCircle(
+                  size: 80,
+                  color: Colors.orange,
+                  secondRingColor: Colors.green,
+                  thirdRingColor: Colors.indigo),
+            );
+          }).timeout(
+        const Duration(seconds: 2),
+        onTimeout: () => Navigator.pop(context),
+      );
+
+      Timer(const Duration(seconds: 2), () {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => Finalizacao(
+                  id: id,
+                ))).then(onGoBack);
+        setState(() {
+          context.read<ProtocoloModelo>().inicioIsFalse = true;
+        });
+      });
+      return;
+    } else if (response.isTapConfirmButton && protocoloCheck[0].fim != null) {
+      String nomeColaborador = (context.read<LoginController>().username);
+      ArtSweetAlert.show(
+          context: context,
+          artDialogArgs: ArtDialogArgs(
+              type: ArtSweetAlertType.info,
+              title:
+                  "Imprimindo através da Júpiter I.A!\nNão se preoucupe $nomeColaborador\nEm breve estará na sua mesa"));
       return;
     }
 
@@ -82,26 +153,22 @@ class _MainHomeState extends State<HomePage> {
       ArtSweetAlert.show(
           context: context,
           artDialogArgs: ArtDialogArgs(
-              type: ArtSweetAlertType.info,
-              title: "Imprimindo através da Júpiter I.A!"));
+              type: ArtSweetAlertType.info, title: "Exibição em instantes!"));
       return;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Protocolo> protocoloLista = filtroAtivado
-        ? protocoloFiltroLista.reversed.toList()
-        : context.watch<ProtocoloModelo>().listaProtocolo.reversed.toList();
-
-        for(var item in context.read<ProtocoloModelo>().testandoListaItensProtocolo){
-          debugPrint('${item.toJson()}');
-        }
+    
 
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(children: [
+          IconButton(onPressed: (){
+            refreshPage();
+          }, icon: const Icon(Icons.refresh_rounded)),
           const SizedBox(
             height: 20,
           ),
@@ -116,29 +183,32 @@ class _MainHomeState extends State<HomePage> {
             height: 20,
           ),
           Expanded(
-              child: protocoloLista.isNotEmpty
+              child: protocoloFiltroLista.isNotEmpty
                   ? ListView.builder(
-                      itemCount: protocoloLista.length,
+                      itemCount: protocoloFiltroLista.length,
                       itemBuilder: (context, index) => Card(
-                        key: ValueKey(protocoloLista[index].id),
+                        key: ValueKey(protocoloFiltroLista[index].id),
                         color: Colors.lightGreen,
                         elevation: 4,
                         margin: const EdgeInsets.symmetric(vertical: 10),
                         child: ListTile(
                           leading: Text(
-                            protocoloLista[index].id.toString(),
+                            protocoloFiltroLista[index].id.toString(),
                             style: const TextStyle(fontSize: 24),
                           ),
                           title: Text('Placa: ' +
-                              protocoloLista[index].placa.toString()),
+                              protocoloFiltroLista[index].placa.toString()),
                           subtitle: Text('\n' 'Início: ' +
-                              protocoloLista[index].inicio.toString() +
+                              protocoloFiltroLista[index].inicio.toString() +
                               '\n'
                                   '\n'
                                   'Final: ' +
-                              (protocoloLista[index].fim ?? 'Ainda não finalizado').toString()),
+                              (protocoloFiltroLista[index].fim ??
+                                      'Ainda não finalizado')
+                                  .toString()),
                           onTap: () {
-                            menuProtocolo(protocoloLista[index].id.toString());
+                            menuProtocolo(
+                                protocoloFiltroLista[index].id.toString());
                           },
                         ),
                       ),

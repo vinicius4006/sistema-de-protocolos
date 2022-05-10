@@ -1,7 +1,11 @@
+
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:protocolo_app/src/shared/models/itens_protocolo.dart';
+import 'package:protocolo_app/src/shared/models/protocolo.dart';
 
 String BASEURL = 'http://frota.jupiter.com.br/api/view/JSON';
+String URLSERVER = 'http://10.1.2.218:3000';
 
 class VeiculoData {
   Future<List<dynamic>> loadPlacas() async {
@@ -17,7 +21,7 @@ class VeiculoData {
   }
 }
 
-class retornarCarroOuMoto with ChangeNotifier {
+class chamandoApiReq with ChangeNotifier {
   Future<List<dynamic>> retornarSeMotoOuCarro(int id) async {
     if (id != -1) {
       final response = await Dio().get('$BASEURL/retornarVeiculoPorId?id=$id');
@@ -38,8 +42,68 @@ class retornarCarroOuMoto with ChangeNotifier {
   }
 
   Future<List<dynamic>> retornarSeMotoOuCarroPorBooleano(String change) async {
-    final responseTipo =
+    try{
+final responseTipo =
         await Dio().get('$BASEURL/retornarItensVeiculo?tipo=$change');
     return responseTipo.data['results'];
+    }catch(e){
+      debugPrint('Motivo de não retornarSeMotoOuCarroPorBooleano: $e');
+      return [];
+    }
+    
+  }
+
+  Future<List<Protocolo>> retornarProtocolos() async {
+    final responseTodosOsProtocolos = await Dio().get('$URLSERVER/protocolos');
+
+    return (responseTodosOsProtocolos.data as List).map((item) {
+      return Protocolo.fromJson(item);
+    }).toList();
+  }
+
+  Future<Protocolo> retornarProtocolosPorId(String id) async {
+    final responseProtocoloPorId = await Dio().get('$URLSERVER/protocolos/$id');
+
+    return Protocolo.fromJson(responseProtocoloPorId.data);
+  }
+
+  Future<List<dynamic>> retornarItensProtocoloId(String id) async {
+ 
+    final responseItensProtocolosPorId =
+        await Dio().get('$URLSERVER/itens_protocolos');
+     
+    List<dynamic> listaItensProtocolo =
+        (responseItensProtocolosPorId.data as List)
+        .map((element){
+          return element;
+        })
+        .toList();
+
+
+   
+    debugPrint('tamnho: ${listaItensProtocolo.length}');
+
+    List<dynamic> filtroSomenteItensProtocoloPedido =
+        listaItensProtocolo.where((element) => element[0]['protocolo'] == id).toList();
+
+    var listaConvertida = (filtroSomenteItensProtocoloPedido[0]).map((element) {
+      return ItensProtocolo.fromJson(element);
+    }).toList();
+
+    // for(ItensProtocolo item in listaConvertida){
+    //   debugPrint('${item.toJson()}');
+    // }
+   
+
+    listaConvertida.sort(((a, b) =>
+        (int.parse(a.itemveiculo.toString()))
+            .compareTo(int.parse(b.itemveiculo.toString()))));
+            
+    //   for(ItensProtocolo item in listaConvertida){
+    //   debugPrint('ORGANIZADA: ${item.toJson()}');
+    // }
+
+   return listaConvertida;
+
   }
 }

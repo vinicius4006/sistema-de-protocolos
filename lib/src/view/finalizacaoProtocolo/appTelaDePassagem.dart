@@ -1,0 +1,26 @@
+
+import 'package:flutter/material.dart';
+
+class TelaDePassagem extends StatefulWidget {
+  const TelaDePassagem({Key? key}) : super(key: key);
+
+  @override
+  State<TelaDePassagem> createState() => _TelaDePassagemState();
+}
+
+class _TelaDePassagemState extends State<TelaDePassagem> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: Text('Entrando...', style: TextStyle(fontSize: 60, fontWeight: FontWeight.bold),),
+      ),
+    );
+  }
+}

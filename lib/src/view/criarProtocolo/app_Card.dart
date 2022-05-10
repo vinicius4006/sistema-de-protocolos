@@ -8,7 +8,8 @@ import 'package:image_picker/image_picker.dart';
 
 import 'package:provider/provider.dart';
 
-import '../../controllers/protocolo_controller.dart';
+import '../../controllers/startProtocolo_controller.dart';
+import 'package:getwidget/getwidget.dart';
 
 class CardForm extends StatefulWidget {
   const CardForm(
@@ -33,11 +34,19 @@ class _CardFormState extends State<CardForm> {
   int indexRadio = 0;
   List<int> checkSelect = [];
   List<bool> changeLista = [false];
+  int num = 3;
+  List<Color> listColor = [
+    Colors.red,
+    Colors.blue,
+    Colors.purple,
+    Colors.green,
+    Colors.orange
+  ];
 
   @override
   void initState() {
     super.initState();
-    select = -1;
+
     context.read<ProtocoloModelo>().listaItensProtocolo.clear();
   }
 
@@ -119,15 +128,19 @@ class _CardFormState extends State<CardForm> {
 
     if (input == 'radio') {
       Timer(const Duration(seconds: 1), () async {
-        context
-            .read<ProtocoloModelo>()
-            .addFormItensProtocolo(widget.numCat, indexRadio, '', base64Image);
+        context.read<ProtocoloModelo>().addFormItensProtocolo(
+            widget.numCat,
+            indexRadio,
+            context.read<ProtocoloModelo>().inicioIsFalse ? 'f' : 't',
+            base64Image);
       });
     } else {
       Timer(const Duration(seconds: 1), () async {
-        context
-            .read<ProtocoloModelo>()
-            .addFormItensProtocolo(widget.numCat, checkSelect, '', base64Image);
+        context.read<ProtocoloModelo>().addFormItensProtocolo(
+            widget.numCat,
+            checkSelect,
+            context.read<ProtocoloModelo>().inicioIsFalse ? 'f' : 't',
+            base64Image);
       });
     }
 
@@ -140,12 +153,22 @@ class _CardFormState extends State<CardForm> {
                 if (input == 'radio') {
                   Timer(const Duration(seconds: 1), () async {
                     context.read<ProtocoloModelo>().addFormItensProtocolo(
-                        widget.numCat, indexRadio, '', '');
+                        widget.numCat,
+                        indexRadio,
+                        context.watch<ProtocoloModelo>().inicioIsFalse
+                            ? 'f'
+                            : 't',
+                        '');
                   });
                 } else {
                   Timer(const Duration(seconds: 1), () async {
                     context.read<ProtocoloModelo>().addFormItensProtocolo(
-                        widget.numCat, checkSelect, '', '');
+                        widget.numCat,
+                        checkSelect,
+                        context.watch<ProtocoloModelo>().inicioIsFalse
+                            ? 'f'
+                            : 't',
+                        '');
                   });
                 }
               });
@@ -163,40 +186,78 @@ class _CardFormState extends State<CardForm> {
 
   //--------------------RADIOBUTTON
   showRadioOps(List<String> lista) {
+    //verificação para limpar quando trocar o numero da placa
+    if (context.read<ProtocoloModelo>().selectRadioVerificacao == -1) {
+      select = -1;
+    }
     return ListView.builder(
         physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         itemCount: lista.length,
         itemBuilder: (context, index) {
-          return RadioListTile(
-            title: Text(lista[index]),
-            value: index,
-            groupValue: select,
-            onChanged: (value) {
-              setState(() {
-                select = int.parse(value.toString());
-                indexRadio = index;
-              });
-              context
-                  .read<ProtocoloModelo>()
-                  .addFormItensProtocolo(widget.numCat, index, '', '');
-            },
+          return Container(
+            margin: const EdgeInsets.fromLTRB(5, 0, 10, 8),
+            decoration: BoxDecoration(
+                border:
+                    Border.all(color: Theme.of(context).primaryColor, width: 2),
+                borderRadius: BorderRadius.circular(12)),
+            child: RadioListTile(
+              title: Text(
+                lista[index],
+                style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                    color: Theme.of(context).primaryColor),
+              ),
+              activeColor: Theme.of(context).primaryColor,
+              value: index,
+              groupValue: select,
+              onChanged: (value) {
+                //debugPrint('Mostrar Primeiro: $value');
+                setState(() {
+                  select = int.parse(value.toString());
+                  context.read<ProtocoloModelo>().selectRadioVerificacao =
+                      select;
+                  indexRadio = index;
+                });
+                context.read<ProtocoloModelo>().addFormItensProtocolo(
+                    widget.numCat,
+                    index,
+                    context.read<ProtocoloModelo>().inicioIsFalse ? 'f' : 't',
+                    '');
+              },
+            ),
           );
         });
   }
 
   //----------------------CHECKBOX
   showCheckOps(List<String> lista) {
+    //verificação para limpar quando trocar o numero da placa
+    if (!context
+        .read<ProtocoloModelo>()
+        .changeListaVerificacao
+        .contains(true)) {
+      changeLista = [false];
+      checkSelect.clear();
+    }
+
     //Verifico e excluo do array
     void itemChange(bool val, int index) {
       setState(() {
         changeLista[index] = val;
+        context.read<ProtocoloModelo>().changeListaVerificacao[index] = val;
         if (changeLista[index]) {
           checkSelect.add(index);
         } else {
           checkSelect.remove(index);
         }
       });
+      context.read<ProtocoloModelo>().addFormItensProtocolo(
+          widget.numCat,
+          checkSelect,
+          context.read<ProtocoloModelo>().inicioIsFalse ? 'f' : 't',
+          '');
     }
 
     return ListView.builder(
@@ -205,18 +266,54 @@ class _CardFormState extends State<CardForm> {
         itemCount: lista.length,
         itemBuilder: (context, index) {
           changeLista.add(false);
-          return CheckboxListTile(
-            title: Text(lista[index]),
-            dense: true,
-            value: changeLista[index],
-            onChanged: (bool? val) {
-              itemChange(val!, index);
-
-              context
-                  .read<ProtocoloModelo>()
-                  .addFormItensProtocolo(widget.numCat, checkSelect, '', '');
-            },
+          context.read<ProtocoloModelo>().changeListaVerificacao.add(false);
+          return Container(
+            margin: const EdgeInsets.fromLTRB(10, 0, 10, 8),
+            decoration: BoxDecoration(
+                border:
+                    Border.all(color: Theme.of(context).primaryColor, width: 2),
+                borderRadius: BorderRadius.circular(12)),
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    lista[index],
+                    style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                        color: Theme.of(context).primaryColor),
+                  ),
+                  const SizedBox(
+                    width: 15,
+                  ),
+                  GFCheckbox(
+                    activeBgColor: listColor[index],
+                    onChanged: (val) {
+                      setState(() {
+                        itemChange(val, index);
+                      });
+                    },
+                    value: changeLista[index],
+                    inactiveIcon: null,
+                  ),
+                ],
+              ),
+            ),
           );
+          // return CheckboxListTile(
+          //   title: Text(lista[index]),
+          //   dense: true,
+          //   value: changeLista[index],
+          //   onChanged: (bool? val) {
+          //     itemChange(val!, index);
+
+          //     context
+          //         .read<ProtocoloModelo>()
+          //         .addFormItensProtocolo(widget.numCat, checkSelect, '', '');
+          //   },
+          // );
         });
   }
 
@@ -230,31 +327,127 @@ class _CardFormState extends State<CardForm> {
 
     var listaParametros = separateString.split(',');
 
-    return SafeArea(
+    return Container(
+      padding: const EdgeInsets.all(10),
       child: Card(
-        child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-          ListTile(
-            title: Text(widget.title),
-          ),
-          Container(
-              child: widget.input == 'radio'
-                  ? showRadioOps(listaParametros)
-                  : showCheckOps(listaParametros)),
-          _path != null
-              ? _showPhoto(context, widget.input)
-              : const Text('Aguardando...'),
-          ElevatedButton(
-            onPressed: () {
-              _showOptions(context);
-            },
-            child: const Text(
-              'Tire a foto',
-              style: TextStyle(color: Colors.white),
+        elevation: 8,
+        color: Colors.grey[100],
+        shadowColor: Theme.of(context).primaryColor,
+        margin: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Stack(children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    topRight: Radius.circular(10)),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 40,
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+              Container(
+                alignment: Alignment.center,
+                margin: const EdgeInsets.only(top: 10),
+                child: Text(
+                  widget.title,
+                  style: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18),
+                ),
+              ),
+            ]),
+            const SizedBox(
+              height: 20,
             ),
-          ),
-          const SizedBox(height: 20,)
-        ]),
+            Container(
+                alignment: Alignment.center,
+                margin: const EdgeInsets.fromLTRB(10, 40, 0, 0),
+                child: widget.input == 'radio'
+                    ? showRadioOps(listaParametros)
+                    : showCheckOps(listaParametros)),
+            _path != null ? _showPhoto(context, widget.input) : const Text(''),
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 25),
+              width: 200,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    elevation: 5,
+                    padding: const EdgeInsets.all(15),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15)),
+                    primary: Theme.of(context).primaryColor),
+                onPressed: (() {
+                  _showOptions(context);
+                }),
+                child: const Text(
+                  'Tire a Foto',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
+    // return SafeArea(
+    //   child: Card(
+    //     shape: RoundedRectangleBorder(
+    //       side: const BorderSide(color: Colors.white70, width: 1),
+    //       borderRadius: BorderRadius.circular(10),
+    //     ),
+    //     elevation: 3,
+    //     child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+
+    //       Stack(
+    //         children: [
+    //           Container(
+    //             width: MediaQuery.of(context).size.width,
+    //             height: 40,
+    //             color: Colors.amber,
+    //             decoration: BoxDecoration(
+    //               border: Border.all(
+
+    //                 width: 8
+    //               )
+    //             ),
+    //            ),
+
+    //           Text(
+    //             widget.title,
+    //             style: const TextStyle(
+    //                 color: Colors.black,
+    //                 fontWeight: FontWeight.bold,
+    //                 fontSize: 24),
+    //           ),
+    //         ],
+    //       ),
+    //       Container(
+    //           child: widget.input == 'radio'
+    //               ? showRadioOps(listaParametros)
+    //               : showCheckOps(listaParametros)),
+    //       _path != null ? _showPhoto(context, widget.input) : const Text(''),
+    //       ElevatedButton(
+    //         onPressed: () {
+    //           _showOptions(context);
+    //         },
+    //         child: const Text(
+    //           'Tire a foto',
+    //           style: TextStyle(color: Colors.white),
+    //         ),
+    //       ),
+    //       const SizedBox(
+    //         height: 20,
+    //       )
+    //     ]),
+    //   ),
+    // );
   }
 }

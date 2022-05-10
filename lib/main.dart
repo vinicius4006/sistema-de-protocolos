@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
 import 'package:protocolo_app/src/controllers/login_controller.dart';
-import 'package:protocolo_app/src/controllers/protocolo_controller.dart';
+import 'package:protocolo_app/src/controllers/startProtocolo_controller.dart';
 import 'package:protocolo_app/src/view/login/login.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => retornarCarroOuMoto()),
+        ChangeNotifierProvider(create: (_) => chamandoApiReq()),
         ChangeNotifierProvider(create: (_) => ProtocoloModelo()),
         ChangeNotifierProvider(create: (_) => LoginController())
       ],

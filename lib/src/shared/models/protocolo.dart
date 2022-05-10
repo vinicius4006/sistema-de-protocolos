@@ -10,6 +10,9 @@ class Protocolo {
   String? observacaoFinal;
   String? placa;
   String? veiculo;
+  String? assinaturaInicial;
+  String? assinaturaFinal;
+  
 
   Protocolo(
       {this.digitador,
@@ -22,7 +25,10 @@ class Protocolo {
       this.observacao,
       this.observacaoFinal,
       this.placa,
-      this.veiculo});
+      this.veiculo,
+      this.assinaturaInicial,
+      this.assinaturaFinal
+      });
 
   Protocolo.fromJson(Map<String, dynamic> json) {
     digitador = json['digitador'];
@@ -36,6 +42,8 @@ class Protocolo {
     observacaoFinal = json['observacao_final'];
     placa = json['placa'];
     veiculo = json['veiculo'];
+    assinaturaInicial = json['assinaturaInicial'];
+    assinaturaFinal = json['assinaturaFinal'];
   }
 
   Map<String, dynamic> toJson() {
@@ -51,6 +59,8 @@ class Protocolo {
     data['observacao_final'] = observacaoFinal;
     data['placa'] = placa;
     data['veiculo'] = veiculo;
+    data['assinaturaInicial'] = assinaturaInicial;
+    data['assinaturaFinal'] = assinaturaFinal;
     return data;
   }
 }

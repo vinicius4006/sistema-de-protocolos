@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
 
@@ -7,16 +9,28 @@ import 'package:protocolo_app/src/view/login/login.dart';
 import 'package:provider/provider.dart';
 
 import '../../controllers/login_controller.dart';
+import '../../controllers/startProtocolo_controller.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+
+
+  FutureOr onGoBack(dynamic value) {
+    debugPrint('VOLTOU');
+  }
+
   void _telaCriarProtocolo(BuildContext context) {
     Route route =
         MaterialPageRoute(builder: (context) => const CriarProtocolo());
-    Navigator.push(context, route);
+    Navigator.push(context, route).then(onGoBack);
   }
 
   @override
@@ -27,6 +41,7 @@ class Home extends StatelessWidget {
             return IconButton(
                 onPressed: () {
                   _telaCriarProtocolo(context);
+                  context.read<ProtocoloModelo>().inicioIsFalse = false;
                 },
                 icon: const Icon(Icons.add_outlined));
           }),
@@ -68,7 +83,7 @@ class Home extends StatelessWidget {
             }),
           ],
           centerTitle: true,
-          title: Text(title),
+          title: Text(widget.title),
         ),
         body: const HomePage());
   }
