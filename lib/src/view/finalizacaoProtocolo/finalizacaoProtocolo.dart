@@ -29,7 +29,7 @@ class Finalizacao extends StatefulWidget {
 class _FinalizacaoState extends State<Finalizacao> {
   Protocolo? protocolo;
   List<dynamic>? listaItensProtocoloId;
-
+final ScrollController _scrollController = ScrollController();
   final dataFinal = DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.now());
   @override
   void initState() {
@@ -45,6 +45,25 @@ class _FinalizacaoState extends State<Finalizacao> {
         listaItensProtocoloId = value;
       });
     });
+  }
+    scrollTo(int index) async {
+    final listaKeyScroll =
+        context.read<ProtocoloModelo>().listaKey[index].currentContext!;
+    await Scrollable.ensureVisible(
+      listaKeyScroll,
+      duration: const Duration(milliseconds: 600),
+    );
+  }
+
+  scrollToTop() async {
+    _scrollController.animateTo(0,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.fastOutSlowIn);
+  }
+  scrollToBottom() async {
+    _scrollController.animateTo(20000,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.fastOutSlowIn);
   }
 
   // final SignatureController _controller = SignatureController(
@@ -93,7 +112,7 @@ class _FinalizacaoState extends State<Finalizacao> {
           context: context,
           artDialogArgs: ArtDialogArgs(
             type: ArtSweetAlertType.info,
-            title: "Preencha os campos",
+            title: "Não esqueça da assinatura!",
           ));
     } catch (e) {
       debugPrint('Motivo do erro da mensagem: $e');
@@ -217,6 +236,7 @@ class _FinalizacaoState extends State<Finalizacao> {
       context.read<ProtocoloModelo>().idFinalProtocolo = widget.id;
       context.read<ProtocoloModelo>().listaItensProtocolo.clear();
       context.read<ProtocoloModelo>().controller.clear();
+      context.read<ProtocoloModelo>().listaKey.clear();
 
       String tipoVeiculo =
           (listaItensProtocoloId![1] as ItensProtocolo).itemveiculo == '2'
@@ -227,7 +247,27 @@ class _FinalizacaoState extends State<Finalizacao> {
           title: const Text('Finalização de Protocolo'),
           centerTitle: true,
         ),
+        floatingActionButton: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            FloatingActionButton.small(
+              onPressed: (() => scrollToTop()),
+              child: const Icon(Icons.arrow_upward),
+              heroTag: null,
+            ),
+            const SizedBox(
+        height: 20,
+      ),
+      FloatingActionButton.small(
+        heroTag: null,
+              onPressed: (() => scrollToBottom()),
+              child: const Icon(Icons.arrow_downward),
+            ),
+
+          ],
+        ),
         body: SingleChildScrollView(
+          controller: _scrollController,
           child: Column(children: [
             SizedBox(
               height: 350,
@@ -399,7 +439,31 @@ class _FinalizacaoState extends State<Finalizacao> {
 
                     if (context.read<ProtocoloModelo>().controller.isEmpty ||
                         tamanhoVeiculo.length != listaItensDoVeiculo.length) {
-                      showCompleteCampo(context);
+                          List<ItensProtocolo> listaOrganizada = context
+                                  .read<ProtocoloModelo>()
+                                  .listaItensProtocolo;
+                              List<String> listaCheckIdLista = [];
+                              List<String> listaCheckIdVeiculo = [];
+                              for (var item in tamanhoVeiculo) {
+                                listaCheckIdLista.add(item['id']);
+                              }
+                              for (var item in listaOrganizada) {
+                                listaCheckIdVeiculo
+                                    .add(item.itemveiculo.toString());
+                              }
+
+                              for (var item in listaCheckIdLista.reversed) {
+                                if (listaCheckIdVeiculo.contains(item)) {
+                                  debugPrint('True');
+                                } else {
+                                   scrollTo(listaCheckIdLista.indexOf(item));
+                                }
+                              }
+                              if (listaCheckIdVeiculo.length ==
+                                  listaCheckIdLista.length) {
+                                showCompleteCampo(context);
+                              }
+                      
                     } else {
                       showConfirmDialog(context);
                     }

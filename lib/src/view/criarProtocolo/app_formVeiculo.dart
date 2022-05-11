@@ -47,7 +47,6 @@ class _VeiculoFormState extends State<VeiculoForm> {
         const SizedBox(
           height: 20.0,
         ),
-        ElevatedButton(onPressed: (){scrollTo(12);}, child: const Text('IR')),
         ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
             itemCount: data.length,

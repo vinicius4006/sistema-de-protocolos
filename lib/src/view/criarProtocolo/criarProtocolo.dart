@@ -11,6 +11,7 @@ import 'package:protocolo_app/src/controllers/login_controller.dart';
 import 'package:protocolo_app/src/controllers/startProtocolo_controller.dart';
 
 import 'package:art_sweetalert/art_sweetalert.dart';
+import 'package:protocolo_app/src/shared/models/itens_protocolo.dart';
 import 'package:protocolo_app/src/shared/models/protocolo.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/app_formVeiculo.dart';
 import 'package:provider/provider.dart';
@@ -32,10 +33,13 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
   bool _loading = true;
   GlobalKey<ArtDialogState>? _artDialogKey;
   ProtocoloModelo protocoloModelo = ProtocoloModelo();
+  final ScrollController _scrollController = ScrollController();
+
 
   @override
   void initState() {
     _artDialogKey = GlobalKey<ArtDialogState>();
+
     loopVeiculo(VeiculoData().loadPlacas());
 
     super.initState();
@@ -49,6 +53,8 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
     debugPrint('SAI DAQUI PQ DESFEZ');
   }
 
+
+
   scrollTo(int index) async {
     final listaKeyScroll =
         context.read<ProtocoloModelo>().listaKey[index].currentContext!;
@@ -56,6 +62,17 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
       listaKeyScroll,
       duration: const Duration(milliseconds: 600),
     );
+  }
+
+  scrollToTop() async {
+    _scrollController.animateTo(0,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.fastOutSlowIn);
+  }
+  scrollToBottom() async {
+    _scrollController.animateTo(8000,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.fastOutSlowIn);
   }
 
   loopVeiculo(Future lista) async {
@@ -90,7 +107,7 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
   @override
   Widget build(BuildContext context) {
     // loopMotorista(MotoristaData().loadMotoristas());
-
+    //pageContext = context;
     return Scaffold(
         appBar: AppBar(
           leading: Builder(builder: (BuildContext context) {
@@ -103,19 +120,32 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
           centerTitle: true,
           title: const Text('Criação de Protocolo'),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            scrollTo(0);
-          },
-          child: const Icon(Icons.arrow_upward),
-        ),
+        floatingActionButton: veiculoSelecionado.isNotEmpty ? Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            FloatingActionButton.small(
+              onPressed: (() => scrollToTop()),
+              child: const Icon(Icons.arrow_upward),
+              heroTag: null,
+            ),
+            const SizedBox(
+        height: 20,
+      ),
+      FloatingActionButton.small(
+        heroTag: null,
+              onPressed: (() => scrollToBottom()),
+              child: const Icon(Icons.arrow_downward),
+            ),
+
+          ],
+        ) : FloatingActionButton.small(backgroundColor: Colors.white,onPressed: (){}),
         body: Form(
           key: context.read<ProtocoloModelo>().formKey,
           child: SizedBox(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             child: ListView(
-              //controller: _scrollController,
+              controller: _scrollController,
               children: <Widget>[
                 const SizedBox(
                   height: 20.0,
@@ -143,6 +173,7 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                 const SizedBox(
                   height: 20.0,
                 ),
+
                 const Text(
                   'Veículos',
                   style: TextStyle(fontSize: 20.0),
@@ -165,6 +196,7 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                           .read<ProtocoloModelo>()
                           .listaItensProtocolo
                           .clear();
+                      context.read<ProtocoloModelo>().listaKey.clear();
                       context.read<ProtocoloModelo>().controller.clear();
 
                       context.read<ProtocoloModelo>().selectRadioVerificacao =
@@ -205,13 +237,17 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                 const SizedBox(
                   height: 20.0,
                 ),
+
                 Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 25),
-                      width: double.infinity,
+                      
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      
                       child: ElevatedButton(
+                      
                         style: ElevatedButton.styleFrom(
+                          
                             elevation: 5,
                             padding: const EdgeInsets.all(15),
                             shape: RoundedRectangleBorder(
@@ -269,26 +305,35 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                                     title: 'Protocolo Criado',
                                   ));
                             } else {
-                            //   List<ItensProtocolo> listaOrganizada = context
-                            //       .read<ProtocoloModelo>()
-                            //       .listaItensProtocolo;
-                            //   listaOrganizada.sort(((a, b) => (int.parse(
-                            //           a.itemveiculo.toString()))
-                            //       .compareTo(
-                            //           int.parse(b.itemveiculo.toString()))));
-                            //   for (var item in listaOrganizada) {
-                            //     debugPrint('INDO: ${item.toJson()}');
-                            //    if (item.toJson().isEmpty) {
-                            //      debugPrint('FOI');
-                            //       scrollTo(listaOrganizada.indexOf(item));
-                            //     }
-                            //  }
-                              // ArtSweetAlert.show(
-                              //     context: context,
-                              //     artDialogArgs: ArtDialogArgs(
-                              //       type: ArtSweetAlertType.info,
-                              //       title: "Verifique os dados",
-                              //     ));
+                              List<ItensProtocolo> listaOrganizada = context
+                                  .read<ProtocoloModelo>()
+                                  .listaItensProtocolo;
+                              List<String> listaCheckIdLista = [];
+                              List<String> listaCheckIdVeiculo = [];
+                              for (var item in tamanhoVeiculo) {
+                                listaCheckIdLista.add(item['id']);
+                              }
+                              for (var item in listaOrganizada) {
+                                listaCheckIdVeiculo
+                                    .add(item.itemveiculo.toString());
+                              }
+
+                              for (var item in listaCheckIdLista.reversed) {
+                                if (listaCheckIdVeiculo.contains(item)) {
+                                  debugPrint('True');
+                                } else {
+                                  scrollTo(listaCheckIdLista.indexOf(item));
+                                }
+                              }
+                              if (listaCheckIdVeiculo.length ==
+                                  listaCheckIdLista.length) {
+                                ArtSweetAlert.show(
+                                    context: context,
+                                    artDialogArgs: ArtDialogArgs(
+                                      type: ArtSweetAlertType.info,
+                                      title: "Verifique sua assinatura",
+                                    ));
+                              }
                             }
                           } catch (e) {
                             ArtSweetAlert.show(
