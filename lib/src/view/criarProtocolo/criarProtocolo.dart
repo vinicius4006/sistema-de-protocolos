@@ -35,7 +35,6 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
   ProtocoloModelo protocoloModelo = ProtocoloModelo();
   final ScrollController _scrollController = ScrollController();
 
-
   @override
   void initState() {
     _artDialogKey = GlobalKey<ArtDialogState>();
@@ -53,11 +52,17 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
     debugPrint('SAI DAQUI PQ DESFEZ');
   }
 
-
-
   scrollTo(int index) async {
+    debugPrint('Scroll Index: ${index}');
+    Timer(Duration(milliseconds: 580), () {
+      setState(() {
+        context.read<ProtocoloModelo>().listaDeCoresCheck[index] = Colors.red;
+      });
+    });
+
     final listaKeyScroll =
         context.read<ProtocoloModelo>().listaKey[index].currentContext!;
+
     await Scrollable.ensureVisible(
       listaKeyScroll,
       duration: const Duration(milliseconds: 600),
@@ -69,8 +74,13 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
         duration: const Duration(milliseconds: 500),
         curve: Curves.fastOutSlowIn);
   }
+
   scrollToBottom() async {
-    _scrollController.animateTo(8000,
+    var data = await context
+        .read<chamandoApiReq>()
+        .retornarSeMotoOuCarro(int.parse(veiculoSelecionado.substring(10)));
+    double time = data[1]['id'] != '2' ? 8000 : 20000;
+    _scrollController.animateTo(time,
         duration: const Duration(milliseconds: 500),
         curve: Curves.fastOutSlowIn);
   }
@@ -107,7 +117,7 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
   @override
   Widget build(BuildContext context) {
     // loopMotorista(MotoristaData().loadMotoristas());
-    //pageContext = context;
+
     return Scaffold(
         appBar: AppBar(
           leading: Builder(builder: (BuildContext context) {
@@ -120,25 +130,27 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
           centerTitle: true,
           title: const Text('Criação de Protocolo'),
         ),
-        floatingActionButton: veiculoSelecionado.isNotEmpty ? Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            FloatingActionButton.small(
-              onPressed: (() => scrollToTop()),
-              child: const Icon(Icons.arrow_upward),
-              heroTag: null,
-            ),
-            const SizedBox(
-        height: 20,
-      ),
-      FloatingActionButton.small(
-        heroTag: null,
-              onPressed: (() => scrollToBottom()),
-              child: const Icon(Icons.arrow_downward),
-            ),
-
-          ],
-        ) : FloatingActionButton.small(backgroundColor: Colors.white,onPressed: (){}),
+        floatingActionButton: veiculoSelecionado.isNotEmpty
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  FloatingActionButton.small(
+                    onPressed: (() => scrollToTop()),
+                    child: const Icon(Icons.arrow_upward),
+                    heroTag: null,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  FloatingActionButton.small(
+                    heroTag: null,
+                    onPressed: (() => scrollToBottom()),
+                    child: const Icon(Icons.arrow_downward),
+                  ),
+                ],
+              )
+            : FloatingActionButton.small(
+                backgroundColor: Colors.white, onPressed: () {}),
         body: Form(
           key: context.read<ProtocoloModelo>().formKey,
           child: SizedBox(
@@ -204,11 +216,12 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                       context.read<ProtocoloModelo>().changeListaVerificacao = [
                         false
                       ];
+                      context.read<ProtocoloModelo>().listaDeCoresCheck.clear();
 
-                      data = context
-                          .read<chamandoApiReq>()
-                          .retornarSeMotoOuCarro(
-                              int.parse(veiculoSelecionado.substring(10)));
+                      // data = context
+                      //     .read<chamandoApiReq>()
+                      //     .retornarSeMotoOuCarro(
+                      //         int.parse(veiculoSelecionado.substring(10)));
                     });
                   },
                 ),
@@ -241,13 +254,9 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                 Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Container(
-                      
                       padding: const EdgeInsets.symmetric(vertical: 15),
-                      
                       child: ElevatedButton(
-                      
                         style: ElevatedButton.styleFrom(
-                          
                             elevation: 5,
                             padding: const EdgeInsets.all(15),
                             shape: RoundedRectangleBorder(
@@ -322,6 +331,8 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                                 if (listaCheckIdVeiculo.contains(item)) {
                                   debugPrint('True');
                                 } else {
+                                  debugPrint(
+                                      'INDEX: ${listaCheckIdLista.indexOf(item)}');
                                   scrollTo(listaCheckIdLista.indexOf(item));
                                 }
                               }
@@ -340,7 +351,7 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                                 context: context,
                                 artDialogArgs: ArtDialogArgs(
                                   type: ArtSweetAlertType.info,
-                                  title: "Verifique os dados",
+                                  title: "Escolha o veículo",
                                 ));
                           }
                         }),

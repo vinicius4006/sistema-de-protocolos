@@ -12,11 +12,13 @@ import '../../controllers/startProtocolo_controller.dart';
 import 'package:getwidget/getwidget.dart';
 
 class CardForm extends StatefulWidget {
-  const CardForm(
+   CardForm(
       {Key? key,
       required this.title,
       required this.ops,
       required this.input,
+      required this.color,
+      required this.indexGlobal,
       this.numCat = ''})
       : super(key: key);
 
@@ -24,6 +26,8 @@ class CardForm extends StatefulWidget {
   final String ops;
   final String input;
   final String numCat;
+  final int indexGlobal;
+   Color color;
 
   @override
   State<CardForm> createState() => _CardFormState();
@@ -219,6 +223,10 @@ class _CardFormState extends State<CardForm> {
                   context.read<ProtocoloModelo>().selectRadioVerificacao =
                       select;
                   indexRadio = index;
+                 
+                    context.read<ProtocoloModelo>().listaDeCoresCheck[widget.indexGlobal] = Colors.green;
+                    widget.color = Colors.green;
+                  
                 });
                 context.read<ProtocoloModelo>().addFormItensProtocolo(
                     widget.numCat,
@@ -249,8 +257,14 @@ class _CardFormState extends State<CardForm> {
         context.read<ProtocoloModelo>().changeListaVerificacao[index] = val;
         if (changeLista[index]) {
           checkSelect.add(index);
+          context.read<ProtocoloModelo>().listaDeCoresCheck[widget.indexGlobal] = Colors.green;
+                    widget.color = Colors.green;
         } else {
           checkSelect.remove(index);
+          if(checkSelect.isEmpty){
+            context.read<ProtocoloModelo>().listaDeCoresCheck[widget.indexGlobal] = Colors.red;
+                    widget.color = Colors.red;
+          }
         }
       });
       context.read<ProtocoloModelo>().addFormItensProtocolo(
@@ -346,7 +360,7 @@ class _CardFormState extends State<CardForm> {
                 child: Container(
                   width: MediaQuery.of(context).size.width,
                   height: 40,
-                  color: Theme.of(context).primaryColor,
+                  color: widget.color,
                 ),
               ),
               Container(
@@ -397,57 +411,6 @@ class _CardFormState extends State<CardForm> {
         ),
       ),
     );
-    // return SafeArea(
-    //   child: Card(
-    //     shape: RoundedRectangleBorder(
-    //       side: const BorderSide(color: Colors.white70, width: 1),
-    //       borderRadius: BorderRadius.circular(10),
-    //     ),
-    //     elevation: 3,
-    //     child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-
-    //       Stack(
-    //         children: [
-    //           Container(
-    //             width: MediaQuery.of(context).size.width,
-    //             height: 40,
-    //             color: Colors.amber,
-    //             decoration: BoxDecoration(
-    //               border: Border.all(
-
-    //                 width: 8
-    //               )
-    //             ),
-    //            ),
-
-    //           Text(
-    //             widget.title,
-    //             style: const TextStyle(
-    //                 color: Colors.black,
-    //                 fontWeight: FontWeight.bold,
-    //                 fontSize: 24),
-    //           ),
-    //         ],
-    //       ),
-    //       Container(
-    //           child: widget.input == 'radio'
-    //               ? showRadioOps(listaParametros)
-    //               : showCheckOps(listaParametros)),
-    //       _path != null ? _showPhoto(context, widget.input) : const Text(''),
-    //       ElevatedButton(
-    //         onPressed: () {
-    //           _showOptions(context);
-    //         },
-    //         child: const Text(
-    //           'Tire a foto',
-    //           style: TextStyle(color: Colors.white),
-    //         ),
-    //       ),
-    //       const SizedBox(
-    //         height: 20,
-    //       )
-    //     ]),
-    //   ),
-    // );
+   
   }
 }

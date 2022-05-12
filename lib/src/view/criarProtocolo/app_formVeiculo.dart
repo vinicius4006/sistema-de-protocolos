@@ -55,12 +55,15 @@ class _VeiculoFormState extends State<VeiculoForm> {
        
             itemBuilder: (context, index) {
              context.read<ProtocoloModelo>().listaKey.add(GlobalKey());
+             context.read<ProtocoloModelo>().listaDeCoresCheck.add(Colors.green);
               return CardForm(
                key: context.read<ProtocoloModelo>().listaKey[index],
+               indexGlobal: index,
                 title: data[index].descricao.toString(),
                 ops: data[index].parametros.toString(),
                 input: data[index].input.toString(),
                 numCat: data[index].id.toString(),
+                color: context.read<ProtocoloModelo>().listaDeCoresCheck[index],
               );
             }),
         const Assinatura()
@@ -73,9 +76,9 @@ class _VeiculoFormState extends State<VeiculoForm> {
   }
 
   Widget showAll() {
-    for(var item in context.read<ProtocoloModelo>().listaKey){
-      debugPrint('QUANDO CARREGA: ${item.currentContext}');
-    }
+    // for(var item in context.read<ProtocoloModelo>().listaKey){
+    //   debugPrint('QUANDO CARREGA: ${item.currentContext}');
+    // }
     if (widget.placa == null) {
       return const CircularProgressIndicator();
     } else {

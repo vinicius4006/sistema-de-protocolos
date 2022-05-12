@@ -20,8 +20,8 @@ class _AssinaturaState extends State<Assinatura> {
          const Divider(),
             Signature(
               controller: controller,
-              height: 110,
-              width: 400,
+              height: 100,
+              width: 320,
 
               backgroundColor: Colors.grey,
             ),

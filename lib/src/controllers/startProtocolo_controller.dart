@@ -8,19 +8,18 @@ import 'package:protocolo_app/src/shared/models/protocolo.dart';
 import 'package:signature/signature.dart';
 
 const BASEURL = 'http://10.1.2.218:3000';
+
 class ProtocoloModelo with ChangeNotifier {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   GlobalKey<FormState> get formKey => _formKey;
   final List<GlobalKey> listaKey = [];
 
-
-
+  bool checkRefresh = false;
 
   final SignatureController controller = SignatureController(
       penStrokeWidth: 3,
       penColor: Colors.black,
       exportBackgroundColor: Colors.grey);
-      
 
   final List<Protocolo> listaProtocolo = [];
   final List<ItensProtocolo> listaItensProtocolo = [];
@@ -31,7 +30,7 @@ class ProtocoloModelo with ChangeNotifier {
   var id = Random().nextInt(10000).toString();
   String idFinalProtocolo = '';
 
-
+  List<Color> listaDeCoresCheck = [];
 
   addFormProtocolo(
       String dataInicio,
@@ -45,42 +44,37 @@ class ProtocoloModelo with ChangeNotifier {
       String? digitadorInicio,
       String? digitadorFinal,
       String? assinaturaInicial,
-      String? assinaturaFinal
-
-      ) async {
+      String? assinaturaFinal) async {
     var protocolo = Protocolo(
-        id: id, veiculo: idVeiculo, placa: placaVeiculo, inicio: dataInicio, digitador:digitadorInicio, assinaturaInicial: assinaturaInicial); 
-     
-     //Organizo antes de mandar para o servidor
-     listaItensProtocolo.sort(((a, b) => (int.parse(a.itemveiculo.toString())).compareTo(int.parse(b.itemveiculo.toString()))));
-  
-    var listaItensProtocoloJson = ListaItensProtocolo(itensProtocolo: listaItensProtocolo).toJson();
+        id: id,
+        veiculo: idVeiculo,
+        placa: placaVeiculo,
+        inicio: dataInicio,
+        digitador: digitadorInicio,
+        assinaturaInicial: assinaturaInicial);
 
-   
+    //Organizo antes de mandar para o servidor
+    listaItensProtocolo.sort(((a, b) => (int.parse(a.itemveiculo.toString()))
+        .compareTo(int.parse(b.itemveiculo.toString()))));
 
-  //MANDANDO PARA O SERVIDOR
-    final responseProtocolo = await Dio().post('$BASEURL/protocolos', 
-    data: protocolo.toJson())
-    .then((response) => debugPrint('SUCESSO: ${response.data}'))
-    .catchError((onError) => debugPrint('Motivo do erro: $onError'));
-    
-    final responseItensProtocolo = await Dio().post('$BASEURL/itens_protocolos', data: listaItensProtocolo)
-    .then((response) => debugPrint('SUCESSO: ${response.data}'))
-    .catchError((onError) => debugPrint('Motivo do erro: $onError'));
-   
-    
-  
- 
+    var listaItensProtocoloJson =
+        ListaItensProtocolo(itensProtocolo: listaItensProtocolo).toJson();
 
+    //MANDANDO PARA O SERVIDOR
+    final responseProtocolo = await Dio()
+        .post('$BASEURL/protocolos', data: protocolo.toJson())
+        .then((response) => debugPrint('SUCESSO: ${response.data}'))
+        .catchError((onError) => debugPrint('Motivo do erro: $onError'));
 
-
+    final responseItensProtocolo = await Dio()
+        .post('$BASEURL/itens_protocolos', data: listaItensProtocolo)
+        .then((response) => debugPrint('SUCESSO: ${response.data}'))
+        .catchError((onError) => debugPrint('Motivo do erro: $onError'));
 
     id = Random().nextInt(10000).toString();
 
     notifyListeners();
   }
-
-
 
   addFormItensProtocolo(String idItemVeiculo, dynamic opcaoSelecionada,
       String inicio, String? img64) async {
@@ -94,37 +88,25 @@ class ProtocoloModelo with ChangeNotifier {
       imagem: img64,
     );
 
-   
-
-   
-      for (var elemento in listaItensProtocolo) {
-        if (elemento.itemveiculo == itensProtocolo.itemveiculo) {
-          elemento.valor = itensProtocolo.valor;
-          elemento.imagem = itensProtocolo.imagem;
-          _listaChecagem = true;
-        }
+    for (var elemento in listaItensProtocolo) {
+      if (elemento.itemveiculo == itensProtocolo.itemveiculo) {
+        elemento.valor = itensProtocolo.valor;
+        elemento.imagem = itensProtocolo.imagem;
+        _listaChecagem = true;
       }
-      _listaChecagem
-          ? debugPrint('')
-          : listaItensProtocolo.add(itensProtocolo);
-
-
-      
+    }
+    _listaChecagem ? debugPrint('') : listaItensProtocolo.add(itensProtocolo);
 
     notifyListeners();
   }
-
 
   //Ficou mais fácil só apontar para cá
   endFormItensProtocolo() async {
-     final responseItensProtocolo = await Dio().post('$BASEURL/itens_protocolos', data: listaItensProtocolo)
-    .then((response) => debugPrint('SUCESSO: ${response.data}'))
-    .catchError((onError) => debugPrint('Motivo do erro: $onError'));
-
-
+    final responseItensProtocolo = await Dio()
+        .post('$BASEURL/itens_protocolos', data: listaItensProtocolo)
+        .then((response) => debugPrint('SUCESSO: ${response.data}'))
+        .catchError((onError) => debugPrint('Motivo do erro: $onError'));
 
     notifyListeners();
   }
-
-  
 }

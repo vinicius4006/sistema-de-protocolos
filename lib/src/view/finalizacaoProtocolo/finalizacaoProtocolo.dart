@@ -29,7 +29,8 @@ class Finalizacao extends StatefulWidget {
 class _FinalizacaoState extends State<Finalizacao> {
   Protocolo? protocolo;
   List<dynamic>? listaItensProtocoloId;
-final ScrollController _scrollController = ScrollController();
+  String tipoScroll = '';
+  final ScrollController _scrollController = ScrollController();
   final dataFinal = DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.now());
   @override
   void initState() {
@@ -46,13 +47,17 @@ final ScrollController _scrollController = ScrollController();
       });
     });
   }
-    scrollTo(int index) async {
+
+  scrollTo(int index) async {
     final listaKeyScroll =
         context.read<ProtocoloModelo>().listaKey[index].currentContext!;
     await Scrollable.ensureVisible(
       listaKeyScroll,
       duration: const Duration(milliseconds: 600),
     );
+    // setState(() {
+    //   context.read<ProtocoloModelo>().listaDeCoresCheck[index] = Colors.red;
+    // });
   }
 
   scrollToTop() async {
@@ -60,16 +65,18 @@ final ScrollController _scrollController = ScrollController();
         duration: const Duration(milliseconds: 500),
         curve: Curves.fastOutSlowIn);
   }
+
   scrollToBottom() async {
-    _scrollController.animateTo(20000,
+    var data = await context
+        .read<chamandoApiReq>()
+        .retornarSeMotoOuCarroPorBooleano(tipoScroll);
+    double time = data[1]['id'] != '2' ? 8000 : 20000;
+    _scrollController.animateTo(time,
         duration: const Duration(milliseconds: 500),
         curve: Curves.fastOutSlowIn);
   }
 
-  // final SignatureController _controller = SignatureController(
-  //     penStrokeWidth: 3,
-  //     penColor: Colors.black,
-  //     exportBackgroundColor: Colors.blue);
+ 
 
   Future dadosDoTipo(String tipo, BuildContext context) async {
     var result = await context
@@ -147,7 +154,6 @@ final ScrollController _scrollController = ScrollController();
       });
       EndProtocolo().addFormProtocoloEnd(widget.id, dataFinal,
           context.read<LoginController>().username, assinaturaFinal);
-     
 
       context.read<ProtocoloModelo>().endFormItensProtocolo();
 
@@ -206,14 +212,14 @@ final ScrollController _scrollController = ScrollController();
           .replaceAll(']', '')
           .replaceAll('"', '')
           .split(',');
-     // debugPrint('ValorEditadoParaExibir: $valorEditadoParaExibir - $index');
+      // debugPrint('ValorEditadoParaExibir: $valorEditadoParaExibir - $index');
       var listaItensCopia = (listaItens[index]?.substring(1))!
           .replaceAll(']', '')
           .replaceAll(' ', '')
           .replaceAll(',', '');
       var listaModificadaEditada = listaItensCopia.split('');
       //debugPrint(
-        //  'ListaModificadaEditada: $index - $listaModificadaEditada - ${listaModificadaEditada.length}');
+      //  'ListaModificadaEditada: $index - $listaModificadaEditada - ${listaModificadaEditada.length}');
       for (String item in listaModificadaEditada) {
         valorFinalEditadoExibir.add(valorEditadoParaExibir[int.parse(item)]);
       }
@@ -230,18 +236,21 @@ final ScrollController _scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
     if (listaItensProtocoloId == null) {
-     
       return const TelaDePassagem();
     } else {
       context.read<ProtocoloModelo>().idFinalProtocolo = widget.id;
       context.read<ProtocoloModelo>().listaItensProtocolo.clear();
       context.read<ProtocoloModelo>().controller.clear();
       context.read<ProtocoloModelo>().listaKey.clear();
+      context.read<ProtocoloModelo>().listaDeCoresCheck.clear();
 
       String tipoVeiculo =
           (listaItensProtocoloId![1] as ItensProtocolo).itemveiculo == '2'
               ? '0'
               : '1';
+      setState(() {
+        tipoScroll = tipoVeiculo;
+      });
       return Scaffold(
         appBar: AppBar(
           title: const Text('Finalização de Protocolo'),
@@ -256,14 +265,13 @@ final ScrollController _scrollController = ScrollController();
               heroTag: null,
             ),
             const SizedBox(
-        height: 20,
-      ),
-      FloatingActionButton.small(
-        heroTag: null,
+              height: 20,
+            ),
+            FloatingActionButton.small(
+              heroTag: null,
               onPressed: (() => scrollToBottom()),
               child: const Icon(Icons.arrow_downward),
             ),
-
           ],
         ),
         body: SingleChildScrollView(
@@ -313,23 +321,31 @@ final ScrollController _scrollController = ScrollController();
                       ),
                       const Divider(),
                       ListTile(
-                              leading:  Icon(Icons.assignment_outlined, color: Colors.green[500],),
-                              title: const Text('Assinatura Inicial', style: TextStyle(
-                                fontWeight: FontWeight.w500, fontSize: 18),),
-                              onTap: () {
-                                ArtSweetAlert.show(
-                                    context: context,
-                                    artDialogArgs: ArtDialogArgs(
-                                        title: "Assinatura Inicial",
-                                        customColumns: [
-                                          Container(
-                                              margin: const EdgeInsets.only(
-                                                  bottom: 12.0),
-                                              child: getImagemBase64( protocolo?.assinaturaInicial.toString() ?? ''
-                                                 ))
-                                        ]));
-                              },
-                            ),
+                        leading: Icon(
+                          Icons.assignment_outlined,
+                          color: Colors.green[500],
+                        ),
+                        title: const Text(
+                          'Assinatura Inicial',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500, fontSize: 18),
+                        ),
+                        onTap: () {
+                          ArtSweetAlert.show(
+                              context: context,
+                              artDialogArgs: ArtDialogArgs(
+                                  title: "Assinatura Inicial",
+                                  customColumns: [
+                                    Container(
+                                        margin:
+                                            const EdgeInsets.only(bottom: 12.0),
+                                        child: getImagemBase64(protocolo
+                                                ?.assinaturaInicial
+                                                .toString() ??
+                                            ''))
+                                  ]));
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -423,62 +439,59 @@ final ScrollController _scrollController = ScrollController();
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Container(
-      padding: const EdgeInsets.symmetric(vertical: 25),
-      width: double.infinity,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-              elevation: 5,
-              padding: const EdgeInsets.all(15),
-              shape:
-                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-              primary: Colors.green),
-       onPressed: () async {
-                    var tamanhoVeiculo = await dadosDoTipo(tipoVeiculo, context);
+                padding: const EdgeInsets.symmetric(vertical: 25),
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      elevation: 5,
+                      padding: const EdgeInsets.all(15),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15)),
+                      primary: Colors.green),
+                  onPressed: () async {
+                    var tamanhoVeiculo =
+                        await dadosDoTipo(tipoVeiculo, context);
                     var listaItensDoVeiculo =
                         context.read<ProtocoloModelo>().listaItensProtocolo;
 
                     if (context.read<ProtocoloModelo>().controller.isEmpty ||
                         tamanhoVeiculo.length != listaItensDoVeiculo.length) {
-                          List<ItensProtocolo> listaOrganizada = context
-                                  .read<ProtocoloModelo>()
-                                  .listaItensProtocolo;
-                              List<String> listaCheckIdLista = [];
-                              List<String> listaCheckIdVeiculo = [];
-                              for (var item in tamanhoVeiculo) {
-                                listaCheckIdLista.add(item['id']);
-                              }
-                              for (var item in listaOrganizada) {
-                                listaCheckIdVeiculo
-                                    .add(item.itemveiculo.toString());
-                              }
+                      List<ItensProtocolo> listaOrganizada =
+                          context.read<ProtocoloModelo>().listaItensProtocolo;
+                      List<String> listaCheckIdLista = [];
+                      List<String> listaCheckIdVeiculo = [];
+                      for (var item in tamanhoVeiculo) {
+                        listaCheckIdLista.add(item['id']);
+                      }
+                      for (var item in listaOrganizada) {
+                        listaCheckIdVeiculo.add(item.itemveiculo.toString());
+                      }
 
-                              for (var item in listaCheckIdLista.reversed) {
-                                if (listaCheckIdVeiculo.contains(item)) {
-                                  debugPrint('True');
-                                } else {
-                                   scrollTo(listaCheckIdLista.indexOf(item));
-                                }
-                              }
-                              if (listaCheckIdVeiculo.length ==
-                                  listaCheckIdLista.length) {
-                                showCompleteCampo(context);
-                              }
-                      
+                      for (var item in listaCheckIdLista.reversed) {
+                        if (listaCheckIdVeiculo.contains(item)) {
+                          debugPrint('True');
+                        } else {
+                          scrollTo(listaCheckIdLista.indexOf(item));
+                        }
+                      }
+                      if (listaCheckIdVeiculo.length ==
+                          listaCheckIdLista.length) {
+                        showCompleteCampo(context);
+                      }
                     } else {
                       showConfirmDialog(context);
                     }
                   },
-        child: const Text(
-          'Finalizar',
-          style: TextStyle(
-                color: Color.fromARGB(255, 249, 249, 249),
-                fontWeight: FontWeight.bold,
-                fontSize: 18),
-        ),
-      ),
-    ),
+                  child: const Text(
+                    'Finalizar',
+                    style: TextStyle(
+                        color: Color.fromARGB(255, 249, 249, 249),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18),
+                  ),
+                ),
+              ),
             ),
-           
             const SizedBox(
               height: 60,
             )

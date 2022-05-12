@@ -14,39 +14,47 @@ import 'package:provider/provider.dart';
 import '../../shared/models/protocolo.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+   HomePage({Key? key, required this.deVolta}) : super(key: key);
 
+  String deVolta = 'false';
 
   @override
   State<HomePage> createState() => _MainHomeState();
 }
 
 class _MainHomeState extends State<HomePage> {
+
+
+
   final df = DateFormat('dd-MM-yyyy hh:mm a');
   List<Protocolo> protocoloFiltroLista = [];
   List<Protocolo> listaProtocolo = [];
 
-FutureOr onGoBack(dynamic value) {
-    debugPrint('VOLTOU');
+
+  FutureOr onGoBack(dynamic value) {
+    refreshPage();
   }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-refreshPage();
+    refreshPage();
   }
 
   @override
   void dispose() {
+    
     super.dispose();
   }
 
   refreshPage() {
+    debugPrint('Atualizou');
     retornarProtocolos().then((value) {
       setState(() {
         protocoloFiltroLista = value.reversed.toList();
         listaProtocolo = value.reversed.toList();
+        widget.deVolta = 'false';
       });
       debugPrint('Refresh');
       debugPrint('$value');
@@ -129,10 +137,12 @@ refreshPage();
       );
 
       Timer(const Duration(seconds: 2), () {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => Finalizacao(
-                  id: id,
-                ))).then(onGoBack);
+        Navigator.of(context)
+            .push(MaterialPageRoute(
+                builder: (context) => Finalizacao(
+                      id: id,
+                    )))
+            .then(onGoBack);
         setState(() {
           context.read<ProtocoloModelo>().inicioIsFalse = true;
         });
@@ -160,15 +170,16 @@ refreshPage();
 
   @override
   Widget build(BuildContext context) {
-    
-
+    widget.deVolta == 'true' ? refreshPage() : debugPrint(''); 
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(children: [
-          IconButton(onPressed: (){
-            refreshPage();
-          }, icon: const Icon(Icons.refresh_rounded)),
+          IconButton(
+              onPressed: () {
+                refreshPage();
+              },
+              icon: const Icon(Icons.refresh_rounded)),
           const SizedBox(
             height: 20,
           ),

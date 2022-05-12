@@ -2,7 +2,7 @@
     package="com.example.protocolo_app">
     <uses-permission android:name="android.permission.INTERNET" />
    <application
-        android:label="Sistema de Protocolos"
+        android:label="Protocolos"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

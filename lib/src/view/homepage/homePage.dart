@@ -22,9 +22,15 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
+String volta = 'false';
+
 
   FutureOr onGoBack(dynamic value) {
-    debugPrint('VOLTOU');
+    debugPrint('VOLTOU do criar');
+    setState(() {
+      volta = 'true';
+    });
+   
   }
 
   void _telaCriarProtocolo(BuildContext context) {
@@ -85,6 +91,6 @@ class _HomeState extends State<Home> {
           centerTitle: true,
           title: Text(widget.title),
         ),
-        body: const HomePage());
+        body:    HomePage(deVolta: volta,));
   }
 }
