@@ -49,7 +49,7 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
     veiculoSelecionar.dispose();
 
     super.dispose();
-    debugPrint('SAI DAQUI PQ DESFEZ');
+    debugPrint('Dispose CriarProtocolo');
   }
 
   scrollTo(int index) async {
@@ -91,7 +91,7 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
     }
   }
 
-  void loading() {
+  void loading()  {
     setState(() {
       _loading = true;
     });
@@ -117,7 +117,7 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
   @override
   Widget build(BuildContext context) {
     // loopMotorista(MotoristaData().loadMotoristas());
-
+  debugPrint('Build CriarProtocolo');
     return Scaffold(
         appBar: AppBar(
           leading: Builder(builder: (BuildContext context) {
@@ -268,7 +268,7 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                                 .read<chamandoApiReq>()
                                 .retornarSeMotoOuCarro(int.parse(
                                     veiculoSelecionado.substring(10)));
-                            var listaItensDoVeiculo = context
+                            var listaItensDoVeiculo = await context
                                 .read<ProtocoloModelo>()
                                 .listaItensProtocolo;
                             if (context

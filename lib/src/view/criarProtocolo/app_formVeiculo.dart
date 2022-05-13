@@ -28,6 +28,7 @@ class _VeiculoFormState extends State<VeiculoForm> {
   @override
   void dispose() {
     super.dispose();
+    debugPrint('Dispose VeiculoForm');
   }
 
   scrollTo(int index) async {
@@ -37,6 +38,7 @@ class _VeiculoFormState extends State<VeiculoForm> {
  
   //--------------------------A FUNCAO PEDE UM PARAMETRO PARA EXIBIR A LISTA DE CARD
   Widget exibirListaDeCard(List<ItensVeiculos>? data) {
+    
     try {
       return Column(children: [
         data![2].tipoVeiculo == '0'
@@ -47,6 +49,7 @@ class _VeiculoFormState extends State<VeiculoForm> {
         const SizedBox(
           height: 20.0,
         ),
+       
         ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
             itemCount: data.length,
@@ -82,6 +85,7 @@ class _VeiculoFormState extends State<VeiculoForm> {
     if (widget.placa == null) {
       return const CircularProgressIndicator();
     } else {
+      
       return FutureBuilder(
           future: widget.placa!.length > 1
               ? context
@@ -117,6 +121,7 @@ class _VeiculoFormState extends State<VeiculoForm> {
   //--------------------------CORPO DO FORM VEICULO
   @override
   Widget build(BuildContext context) {
+    debugPrint('Build VeiculoForm');
     return showAll();
   }
 }

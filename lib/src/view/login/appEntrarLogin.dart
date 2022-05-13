@@ -17,8 +17,15 @@ class Entrar extends StatefulWidget {
 
 class _EntrarState extends State<Entrar> {
   bool loading = true;
+
+  @override
+  void dispose() {
+    debugPrint('Dispose Entrar-Button');
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
+    debugPrint('Build Entrar-Button');
     var readContext = context.read<LoginController>();
     var watchContext = context.watch<LoginController>();
 

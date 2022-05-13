@@ -24,9 +24,13 @@ class _HomeState extends State<Home> {
 
 String volta = 'false';
 
-
+@override
+void dispose() {
+  debugPrint('Dispose Home');
+  super.dispose();
+}
   FutureOr onGoBack(dynamic value) {
-    debugPrint('VOLTOU do criar');
+
     setState(() {
       volta = 'true';
     });
@@ -39,8 +43,10 @@ String volta = 'false';
     Navigator.push(context, route).then(onGoBack);
   }
 
+
   @override
   Widget build(BuildContext context) {
+    debugPrint('Build Home');
     return Scaffold(
         appBar: AppBar(
           leading: Builder(builder: (BuildContext context) {

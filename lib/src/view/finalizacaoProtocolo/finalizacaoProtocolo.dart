@@ -32,6 +32,7 @@ class _FinalizacaoState extends State<Finalizacao> {
   String tipoScroll = '';
   final ScrollController _scrollController = ScrollController();
   final dataFinal = DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.now());
+  
   @override
   void initState() {
     // TODO: implement initState
@@ -48,6 +49,11 @@ class _FinalizacaoState extends State<Finalizacao> {
     });
   }
 
+@override
+void dispose() {
+  debugPrint('Dispose Finalizacao');
+  super.dispose();
+}
   scrollTo(int index) async {
     final listaKeyScroll =
         context.read<ProtocoloModelo>().listaKey[index].currentContext!;
@@ -55,9 +61,12 @@ class _FinalizacaoState extends State<Finalizacao> {
       listaKeyScroll,
       duration: const Duration(milliseconds: 600),
     );
-    // setState(() {
-    //   context.read<ProtocoloModelo>().listaDeCoresCheck[index] = Colors.red;
-    // });
+    //Timer(Duration(milliseconds: 630),(){
+// setState(() {
+//       context.read<ProtocoloModelo>().listaDeCoresCheck[index] = Colors.red;
+//     });
+   // } );
+    
   }
 
   scrollToTop() async {
@@ -235,14 +244,14 @@ class _FinalizacaoState extends State<Finalizacao> {
   //Corpo da Aplicação
   @override
   Widget build(BuildContext context) {
+    debugPrint('Build Finalizacao');
     if (listaItensProtocoloId == null) {
       return const TelaDePassagem();
     } else {
       context.read<ProtocoloModelo>().idFinalProtocolo = widget.id;
       context.read<ProtocoloModelo>().listaItensProtocolo.clear();
       context.read<ProtocoloModelo>().controller.clear();
-      context.read<ProtocoloModelo>().listaKey.clear();
-      context.read<ProtocoloModelo>().listaDeCoresCheck.clear();
+      
 
       String tipoVeiculo =
           (listaItensProtocoloId![1] as ItensProtocolo).itemveiculo == '2'

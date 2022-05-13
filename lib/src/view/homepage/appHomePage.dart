@@ -44,27 +44,29 @@ class _MainHomeState extends State<HomePage> {
 
   @override
   void dispose() {
-    
+    debugPrint('Dispose HomePage');
     super.dispose();
   }
 
+
   refreshPage() {
-    debugPrint('Atualizou');
+    //debugPrint('Atualizou');
+    
     retornarProtocolos().then((value) {
       setState(() {
         protocoloFiltroLista = value.reversed.toList();
         listaProtocolo = value.reversed.toList();
         widget.deVolta = 'false';
       });
-      debugPrint('Refresh');
-      debugPrint('$value');
+     // debugPrint('Refresh');
+     // debugPrint('$value');
     }).catchError((onError) =>
         debugPrint('Dados do protocolo não vieram, motivo do erro: $onError'));
   }
 
   Future<List<Protocolo>> retornarProtocolos() async {
     final responseTodosOsProtocolos = await Dio().get('$URLSERVER/protocolos');
-
+await Future.delayed(const Duration(seconds: 1));
     return (responseTodosOsProtocolos.data as List).map((item) {
       return Protocolo.fromJson(item);
     }).toList();
@@ -100,6 +102,8 @@ class _MainHomeState extends State<HomePage> {
     });
   }
 
+
+
   void menuProtocolo(String id) async {
     var protocoloCheck =
         listaProtocolo.where((element) => element.id == id).toList();
@@ -125,16 +129,17 @@ class _MainHomeState extends State<HomePage> {
           context: context,
           builder: (_) {
             return Center(
-              child: LoadingAnimationWidget.discreteCircle(
+              child: LoadingAnimationWidget.waveDots(
                   size: 80,
-                  color: Colors.orange,
-                  secondRingColor: Colors.green,
-                  thirdRingColor: Colors.indigo),
+                  color: Colors.white,
+                  ),
             );
           }).timeout(
         const Duration(seconds: 2),
         onTimeout: () => Navigator.pop(context),
       );
+      context.read<ProtocoloModelo>().listaKey.clear();
+      context.read<ProtocoloModelo>().listaDeCoresCheck.clear();
 
       Timer(const Duration(seconds: 2), () {
         Navigator.of(context)
@@ -170,7 +175,9 @@ class _MainHomeState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('Build HomePage');
     widget.deVolta == 'true' ? refreshPage() : debugPrint(''); 
+    
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(10),
@@ -205,10 +212,10 @@ class _MainHomeState extends State<HomePage> {
                         child: ListTile(
                           leading: Text(
                             protocoloFiltroLista[index].id.toString(),
-                            style: const TextStyle(fontSize: 24),
+                            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
                           ),
                           title: Text('Placa: ' +
-                              protocoloFiltroLista[index].placa.toString()),
+                              protocoloFiltroLista[index].placa.toString(), style: TextStyle(fontWeight: FontWeight.w700, fontSize: 20),),
                           subtitle: Text('\n' 'Início: ' +
                               protocoloFiltroLista[index].inicio.toString() +
                               '\n'
@@ -216,7 +223,7 @@ class _MainHomeState extends State<HomePage> {
                                   'Final: ' +
                               (protocoloFiltroLista[index].fim ??
                                       'Ainda não finalizado')
-                                  .toString()),
+                                  .toString(), style: TextStyle(fontWeight: FontWeight.w900),),
                           onTap: () {
                             menuProtocolo(
                                 protocoloFiltroLista[index].id.toString());

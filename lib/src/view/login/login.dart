@@ -15,12 +15,17 @@ class LoginProtocolo extends StatefulWidget {
 
 class _LoginState extends State<LoginProtocolo> {
 
-
+@override
+void dispose() {
+  debugPrint('Dispose Login');
+  super.dispose();
+}
 
 
   
   @override
   Widget build(BuildContext context) {
+    debugPrint('Build Login');
     return Scaffold(
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,

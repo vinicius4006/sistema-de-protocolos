@@ -13,8 +13,15 @@ class Assinatura extends StatefulWidget {
 class _AssinaturaState extends State<Assinatura> {
 
   @override
+  void dispose() {
+    debugPrint('Dispose Assinatura');
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    SignatureController controller = context.read<ProtocoloModelo>().controller;
+    debugPrint('Build Assinatura');
+    SignatureController controller = context.watch<ProtocoloModelo>().controller;
     return Center(
       child: Column(children: [
          const Divider(),

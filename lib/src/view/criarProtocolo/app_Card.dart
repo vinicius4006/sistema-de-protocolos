@@ -58,6 +58,7 @@ class _CardFormState extends State<CardForm> {
   void dispose() {
     checkSelect;
     changeLista;
+    debugPrint('Dispose CardForm');
     super.dispose();
   }
 
@@ -334,8 +335,9 @@ class _CardFormState extends State<CardForm> {
   //---------------------CORPO DO CARD
   @override
   Widget build(BuildContext context) {
+    debugPrint('Build CardForm');
     //-----------SEPARACAO DO PARAMETRO PARA FICAR LEGIVEL
-    var separateString = widget.ops.replaceAll('[', '');
+    var separateString = widget.ops.replaceAll('[', ''); //Isso aqui pode mudar
     separateString = separateString.replaceAll(']', '');
     separateString = separateString.replaceAll('"', '');
 
