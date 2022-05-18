@@ -1,7 +1,6 @@
-import 'dart:async';
-
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
+import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
 
 import 'package:protocolo_app/src/view/criarProtocolo/criarProtocolo.dart';
 import 'package:protocolo_app/src/view/homepage/appHomePage.dart';
@@ -10,6 +9,7 @@ import 'package:provider/provider.dart';
 
 import '../../controllers/login_controller.dart';
 import '../../controllers/startProtocolo_controller.dart';
+import '../../shared/models/protocolo.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key, required this.title}) : super(key: key);
@@ -21,28 +21,17 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-
-String volta = 'false';
-
-@override
-void dispose() {
-  debugPrint('Dispose Home');
-  super.dispose();
-}
-  FutureOr onGoBack(dynamic value) {
-
-    setState(() {
-      volta = 'true';
-    });
-   
+  @override
+  void dispose() {
+    debugPrint('Dispose Home');
+    super.dispose();
   }
 
   void _telaCriarProtocolo(BuildContext context) {
     Route route =
         MaterialPageRoute(builder: (context) => const CriarProtocolo());
-    Navigator.push(context, route).then(onGoBack);
+    Navigator.push(context, route);
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -97,6 +86,8 @@ void dispose() {
           centerTitle: true,
           title: Text(widget.title),
         ),
-        body:    HomePage(deVolta: volta,));
+        body: ValueListenableBuilder(
+            valueListenable: criarProtocoloState.protocolo,
+            builder: (context, Protocolo protocolo, _) => HomePage()));
   }
 }

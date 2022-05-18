@@ -68,7 +68,7 @@ final responseTipo =
   }
 
   Future<List<dynamic>> retornarItensProtocoloId(String id) async {
- 
+ debugPrint('ID: ${id}');
     final responseItensProtocolosPorId =
         await Dio().get('$URLSERVER/itens_protocolos');
      
@@ -80,28 +80,24 @@ final responseTipo =
         .toList();
 
 
-   
-    debugPrint('tamnho: ${listaItensProtocolo.length}');
+    
+
 
     List<dynamic> filtroSomenteItensProtocoloPedido =
-        listaItensProtocolo.where((element) => element[0]['protocolo'] == id).toList();
+        listaItensProtocolo.where((element) => element['itensProtocolo'][0]['protocolo'] == id).toList();
 
-    var listaConvertida = (filtroSomenteItensProtocoloPedido[0]).map((element) {
+
+    var listaConvertida = (filtroSomenteItensProtocoloPedido[0]['itensProtocolo']).map((element) {
       return ItensProtocolo.fromJson(element);
     }).toList();
 
-    // for(ItensProtocolo item in listaConvertida){
-    //   debugPrint('${item.toJson()}');
-    // }
    
 
     listaConvertida.sort(((a, b) =>
         (int.parse(a.itemveiculo.toString()))
             .compareTo(int.parse(b.itemveiculo.toString()))));
             
-    //   for(ItensProtocolo item in listaConvertida){
-    //   debugPrint('ORGANIZADA: ${item.toJson()}');
-    // }
+   
 
    return listaConvertida;
 

@@ -6,40 +6,26 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
-import 'package:protocolo_app/src/controllers/login_controller.dart';
-import 'package:protocolo_app/src/controllers/startProtocolo_controller.dart';
+import 'package:protocolo_app/src/controllers/homePageController.dart';
 import 'package:protocolo_app/src/view/finalizacaoProtocolo/finalizacaoProtocolo.dart';
-import 'package:provider/provider.dart';
 
 import '../../shared/models/protocolo.dart';
 
 class HomePage extends StatefulWidget {
-   HomePage({Key? key, required this.deVolta}) : super(key: key);
-
-  String deVolta = 'false';
+  HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _MainHomeState();
 }
 
 class _MainHomeState extends State<HomePage> {
-
-
-
   final df = DateFormat('dd-MM-yyyy hh:mm a');
-  List<Protocolo> protocoloFiltroLista = [];
-  List<Protocolo> listaProtocolo = [];
 
-
-  FutureOr onGoBack(dynamic value) {
-    refreshPage();
-  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    refreshPage();
   }
 
   @override
@@ -48,63 +34,19 @@ class _MainHomeState extends State<HomePage> {
     super.dispose();
   }
 
-
-  refreshPage() {
-    //debugPrint('Atualizou');
-    
-    retornarProtocolos().then((value) {
-      setState(() {
-        protocoloFiltroLista = value.reversed.toList();
-        listaProtocolo = value.reversed.toList();
-        widget.deVolta = 'false';
-      });
-     // debugPrint('Refresh');
-     // debugPrint('$value');
-    }).catchError((onError) =>
-        debugPrint('Dados do protocolo não vieram, motivo do erro: $onError'));
-  }
-
   Future<List<Protocolo>> retornarProtocolos() async {
+    await Future.delayed(Duration(seconds: 2));
     final responseTodosOsProtocolos = await Dio().get('$URLSERVER/protocolos');
-await Future.delayed(const Duration(seconds: 1));
-    return (responseTodosOsProtocolos.data as List).map((item) {
-      return Protocolo.fromJson(item);
-    }).toList();
+    return (responseTodosOsProtocolos.data as List)
+        .map((item) {
+          return Protocolo.fromJson(item);
+        })
+        .toList()
+        .reversed
+        .toList();
   }
 
-  void _protocoloFilter(String keyword) async {
-    List<Protocolo> results;
-    if (keyword.isEmpty) {
-      results = listaProtocolo.toList();
-    } else {
-      results = listaProtocolo
-          .toList()
-          .where((protocolo) => (protocolo.id.toString() +
-                  ' - ' +
-                  protocolo.inicio.toString() +
-                  ' - ' +
-                  protocolo.fim.toString() +
-                  ' - ' +
-                  protocolo.placa.toString())
-              .toLowerCase()
-              .contains(keyword.toLowerCase()))
-          .toList();
-    }
-
-    setState(() {
-      try {
-        //debugPrint('${results[0].placa}');
-        protocoloFiltroLista = results;
-        //filtroAtivado = true;
-      } catch (e) {
-        debugPrint('Motivo do erro no filtro: $e');
-      }
-    });
-  }
-
-
-
-  void menuProtocolo(String id) async {
+  void menuProtocolo(String id, List<Protocolo> listaProtocolo) async {
     var protocoloCheck =
         listaProtocolo.where((element) => element.id == id).toList();
     debugPrint('${protocoloCheck[0].fim}');
@@ -130,37 +72,35 @@ await Future.delayed(const Duration(seconds: 1));
           builder: (_) {
             return Center(
               child: LoadingAnimationWidget.waveDots(
-                  size: 80,
-                  color: Colors.white,
-                  ),
+                size: 80,
+                color: Colors.white,
+              ),
             );
           }).timeout(
         const Duration(seconds: 2),
         onTimeout: () => Navigator.pop(context),
       );
-      context.read<ProtocoloModelo>().listaKey.clear();
-      context.read<ProtocoloModelo>().listaDeCoresCheck.clear();
+      // context.read<ProtocoloModelo>().listaKey.clear();
+      // context.read<ProtocoloModelo>().listaDeCoresCheck.clear();
 
       Timer(const Duration(seconds: 2), () {
         Navigator.of(context)
             .push(MaterialPageRoute(
                 builder: (context) => Finalizacao(
                       id: id,
-                    )))
-            .then(onGoBack);
-        setState(() {
-          context.read<ProtocoloModelo>().inicioIsFalse = true;
-        });
+                    )));
+          
+
       });
       return;
     } else if (response.isTapConfirmButton && protocoloCheck[0].fim != null) {
-      String nomeColaborador = (context.read<LoginController>().username);
+
       ArtSweetAlert.show(
           context: context,
           artDialogArgs: ArtDialogArgs(
               type: ArtSweetAlertType.info,
               title:
-                  "Imprimindo através da Júpiter I.A!\nNão se preoucupe $nomeColaborador\nEm breve estará na sua mesa"));
+                  "Imprimindo através da Júpiter I.A!\nNão se preoucupe \nEm breve estará na sua mesa"));
       return;
     }
 
@@ -176,67 +116,93 @@ await Future.delayed(const Duration(seconds: 1));
   @override
   Widget build(BuildContext context) {
     debugPrint('Build HomePage');
-    widget.deVolta == 'true' ? refreshPage() : debugPrint(''); 
-    
+
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(children: [
-          IconButton(
-              onPressed: () {
-                refreshPage();
-              },
-              icon: const Icon(Icons.refresh_rounded)),
-          const SizedBox(
-            height: 20,
-          ),
-          TextField(
-            onChanged: ((value) => _protocoloFilter(value)),
-            decoration: const InputDecoration(
-              labelText: 'Pesquisar',
-              suffixIcon: Icon(Icons.search),
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Expanded(
-              child: protocoloFiltroLista.isNotEmpty
-                  ? ListView.builder(
-                      itemCount: protocoloFiltroLista.length,
-                      itemBuilder: (context, index) => Card(
-                        key: ValueKey(protocoloFiltroLista[index].id),
-                        color: Colors.lightGreen,
-                        elevation: 4,
-                        margin: const EdgeInsets.symmetric(vertical: 10),
-                        child: ListTile(
-                          leading: Text(
-                            protocoloFiltroLista[index].id.toString(),
-                            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
+        body: FutureBuilder(
+      future: retornarProtocolos(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Center(
+            child:
+                LoadingAnimationWidget.waveDots(color: Colors.green, size: 150),
+          );
+        } else {
+          List<Protocolo> listaProtocolo = (snapshot.data as List<Protocolo>);
+              homePageState.protocoloFilter('', listaProtocolo);
+          return Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(children: [
+              IconButton(
+                  onPressed: () {
+                    //refreshPage();
+                  },
+                  icon: const Icon(Icons.refresh_rounded)),
+              const SizedBox(
+                height: 20,
+              ),
+              TextField(
+                onChanged: ((value) =>
+                    homePageState.protocoloFilter(value, listaProtocolo)),
+                decoration: const InputDecoration(
+                  labelText: 'Pesquisar',
+                  suffixIcon: Icon(Icons.search),
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Expanded(
+                  child: ValueListenableBuilder(
+                valueListenable: homePageState.protocoloFiltro,
+                builder: (context, List<Protocolo> protocoloFiltro, _) {
+                  return protocoloFiltro.isNotEmpty
+                      ? ListView.builder(
+                          itemCount: protocoloFiltro.length,
+                          itemBuilder: (context, index) => Card(
+                            key: ValueKey(protocoloFiltro[index].id),
+                            color: Colors.lightGreen,
+                            elevation: 4,
+                            margin: const EdgeInsets.symmetric(vertical: 10),
+                            child: ListTile(
+                              leading: Text(
+                                protocoloFiltro[index].id.toString(),
+                                style: const TextStyle(
+                                    fontSize: 24, fontWeight: FontWeight.w900),
+                              ),
+                              title: Text(
+                                'Placa: ' +
+                                    protocoloFiltro[index].placa.toString(),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w700, fontSize: 20),
+                              ),
+                              subtitle: Text(
+                                '\n' 'Início: ' +
+                                    protocoloFiltro[index].inicio.toString() +
+                                    '\n'
+                                        '\n'
+                                        'Final: ' +
+                                    (protocoloFiltro[index].fim ??
+                                            'Ainda não finalizado')
+                                        .toString(),
+                                style: TextStyle(fontWeight: FontWeight.w900),
+                              ),
+                              onTap: () {
+                                menuProtocolo(
+                                    protocoloFiltro[index].id.toString(), protocoloFiltro);
+                              },
+                            ),
                           ),
-                          title: Text('Placa: ' +
-                              protocoloFiltroLista[index].placa.toString(), style: TextStyle(fontWeight: FontWeight.w700, fontSize: 20),),
-                          subtitle: Text('\n' 'Início: ' +
-                              protocoloFiltroLista[index].inicio.toString() +
-                              '\n'
-                                  '\n'
-                                  'Final: ' +
-                              (protocoloFiltroLista[index].fim ??
-                                      'Ainda não finalizado')
-                                  .toString(), style: TextStyle(fontWeight: FontWeight.w900),),
-                          onTap: () {
-                            menuProtocolo(
-                                protocoloFiltroLista[index].id.toString());
-                          },
-                        ),
-                      ),
-                    )
-                  : const Text(
-                      'Protocolo não encontrado',
-                      style: TextStyle(fontSize: 24),
-                    ))
-        ]),
-      ),
-    );
+                        )
+                      : const Text(
+                          'Protocolo não encontrado',
+                          style: TextStyle(fontSize: 24),
+                        );
+                },
+              ))
+            ]),
+          );
+        }
+      },
+    ));
   }
 }

@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer' as dev;
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
@@ -11,8 +13,10 @@ import 'package:protocolo_app/src/controllers/login_controller.dart';
 import 'package:protocolo_app/src/controllers/startProtocolo_controller.dart';
 
 import 'package:art_sweetalert/art_sweetalert.dart';
+import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
 import 'package:protocolo_app/src/shared/models/itens_protocolo.dart';
 import 'package:protocolo_app/src/shared/models/protocolo.dart';
+import 'package:protocolo_app/src/view/criarProtocolo/app_Assinatura.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/app_formVeiculo.dart';
 import 'package:provider/provider.dart';
 
@@ -29,7 +33,7 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
   // List<String> motoristas = [''];
   List<String> veiculos = [''];
 
-  final dataInicio = DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.now());
+
   bool _loading = true;
   GlobalKey<ArtDialogState>? _artDialogKey;
   ProtocoloModelo protocoloModelo = ProtocoloModelo();
@@ -47,6 +51,8 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
   @override
   void dispose() {
     veiculoSelecionar.dispose();
+    criarProtocoloState.resetVeiculoSelecionado();
+
 
     super.dispose();
     debugPrint('Dispose CriarProtocolo');
@@ -54,11 +60,11 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
 
   scrollTo(int index) async {
     debugPrint('Scroll Index: ${index}');
-    Timer(Duration(milliseconds: 580), () {
-      setState(() {
-        context.read<ProtocoloModelo>().listaDeCoresCheck[index] = Colors.red;
-      });
-    });
+    // Timer(Duration(milliseconds: 580), () {
+    //   setState(() {
+    //     context.read<ProtocoloModelo>().listaDeCoresCheck[index] = Colors.red;
+    //   });
+    // });
 
     final listaKeyScroll =
         context.read<ProtocoloModelo>().listaKey[index].currentContext!;
@@ -73,16 +79,24 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
     _scrollController.animateTo(0,
         duration: const Duration(milliseconds: 500),
         curve: Curves.fastOutSlowIn);
+
+        for(var item in criarProtocoloState.listaItensProtocolo.value){
+          dev.log('ITEM: ${item.toJson()}');
+        }
   }
 
   scrollToBottom() async {
-    var data = await context
-        .read<chamandoApiReq>()
-        .retornarSeMotoOuCarro(int.parse(veiculoSelecionado.substring(10)));
+    try{
+var data = await context.read<chamandoApiReq>().retornarSeMotoOuCarro(
+        int.parse(criarProtocoloState.veiculoSelecionado.value.substring(10)));
     double time = data[1]['id'] != '2' ? 8000 : 20000;
     _scrollController.animateTo(time,
         duration: const Duration(milliseconds: 500),
         curve: Curves.fastOutSlowIn);
+    } catch(e) {
+      debugPrint('Motivo de não rolar: $e');
+    }
+    
   }
 
   loopVeiculo(Future lista) async {
@@ -91,24 +105,12 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
     }
   }
 
-  void loading()  {
-    setState(() {
-      _loading = true;
-    });
-    Timer(const Duration(seconds: 2), () {
-      setState(() {
-        _loading = false;
-      });
-    });
-  }
-
   Future<List<Protocolo>> retornarProtocolos() async {
     final responseTodosOsProtocolos = await Dio().get('$URLSERVER/protocolos');
     return responseTodosOsProtocolos.data;
   }
 
   final veiculoSelecionar = TextEditingController();
-  String veiculoSelecionado = '';
 
   var data;
 
@@ -117,7 +119,7 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
   @override
   Widget build(BuildContext context) {
     // loopMotorista(MotoristaData().loadMotoristas());
-  debugPrint('Build CriarProtocolo');
+    debugPrint('Build CriarProtocolo');
     return Scaffold(
         appBar: AppBar(
           leading: Builder(builder: (BuildContext context) {
@@ -130,27 +132,24 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
           centerTitle: true,
           title: const Text('Criação de Protocolo'),
         ),
-        floatingActionButton: veiculoSelecionado.isNotEmpty
-            ? Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  FloatingActionButton.small(
-                    onPressed: (() => scrollToTop()),
-                    child: const Icon(Icons.arrow_upward),
-                    heroTag: null,
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  FloatingActionButton.small(
-                    heroTag: null,
-                    onPressed: (() => scrollToBottom()),
-                    child: const Icon(Icons.arrow_downward),
-                  ),
-                ],
-              )
-            : FloatingActionButton.small(
-                backgroundColor: Colors.white, onPressed: () {}),
+        floatingActionButton: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            FloatingActionButton.small(
+              onPressed: (() => scrollToTop()),
+              child: const Icon(Icons.arrow_upward),
+              heroTag: null,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            FloatingActionButton.small(
+              heroTag: null,
+              onPressed: (() => scrollToBottom()),
+              child: const Icon(Icons.arrow_downward),
+            ),
+          ],
+        ),
         body: Form(
           key: context.read<ProtocoloModelo>().formKey,
           child: SizedBox(
@@ -200,52 +199,50 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                   excludeSelected: false,
                   items: veiculos,
                   onChanged: (value) {
-                    loading();
-                    setState(() {
-                      veiculoSelecionado = value;
+                    criarProtocoloState.changeVeiculoSelecionado(value);
+                    context.read<ProtocoloModelo>().listaItensProtocolo.clear();
+                    context.read<ProtocoloModelo>().listaKey.clear();
+                    context.read<ProtocoloModelo>().controller.clear();
+                    //verficar se está limpando msm, mudar essas variaveis de reset
+                    context.read<ProtocoloModelo>().selectRadioVerificacao = -1;
+                    context.read<ProtocoloModelo>().changeListaVerificacao = [
+                      false
+                    ];
+                    // setState(() {
+                    //   veiculoSelecionado = value;
+                    //   context.read<ProtocoloModelo>().listaDeCoresCheck.clear();
 
-                      context
-                          .read<ProtocoloModelo>()
-                          .listaItensProtocolo
-                          .clear();
-                      context.read<ProtocoloModelo>().listaKey.clear();
-                      context.read<ProtocoloModelo>().controller.clear();
-
-                      context.read<ProtocoloModelo>().selectRadioVerificacao =
-                          -1;
-                      context.read<ProtocoloModelo>().changeListaVerificacao = [
-                        false
-                      ];
-                      context.read<ProtocoloModelo>().listaDeCoresCheck.clear();
-
-                      // data = context
-                      //     .read<chamandoApiReq>()
-                      //     .retornarSeMotoOuCarro(
-                      //         int.parse(veiculoSelecionado.substring(10)));
-                    });
+                    //   // data = context
+                    //   //     .read<chamandoApiReq>()
+                    //   //     .retornarSeMotoOuCarro(
+                    //   //         int.parse(veiculoSelecionado.substring(10)));
+                    // });
                   },
                 ),
                 const SizedBox(
                   height: 20.0,
                 ),
 
-                Visibility(
-                    visible: veiculoSelecionado.isNotEmpty,
-                    child: Column(
-                      children: [
-                        !_loading
-                            ? VeiculoForm(
-                                placa: veiculoSelecionado,
-                              )
-                            : Center(
-                                child: LoadingAnimationWidget.twistingDots(
-                                  leftDotColor: Colors.orange,
-                                  rightDotColor: Colors.green,
-                                  size: 70,
+                ValueListenableBuilder(
+                  valueListenable: criarProtocoloState.veiculoSelecionado,
+                  builder: (context, String veiculoSelecionado, _) =>
+                      veiculoSelecionado != ''
+                          ? Column(
+                              children: [
+                                VeiculoForm(
+                                  placa: veiculoSelecionado,
                                 ),
+                                Assinatura(),
+                              ],
+                            )
+                          : Center(
+                              child: LoadingAnimationWidget.waveDots(
+                                color: Colors.green,
+                                size: 100,
                               ),
-                      ],
-                    )),
+                            ),
+                ),
+              
 
                 const SizedBox(
                   height: 20.0,
@@ -267,10 +264,9 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                             var tamanhoVeiculo = await context
                                 .read<chamandoApiReq>()
                                 .retornarSeMotoOuCarro(int.parse(
-                                    veiculoSelecionado.substring(10)));
-                            var listaItensDoVeiculo = await context
-                                .read<ProtocoloModelo>()
-                                .listaItensProtocolo;
+                                    criarProtocoloState.veiculoSelecionado.value
+                                        .substring(10)));
+                            var listaItensDoVeiculo = criarProtocoloState.listaItensProtocolo.value;
                             if (context
                                     .read<ProtocoloModelo>()
                                     .formKey
@@ -292,19 +288,32 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                                 return base64Image;
                               });
 
-                              context.read<ProtocoloModelo>().addFormProtocolo(
-                                  dataInicio,
-                                  "",
-                                  veiculoSelecionado.substring(10),
-                                  veiculoSelecionado.substring(0, 7),
-                                  "",
-                                  "",
-                                  "",
-                                  "",
-                                  context.read<LoginController>().username,
-                                  "",
-                                  assinaturaInicial,
-                                  "");
+                              // context.read<ProtocoloModelo>().addFormProtocolo(
+                              //     dataInicio,
+                              //     "",
+                              //     criarProtocoloState.veiculoSelecionado.value
+                              //         .substring(10),
+                              //     criarProtocoloState.veiculoSelecionado.value
+                              //         .substring(0, 7),
+                              //     "",
+                              //     "",
+                              //     "",
+                              //     "",
+                              //     context.read<LoginController>().username,
+                              //     "",
+                              //     assinaturaInicial,
+                              //     "");
+
+                              criarProtocoloState.novoProtocolo(Protocolo(
+                                id: Random().nextInt(10000).toString(),
+                                inicio: DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.now()),
+                                veiculo: criarProtocoloState.veiculoSelecionado.value
+                                       .substring(10),
+                                placa: criarProtocoloState.veiculoSelecionado.value
+                                       .substring(0, 7),
+                                digitador: context.read<LoginController>().username,
+                                assinaturaInicial: assinaturaInicial
+                                ));
 
                               Navigator.of(context).pop();
                               ArtSweetAlert.show(
@@ -335,6 +344,10 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                                       'INDEX: ${listaCheckIdLista.indexOf(item)}');
                                   scrollTo(listaCheckIdLista.indexOf(item));
                                 }
+                              }
+
+                              for(var item in context.read<ProtocoloModelo>().listaItensProtocolo){
+                                debugPrint('${item.toJson()}');
                               }
                               if (listaCheckIdVeiculo.length ==
                                   listaCheckIdLista.length) {

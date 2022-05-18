@@ -21,7 +21,7 @@ class ProtocoloModelo with ChangeNotifier {
       penColor: Colors.black,
       exportBackgroundColor: Colors.grey);
 
-  final List<Protocolo> listaProtocolo = [];
+  
   final List<ItensProtocolo> listaItensProtocolo = [];
   int selectRadioVerificacao = -1;
   List<bool> changeListaVerificacao = [false];
@@ -60,6 +60,8 @@ class ProtocoloModelo with ChangeNotifier {
     var listaItensProtocoloJson =
         ListaItensProtocolo(itensProtocolo: listaItensProtocolo).toJson();
 
+    debugPrint('VERIFICANDO: ${listaItensProtocoloJson}');
+
     //MANDANDO PARA O SERVIDOR
     final responseProtocolo = await Dio()
         .post('$BASEURL/protocolos', data: protocolo.toJson())
@@ -67,7 +69,7 @@ class ProtocoloModelo with ChangeNotifier {
         .catchError((onError) => debugPrint('Motivo do erro: $onError'));
 
     final responseItensProtocolo = await Dio()
-        .post('$BASEURL/itens_protocolos', data: listaItensProtocolo)
+        .post('$BASEURL/itens_protocolos', data: listaItensProtocoloJson)
         .then((response) => debugPrint('SUCESSO: ${response.data}'))
         .catchError((onError) => debugPrint('Motivo do erro: $onError'));
 
@@ -102,8 +104,13 @@ class ProtocoloModelo with ChangeNotifier {
 
   //Ficou mais fácil só apontar para cá
   endFormItensProtocolo() async {
+     listaItensProtocolo.sort(((a, b) => (int.parse(a.itemveiculo.toString()))
+        .compareTo(int.parse(b.itemveiculo.toString()))));
+
+    var listaItensProtocoloJson =
+        ListaItensProtocolo(itensProtocolo: listaItensProtocolo).toJson();
     final responseItensProtocolo = await Dio()
-        .post('$BASEURL/itens_protocolos', data: listaItensProtocolo)
+        .post('$BASEURL/itens_protocolos', data: listaItensProtocoloJson)
         .then((response) => debugPrint('SUCESSO: ${response.data}'))
         .catchError((onError) => debugPrint('Motivo do erro: $onError'));
 

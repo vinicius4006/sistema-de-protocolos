@@ -42,7 +42,7 @@ class _EntrarState extends State<Entrar> {
                 title: "Oops...",
                 text: "Algum campo não está preenchido"));
       } else {
-        readContext.login().then((value) {
+        watchContext.login().then((value) {
           if (value) {
             showDialog(
                 context: context,

@@ -4,13 +4,21 @@ import 'package:provider/provider.dart';
 import 'package:signature/signature.dart';
 
 class Assinatura extends StatefulWidget {
-  const Assinatura({ Key? key }) : super(key: key);
+   Assinatura({Key? key}) : super(key: key);
+
 
   @override
   State<Assinatura> createState() => _AssinaturaState();
 }
 
 class _AssinaturaState extends State<Assinatura> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+
 
   @override
   void dispose() {
@@ -21,25 +29,29 @@ class _AssinaturaState extends State<Assinatura> {
   @override
   Widget build(BuildContext context) {
     debugPrint('Build Assinatura');
-    SignatureController controller = context.watch<ProtocoloModelo>().controller;
-    return Center(
-      child: Column(children: [
-         const Divider(),
-            Signature(
-              controller: controller,
-              height: 100,
-              width: 320,
 
-              backgroundColor: Colors.grey,
-            ),
-            IconButton(
-              onPressed: (() => setState(() {
-                    controller.clear();
-                  })),
-              icon: const Icon(Icons.clear),
-              color: Colors.redAccent,
-            ),
-      ],),
+    SignatureController controller =
+        context.watch<ProtocoloModelo>().controller;
+
+    return Center(
+      child: Column(
+        children: [
+          const Divider(),
+          Signature(
+            controller: controller,
+            height: 100,
+            width: 320,
+            backgroundColor: Colors.grey,
+          ),
+          IconButton(
+            onPressed: (() => setState(() {
+                  controller.clear();
+                })),
+            icon: const Icon(Icons.clear),
+            color: Colors.redAccent,
+          ),
+        ],
+      ),
     );
   }
 }

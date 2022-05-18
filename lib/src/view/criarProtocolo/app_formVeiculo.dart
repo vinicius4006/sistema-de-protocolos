@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
+import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
 import 'package:protocolo_app/src/controllers/startProtocolo_controller.dart';
 import 'package:protocolo_app/src/shared/models/itensVeiculo.dart';
-import 'package:protocolo_app/src/view/criarProtocolo/app_Assinatura.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/app_Card.dart';
 import 'package:provider/provider.dart';
 
@@ -28,6 +27,8 @@ class _VeiculoFormState extends State<VeiculoForm> {
   @override
   void dispose() {
     super.dispose();
+    criarProtocoloState.listaItensProtocolo.value.clear();
+    criarProtocoloState.excluirFoto();
     debugPrint('Dispose VeiculoForm');
   }
 
@@ -60,7 +61,7 @@ class _VeiculoFormState extends State<VeiculoForm> {
              context.read<ProtocoloModelo>().listaKey.add(GlobalKey());
              context.read<ProtocoloModelo>().listaDeCoresCheck.add(Colors.green);
               return CardForm(
-               key: context.read<ProtocoloModelo>().listaKey[index],
+               //key: context.read<ProtocoloModelo>().listaKey[index],
                indexGlobal: index,
                 title: data[index].descricao.toString(),
                 ops: data[index].parametros.toString(),
@@ -69,7 +70,7 @@ class _VeiculoFormState extends State<VeiculoForm> {
                 color: context.read<ProtocoloModelo>().listaDeCoresCheck[index],
               );
             }),
-        const Assinatura()
+
       ]);
     } catch (e) {
       debugPrint('Motivo do Erro ao fazer lista de cards: $e');
@@ -107,11 +108,7 @@ class _VeiculoFormState extends State<VeiculoForm> {
               ));
             } else {
               return Center(
-                child: LoadingAnimationWidget.twistingDots(
-                  leftDotColor: Colors.orange,
-                  rightDotColor: Colors.green,
-                  size: 70,
-                ),
+                child: Text('Iniciando...', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 36),),
               );
             }
           });
