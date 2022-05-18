@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
@@ -38,22 +37,6 @@ class _CardFormState extends State<CardForm> {
   void dispose() {
     debugPrint('Dispose CardForm');
     super.dispose();
-  }
-
-  Widget getImagemBase64(String imagem) {
-    String _imageBase64 = imagem;
-
-    if (imagem.isEmpty || imagem == '') {
-      return const Text('Não foi tirado foto alguma');
-    } else {
-      const Base64Codec base64 = Base64Codec();
-      var bytes = base64.decode(_imageBase64);
-      return Image.memory(
-        bytes,
-        width: 500,
-        fit: BoxFit.fitWidth,
-      );
-    }
   }
 
   //---------------------CORPO DO CARD

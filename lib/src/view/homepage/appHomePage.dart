@@ -1,11 +1,10 @@
 import 'dart:async';
 
 import 'package:art_sweetalert/art_sweetalert.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
+import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
 import 'package:protocolo_app/src/controllers/homePageController.dart';
 import 'package:protocolo_app/src/view/finalizacaoProtocolo/finalizacaoProtocolo.dart';
 
@@ -31,18 +30,6 @@ class _MainHomeState extends State<HomePage> {
   void dispose() {
     debugPrint('Dispose HomePage');
     super.dispose();
-  }
-
-  Future<List<Protocolo>> retornarProtocolos() async {
-    await Future.delayed(Duration(seconds: 2));
-    final responseTodosOsProtocolos = await Dio().get('$URLSERVER/protocolos');
-    return (responseTodosOsProtocolos.data as List)
-        .map((item) {
-          return Protocolo.fromJson(item);
-        })
-        .toList()
-        .reversed
-        .toList();
   }
 
   void menuProtocolo(String id, List<Protocolo> listaProtocolo) async {
@@ -112,7 +99,7 @@ class _MainHomeState extends State<HomePage> {
 
     return Scaffold(
         body: FutureBuilder(
-      future: retornarProtocolos(),
+      future: homePageState.retornarProtocolos(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Center(
@@ -125,11 +112,17 @@ class _MainHomeState extends State<HomePage> {
           return Padding(
             padding: const EdgeInsets.all(10),
             child: Column(children: [
-              IconButton(
-                  onPressed: () {
-                    //refreshPage();
-                  },
-                  icon: const Icon(Icons.refresh_rounded)),
+              Ink(
+                decoration: ShapeDecoration(
+                    color: Theme.of(context).primaryColor,
+                    shape: CircleBorder()),
+                child: IconButton(
+                    color: Colors.white,
+                    onPressed: () {
+                      criarProtocoloState.refreshPage();
+                    },
+                    icon: const Icon(Icons.refresh_rounded)),
+              ),
               const SizedBox(
                 height: 20,
               ),

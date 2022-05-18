@@ -91,30 +91,9 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                 const SizedBox(
                   height: 20.0,
                 ),
-                // const Text(
-                //   'Motoristas',
-                //   style: TextStyle(fontSize: 20.0),
-                //   textAlign: TextAlign.center,
-                // ),
-                // const SizedBox(
-                //   height: 20.0,
-                // ),
-                // CustomDropdown.search(
-                //   controller: motoristaSelecionar,
-                //   hintText: 'Selecione o Motorista',
-                //   excludeSelected: false,
-                //   onChanged: (value) {
-                //     setState(() {
-                //       motoristaSelecionado = value;
-                //       debugPrint(motoristaSelecionado);
-                //     });
-                //   },
-                //   items: motoristas.reversed.toList(),
-                // ),
                 const SizedBox(
                   height: 20.0,
                 ),
-
                 const Text(
                   'Veículos',
                   style: TextStyle(fontSize: 20.0),
@@ -152,7 +131,6 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                 const SizedBox(
                   height: 20.0,
                 ),
-
                 ValueListenableBuilder(
                   valueListenable: criarProtocoloState.veiculoSelecionado,
                   builder: (context, String veiculoSelecionado, _) =>
@@ -172,11 +150,9 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                               ),
                             ),
                 ),
-
                 const SizedBox(
                   height: 20.0,
                 ),
-
                 Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Container(

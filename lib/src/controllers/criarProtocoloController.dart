@@ -42,6 +42,10 @@ class _CriarProtocolo extends ChangeNotifier {
     veiculoSelecionado.value = '';
   }
 
+  refreshPage() {
+    protocolo.notifyListeners();
+  }
+
   novoProtocolo(Protocolo protocoloNovo) async {
     listaItensProtocolo.value.sort(((a, b) =>
         (int.parse(a.itemveiculo.toString()))
@@ -134,6 +138,20 @@ class _CriarProtocolo extends ChangeNotifier {
     }
 
     return listaItens;
+
+    //atenção na lista que está add mais imagens que o permitido pois a lista não está reiniciando
+  }
+
+  List<String> pegarImgPorStatus(List<dynamic> lista, String id) {
+    List<String>? listaImg = [];
+
+    for (ItensProtocolo item in lista) {
+      if (item.protocolo == id) {
+        listaImg.add(item.imagem.toString());
+      }
+    }
+
+    return listaImg;
 
     //atenção na lista que está add mais imagens que o permitido pois a lista não está reiniciando
   }

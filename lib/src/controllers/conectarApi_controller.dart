@@ -6,7 +6,7 @@ import 'package:protocolo_app/src/shared/models/protocolo.dart';
 String BASEURL = 'http://frota.jupiter.com.br/api/view/JSON';
 String URLSERVER = 'http://10.1.2.218:3000';
 
-class chamandoApiReq extends ChangeNotifier {
+class _chamandoApiReq extends ChangeNotifier {
   final ValueNotifier<TextEditingController> veiculoSelecionar =
       ValueNotifier(TextEditingController());
   final List<String> veiculos = [];
@@ -96,4 +96,4 @@ class chamandoApiReq extends ChangeNotifier {
   }
 }
 
-final chamandoApiReqState = chamandoApiReq();
+final chamandoApiReqState = _chamandoApiReq();

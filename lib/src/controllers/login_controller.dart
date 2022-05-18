@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 const String URL =
     'https://api.jupiter.com.br/view/Usuarios/verificarUsuarioSenhaJSON';
 
-class LoginController extends ChangeNotifier {
+class _LoginController extends ChangeNotifier {
   String username = '';
   String password = '';
   final ValueNotifier<TextEditingController> controllerUsername =
@@ -40,4 +40,4 @@ class LoginController extends ChangeNotifier {
   }
 }
 
-final LoginController loginControllerState = LoginController();
+final _LoginController loginControllerState = _LoginController();
