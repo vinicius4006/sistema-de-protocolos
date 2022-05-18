@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -6,13 +5,12 @@ import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
-import 'package:protocolo_app/src/controllers/endProtocolo_controller.dart';
-import 'package:protocolo_app/src/controllers/startProtocolo_controller.dart';
+import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
 import 'package:protocolo_app/src/shared/models/itensVeiculo.dart';
 import 'package:protocolo_app/src/shared/models/itens_protocolo.dart';
 import 'package:protocolo_app/src/shared/models/protocolo.dart';
+import 'package:protocolo_app/src/view/criarProtocolo/app_Assinatura.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/app_formVeiculo.dart';
-import 'package:provider/provider.dart';
 
 import '../../controllers/login_controller.dart';
 
@@ -26,75 +24,18 @@ class Finalizacao extends StatefulWidget {
 }
 
 class _FinalizacaoState extends State<Finalizacao> {
- 
-  late List<dynamic> tipoScroll;
-  final ScrollController _scrollController = ScrollController();
-  final dataFinal = DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.now());
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    chamandoApiReq().retornarItensProtocoloId(widget.id).then((value) {
-      tipoScroll = value;
-    });
   }
 
   @override
   void dispose() {
     debugPrint('Dispose Finalizacao');
+    criarProtocoloState.scrollController = ScrollController();
+
     super.dispose();
-  }
-
-  scrollTo(int index) async {
-    final listaKeyScroll =
-        context.read<ProtocoloModelo>().listaKey[index].currentContext!;
-    await Scrollable.ensureVisible(
-      listaKeyScroll,
-      duration: const Duration(milliseconds: 600),
-    );
-    //Timer(Duration(milliseconds: 630),(){
-// setState(() {
-//       context.read<ProtocoloModelo>().listaDeCoresCheck[index] = Colors.red;
-//     });
-    // } );
-  }
-
-  scrollToTop() async {
-    _scrollController.animateTo(0,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.fastOutSlowIn);
-  }
-
-  scrollToBottom() async {
-    var data = await tipoScroll;
-    ItensProtocolo dataId = data[1] as ItensProtocolo;
-
-    double time = dataId.itemveiculo.toString() != '2' ? 8000 : 20000;
-    _scrollController.animateTo(time,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.fastOutSlowIn);
-  }
-
-  Future dadosDoTipo(String tipo, BuildContext context) async {
-    var result = await context
-        .read<chamandoApiReq>()
-        .retornarSeMotoOuCarroPorBooleano(tipo);
-    return result;
-  }
-
-  List<String> pegarDadosItensStatus(List<dynamic> lista) {
-    List<String>? listaItens = [];
-
-    for (ItensProtocolo item in lista) {
-      if (item.protocolo == widget.id) {
-        listaItens.add(item.valor!);
-      }
-    }
-
-    return listaItens;
-
-    //atenção na lista que está add mais imagens que o permitido pois a lista não está reiniciando
   }
 
   List<String> pegarImgPorStatus(List<dynamic> lista) {
@@ -141,19 +82,19 @@ class _FinalizacaoState extends State<Finalizacao> {
     }
 
     if (response.isTapConfirmButton) {
-      String assinaturaFinal = await context
-          .read<ProtocoloModelo>()
-          .controller
+      String assinaturaFinal = await criarProtocoloState
+          .assinaturaController.value
           .toPngBytes()
           .then((value) {
         final Uint8List data = value!;
         String base64Image = base64Encode(data);
         return base64Image;
       });
-      EndProtocolo().addFormProtocoloEnd(widget.id, dataFinal,
-          context.read<LoginController>().username, assinaturaFinal);
-
-      context.read<ProtocoloModelo>().endFormItensProtocolo();
+      criarProtocoloState.addFormProtocoloEnd(
+          widget.id,
+          DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.now()),
+          loginControllerState.username,
+          assinaturaFinal);
 
       //FALTAR FINALIZAR OS FORM DE FINALIZACAO
       Navigator.pop(context);
@@ -235,10 +176,6 @@ class _FinalizacaoState extends State<Finalizacao> {
   Widget build(BuildContext context) {
     debugPrint('Build Finalizacao');
 
-    context.read<ProtocoloModelo>().idFinalProtocolo = widget.id;
-    context.read<ProtocoloModelo>().listaItensProtocolo.clear();
-    context.read<ProtocoloModelo>().controller.clear();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Finalização de Protocolo'),
@@ -248,7 +185,7 @@ class _FinalizacaoState extends State<Finalizacao> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           FloatingActionButton.small(
-            onPressed: (() => scrollToTop()),
+            onPressed: (() => criarProtocoloState.scrollToTop()),
             child: const Icon(Icons.arrow_upward),
             heroTag: null,
           ),
@@ -257,20 +194,21 @@ class _FinalizacaoState extends State<Finalizacao> {
           ),
           FloatingActionButton.small(
             heroTag: null,
-            onPressed: (() => scrollToBottom()),
+            onPressed: (() => criarProtocoloState.scrollToBottom()),
             child: const Icon(Icons.arrow_downward),
           ),
         ],
       ),
       body: SingleChildScrollView(
-        controller: _scrollController,
+        controller: criarProtocoloState.scrollController,
         child: Column(children: [
           SizedBox(
             height: 350,
             child: Container(
                 padding: const EdgeInsets.all(20),
                 child: FutureBuilder(
-                  future: chamandoApiReq().retornarProtocolosPorId(widget.id),
+                  future:
+                      chamandoApiReqState.retornarProtocolosPorId(widget.id),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
                       return Text('...');
@@ -365,7 +303,6 @@ class _FinalizacaoState extends State<Finalizacao> {
                               '2'
                           ? '0'
                           : '1';
-                 
 
                   return Column(
                     children: [
@@ -388,7 +325,8 @@ class _FinalizacaoState extends State<Finalizacao> {
                       Padding(
                         padding: const EdgeInsets.all(20.0),
                         child: FutureBuilder(
-                          future: dadosDoTipo(tipoVeiculo, context),
+                          future: criarProtocoloState.dadosDoTipo(
+                              tipoVeiculo, context),
                           builder: ((context, snapshot) {
                             //resolver problema nullo
 
@@ -419,8 +357,10 @@ class _FinalizacaoState extends State<Finalizacao> {
                                             data[index].descricao.toString()),
                                         subtitle: editarStatusConformeInput(
                                             data,
-                                            pegarDadosItensStatus(
-                                                listaItensProtocoloId),
+                                            criarProtocoloState
+                                                .pegarDadosItensStatus(
+                                                    listaItensProtocoloId,
+                                                    widget.id),
                                             index),
                                         onTap: () {
                                           ArtSweetAlert.show(
@@ -455,6 +395,7 @@ class _FinalizacaoState extends State<Finalizacao> {
                       VeiculoForm(
                         placa: tipoVeiculo,
                       ),
+                      Assinatura(),
                       const SizedBox(
                         height: 20.0,
                       ),
@@ -471,21 +412,17 @@ class _FinalizacaoState extends State<Finalizacao> {
                                     borderRadius: BorderRadius.circular(15)),
                                 primary: Colors.green),
                             onPressed: () async {
-                              var tamanhoVeiculo =
-                                  await dadosDoTipo(tipoVeiculo, context);
-                              var listaItensDoVeiculo = context
-                                  .read<ProtocoloModelo>()
-                                  .listaItensProtocolo;
+                              var tamanhoVeiculo = await criarProtocoloState
+                                  .dadosDoTipo(tipoVeiculo, context);
+                              var listaItensDoVeiculo =
+                                  criarProtocoloState.listaItensProtocolo.value;
 
-                              if (context
-                                      .read<ProtocoloModelo>()
-                                      .controller
-                                      .isEmpty ||
+                              if (criarProtocoloState
+                                      .assinaturaController.value.isEmpty ||
                                   tamanhoVeiculo.length !=
                                       listaItensDoVeiculo.length) {
-                                List<ItensProtocolo> listaOrganizada = context
-                                    .read<ProtocoloModelo>()
-                                    .listaItensProtocolo;
+                                List<ItensProtocolo> listaOrganizada =
+                                    listaItensDoVeiculo;
                                 List<String> listaCheckIdLista = [];
                                 List<String> listaCheckIdVeiculo = [];
                                 for (var item in tamanhoVeiculo) {
@@ -500,7 +437,8 @@ class _FinalizacaoState extends State<Finalizacao> {
                                   if (listaCheckIdVeiculo.contains(item)) {
                                     debugPrint('True');
                                   } else {
-                                    scrollTo(listaCheckIdLista.indexOf(item));
+                                    criarProtocoloState.scrollTo(
+                                        listaCheckIdLista.indexOf(item));
                                   }
                                 }
                                 if (listaCheckIdVeiculo.length ==

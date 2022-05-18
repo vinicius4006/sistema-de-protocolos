@@ -17,7 +17,7 @@ class CheckOps extends StatefulWidget {
 
 class _CheckOpsState extends State<CheckOps> {
   late List<String> listaProntaParamentros;
-   List<int> checkSelect = [];
+  List<int> checkSelect = [];
   List<bool> changeLista = [];
   List<Color> listColor = [
     Colors.red,
@@ -48,7 +48,7 @@ class _CheckOpsState extends State<CheckOps> {
   void itemChange(bool val, int index) {
     setState(() {
       changeLista[index] = val;
-      //context.read<ProtocoloModelo>().changeListaVerificacao[index] = val;
+
       if (changeLista[index]) {
         checkSelect.add(index);
       } else {
@@ -95,7 +95,6 @@ class _CheckOpsState extends State<CheckOps> {
                   GFCheckbox(
                     activeBgColor: listColor[index],
                     onChanged: (val) {
-
                       setState(() {
                         itemChange(val, index);
                       });

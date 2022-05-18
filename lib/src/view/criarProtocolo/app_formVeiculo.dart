@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
 import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
-import 'package:protocolo_app/src/controllers/startProtocolo_controller.dart';
 import 'package:protocolo_app/src/shared/models/itensVeiculo.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/app_Card.dart';
-import 'package:provider/provider.dart';
 
 class VeiculoForm extends StatefulWidget {
   VeiculoForm({Key? key, this.placa}) : super(key: key);
@@ -17,7 +15,6 @@ class VeiculoForm extends StatefulWidget {
 
 class _VeiculoFormState extends State<VeiculoForm> {
   final bool _loading = true;
-  
 
   @override
   void initState() {
@@ -29,17 +26,15 @@ class _VeiculoFormState extends State<VeiculoForm> {
     super.dispose();
     criarProtocoloState.listaItensProtocolo.value.clear();
     criarProtocoloState.excluirFoto();
+    criarProtocoloState.changeButton.value.clear();
+    criarProtocoloState.assinaturaController.dispose;
+    criarProtocoloState.listaCoresCard.value.clear();
+    criarProtocoloState.listaKey.clear();
     debugPrint('Dispose VeiculoForm');
   }
 
-  scrollTo(int index) async {
-    final listaKeyScroll = context.read<ProtocoloModelo>().listaKey[index].currentContext!;
-    await Scrollable.ensureVisible(listaKeyScroll, duration: const Duration(milliseconds: 600),);
-  }
- 
   //--------------------------A FUNCAO PEDE UM PARAMETRO PARA EXIBIR A LISTA DE CARD
   Widget exibirListaDeCard(List<ItensVeiculos>? data) {
-    
     try {
       return Column(children: [
         data![2].tipoVeiculo == '0'
@@ -50,27 +45,23 @@ class _VeiculoFormState extends State<VeiculoForm> {
         const SizedBox(
           height: 20.0,
         ),
-       
         ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
             itemCount: data.length,
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
-       
             itemBuilder: (context, index) {
-             context.read<ProtocoloModelo>().listaKey.add(GlobalKey());
-             context.read<ProtocoloModelo>().listaDeCoresCheck.add(Colors.green);
+              criarProtocoloState.listaKey.add(GlobalKey());
+              criarProtocoloState.listaCoresCard.value.add(Colors.green);
               return CardForm(
-               //key: context.read<ProtocoloModelo>().listaKey[index],
-               indexGlobal: index,
+                key: criarProtocoloState.listaKey[index],
+                indexGlobal: index,
                 title: data[index].descricao.toString(),
                 ops: data[index].parametros.toString(),
                 input: data[index].input.toString(),
                 numCat: data[index].id.toString(),
-                color: context.read<ProtocoloModelo>().listaDeCoresCheck[index],
               );
             }),
-
       ]);
     } catch (e) {
       debugPrint('Motivo do Erro ao fazer lista de cards: $e');
@@ -80,20 +71,14 @@ class _VeiculoFormState extends State<VeiculoForm> {
   }
 
   Widget showAll() {
-    // for(var item in context.read<ProtocoloModelo>().listaKey){
-    //   debugPrint('QUANDO CARREGA: ${item.currentContext}');
-    // }
     if (widget.placa == null) {
       return const CircularProgressIndicator();
     } else {
-      
       return FutureBuilder(
           future: widget.placa!.length > 1
-              ? context
-                  .read<chamandoApiReq>()
+              ? chamandoApiReqState
                   .retornarSeMotoOuCarro(int.parse(widget.placa!.substring(10)))
-              : context
-                  .read<chamandoApiReq>()
+              : chamandoApiReqState
                   .retornarSeMotoOuCarroPorBooleano(widget.placa.toString()),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
@@ -108,7 +93,10 @@ class _VeiculoFormState extends State<VeiculoForm> {
               ));
             } else {
               return Center(
-                child: Text('Iniciando...', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 36),),
+                child: Text(
+                  'Iniciando...',
+                  style: TextStyle(fontWeight: FontWeight.w900, fontSize: 36),
+                ),
               );
             }
           });

@@ -11,18 +11,19 @@ class LoginProtocolo extends StatefulWidget {
   State<LoginProtocolo> createState() => _LoginState();
 }
 
-
-
 class _LoginState extends State<LoginProtocolo> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
-@override
-void dispose() {
-  debugPrint('Dispose Login');
-  super.dispose();
-}
+  @override
+  void dispose() {
+    debugPrint('Dispose Login');
+    super.dispose();
+  }
 
-
-  
   @override
   Widget build(BuildContext context) {
     debugPrint('Build Login');
@@ -53,7 +54,7 @@ void dispose() {
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children:  const <Widget>[
+                    children: <Widget>[
                       Text(
                         'Entrar',
                         style: TextStyle(
@@ -61,28 +62,32 @@ void dispose() {
                             fontSize: 40,
                             fontWeight: FontWeight.bold),
                       ),
-                      SizedBox(height: 50,),
+                      SizedBox(
+                        height: 50,
+                      ),
                       Username(),
-                      SizedBox(height: 20,),
+                      SizedBox(
+                        height: 20,
+                      ),
                       Password(),
-                      SizedBox(height: 20,),
-                      Entrar()
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Entrar(),
                     ],
                   ),
                 ),
               ),
               Positioned(
-                top: 550,
-                left: 140,
-                width: 110,
-                height: 200,
-                child: Container(
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(image: AssetImage('assets/logo.png'))
-                  ),
-                 
-                  )
-              )
+                  top: 550,
+                  left: 140,
+                  width: 110,
+                  height: 200,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage('assets/logo.png'))),
+                  ))
             ],
           ),
         ),

@@ -4,7 +4,6 @@ import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:protocolo_app/src/controllers/login_controller.dart';
-import 'package:provider/provider.dart';
 
 import '../homepage/homePage.dart';
 
@@ -23,18 +22,18 @@ class _EntrarState extends State<Entrar> {
     debugPrint('Dispose Entrar-Button');
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     debugPrint('Build Entrar-Button');
-    var readContext = context.read<LoginController>();
-    var watchContext = context.watch<LoginController>();
 
     Future entrarProtocolo() async {
       FocusScopeNode currentFocus = FocusScope.of(context);
       if (!currentFocus.hasPrimaryFocus) {
         currentFocus.unfocus();
       }
-      if (watchContext.username.isEmpty || watchContext.password.isEmpty) {
+      if (loginControllerState.username.isEmpty ||
+          loginControllerState.password.isEmpty) {
         ArtSweetAlert.show(
             context: context,
             artDialogArgs: ArtDialogArgs(
@@ -42,7 +41,7 @@ class _EntrarState extends State<Entrar> {
                 title: "Oops...",
                 text: "Algum campo não está preenchido"));
       } else {
-        watchContext.login().then((value) {
+        loginControllerState.login().then((value) {
           if (value) {
             showDialog(
                 context: context,
@@ -84,7 +83,8 @@ class _EntrarState extends State<Entrar> {
                 artDialogArgs: ArtDialogArgs(
                     type: ArtSweetAlertType.danger,
                     title: "Usuário ou senha incorreta",
-                    text: "Se o problema persistir provavelmente o servidor se encontra OFFLINE"));
+                    text:
+                        "Se o problema persistir provavelmente o servidor se encontra OFFLINE"));
           }
         });
       }

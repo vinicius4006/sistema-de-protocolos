@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
 
 import 'package:protocolo_app/src/view/criarProtocolo/appCamera.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/appCheckOps.dart';
@@ -12,7 +13,6 @@ class CardForm extends StatefulWidget {
       required this.title,
       required this.ops,
       required this.input,
-      required this.color,
       required this.indexGlobal,
       this.numCat = ''})
       : super(key: key);
@@ -22,7 +22,6 @@ class CardForm extends StatefulWidget {
   final String input;
   final String numCat;
   final int indexGlobal;
-  Color color;
 
   @override
   State<CardForm> createState() => _CardFormState();
@@ -32,6 +31,7 @@ class _CardFormState extends State<CardForm> {
   @override
   void initState() {
     super.initState();
+    criarProtocoloState.changeButton.value.add(false);
   }
 
   @override
@@ -60,7 +60,6 @@ class _CardFormState extends State<CardForm> {
   @override
   Widget build(BuildContext context) {
     log('Build CardForm');
-
     return Container(
       padding: const EdgeInsets.all(10),
       child: Card(
@@ -77,10 +76,14 @@ class _CardFormState extends State<CardForm> {
                 borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(10),
                     topRight: Radius.circular(10)),
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 40,
-                  color: widget.color,
+                child: ValueListenableBuilder(
+                  valueListenable: criarProtocoloState.listaCoresCard,
+                  builder: (context, List<Color> listaCoresCard, _) =>
+                      Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 40,
+                    color: listaCoresCard[widget.indexGlobal],
+                  ),
                 ),
               ),
               Container(
@@ -111,28 +114,55 @@ class _CardFormState extends State<CardForm> {
             Container(
               padding: const EdgeInsets.symmetric(vertical: 25),
               width: 200,
-              child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      elevation: 5,
-                      padding: const EdgeInsets.all(15),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15)),
-                      primary: Theme.of(context).primaryColor),
-                  onPressed: (() {
-                    showModalBottomSheet(
-                        context: context,
-                        builder: (context) {
-                          return Camera(
-                              input: widget.input, numCat: widget.numCat);
-                        });
-                  }),
-                  child: Text(
-                    'Tire a Foto',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18),
-                  )),
+              child: ValueListenableBuilder(
+                valueListenable: criarProtocoloState.changeButton,
+                builder: (context, List<bool> change, _) {
+                  if (change[widget.indexGlobal]) {
+                    return ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            elevation: 5,
+                            padding: const EdgeInsets.all(15),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15)),
+                            primary: Theme.of(context).primaryColor),
+                        onPressed: () {
+                          criarProtocoloState.exibirFotoTemporaria(
+                              widget.numCat, context, widget.indexGlobal);
+                        },
+                        child: Text('Mostrar Foto',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18)));
+                  } else {
+                    return ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            elevation: 5,
+                            padding: const EdgeInsets.all(15),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15)),
+                            primary: Theme.of(context).primaryColor),
+                        onPressed: (() {
+                          showModalBottomSheet(
+                              context: context,
+                              builder: (context) {
+                                return Camera(
+                                  input: widget.input,
+                                  numCat: widget.numCat,
+                                  indexGlobal: widget.indexGlobal,
+                                );
+                              });
+                        }),
+                        child: Text(
+                          'Tire a Foto',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18),
+                        ));
+                  }
+                },
+              ),
             ),
           ],
         ),

@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io' as io;
@@ -8,11 +7,16 @@ import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
 import 'package:protocolo_app/src/shared/models/itens_protocolo.dart';
 
 class Camera extends StatefulWidget {
-  Camera({Key? key, required this.input, required this.numCat})
+  Camera(
+      {Key? key,
+      required this.input,
+      required this.numCat,
+      required this.indexGlobal})
       : super(key: key);
 
   String input;
   String numCat;
+  int indexGlobal;
   @override
   State<Camera> createState() => _CameraState();
 }
@@ -31,6 +35,7 @@ class _CameraState extends State<Camera> {
       if (file == null) return;
 
       criarProtocoloState.capturarPathFoto(file.path);
+      criarProtocoloState.trocarButton(widget.indexGlobal, true);
       List<int> imageBytes =
           io.File(criarProtocoloState.foto.value).readAsBytesSync();
       String base64Image = base64Encode(imageBytes);
@@ -56,6 +61,7 @@ class _CameraState extends State<Camera> {
       if (file == null) return;
 
       criarProtocoloState.capturarPathFoto(file.path);
+      criarProtocoloState.trocarButton(widget.indexGlobal, true);
       List<int> imageBytes =
           io.File(criarProtocoloState.foto.value).readAsBytesSync();
       String base64Image = base64Encode(imageBytes);
@@ -67,59 +73,6 @@ class _CameraState extends State<Camera> {
     } catch (e) {
       print('Falha em capturar a imagem: $e');
     }
-  }
-
-  _showPhoto() {
-    return ArtSweetAlert.show(
-        context: context,
-        artDialogArgs: ArtDialogArgs(title: "Foto tirada", customColumns: [
-          Container(
-            margin: const EdgeInsets.only(bottom: 12.0),
-            child: Image.file(
-              io.File(criarProtocoloState.foto.value.toString()),
-            ),
-          )
-        ]));
-    // return showModalBottomSheet(
-    //     context: context,
-    //     builder: (context) {
-    //       return Column(
-    //         children: [
-    //           ElevatedButton.icon(
-    //               onPressed: () {
-    //                 setState(() {
-    //                   //_path = null;
-    //                   // if (input == 'radio') {
-    //                   //   Timer(const Duration(seconds: 1), () async {
-    //                   //     context.read<ProtocoloModelo>().addFormItensProtocolo(
-    //                   //         widget.numCat,
-    //                   //         indexRadio,
-    //                   //         context.watch<ProtocoloModelo>().inicioIsFalse
-    //                   //             ? 'f'
-    //                   //             : 't',
-    //                   //         '');
-    //                   //   });
-    //                   // } else {
-    //                   //   Timer(const Duration(seconds: 1), () async {
-    //                   //     context.read<ProtocoloModelo>().addFormItensProtocolo(
-    //                   //         widget.numCat,
-    //                   //         checkSelect,
-    //                   //         context.watch<ProtocoloModelo>().inicioIsFalse
-    //                   //             ? 'f'
-    //                   //             : 't',
-    //                   //         '');
-    //                   //   });
-    //                   // }
-    //                 });
-    //               },
-    //               icon: const Icon(Icons.delete),
-    //               label: const Text('Excluir Foto')),
-    //           Image.file(
-    //             io.File(criarProtocoloState.foto.value.toString()),
-    //           ),
-    //         ],
-    //       );
-    //     });
   }
 
   @override
@@ -144,7 +97,16 @@ class _CameraState extends State<Camera> {
             Navigator.pop(context);
           },
         ),
-        
+        // ListTile(
+        //   leading: const Icon(Icons.photo_camera_back),
+        //   title: const Text('Mostrar Foto'),
+        //   onTap: () {
+        //     _showPhoto(criarProtocoloState
+        //         .listaItensProtocolo.value[widget.indexGlobal].imagem
+        //         .toString());
+        //     Navigator.pop(context);
+        //   },
+        // ),
       ]),
     );
   }

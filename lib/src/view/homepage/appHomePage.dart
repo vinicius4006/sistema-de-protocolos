@@ -21,7 +21,6 @@ class HomePage extends StatefulWidget {
 class _MainHomeState extends State<HomePage> {
   final df = DateFormat('dd-MM-yyyy hh:mm a');
 
-
   @override
   void initState() {
     // TODO: implement initState
@@ -80,21 +79,15 @@ class _MainHomeState extends State<HomePage> {
         const Duration(seconds: 2),
         onTimeout: () => Navigator.pop(context),
       );
-      // context.read<ProtocoloModelo>().listaKey.clear();
-      // context.read<ProtocoloModelo>().listaDeCoresCheck.clear();
 
       Timer(const Duration(seconds: 2), () {
-        Navigator.of(context)
-            .push(MaterialPageRoute(
-                builder: (context) => Finalizacao(
-                      id: id,
-                    )));
-          
-
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => Finalizacao(
+                  id: id,
+                )));
       });
       return;
     } else if (response.isTapConfirmButton && protocoloCheck[0].fim != null) {
-
       ArtSweetAlert.show(
           context: context,
           artDialogArgs: ArtDialogArgs(
@@ -128,7 +121,7 @@ class _MainHomeState extends State<HomePage> {
           );
         } else {
           List<Protocolo> listaProtocolo = (snapshot.data as List<Protocolo>);
-              homePageState.protocoloFilter('', listaProtocolo);
+          homePageState.protocoloFilter('', listaProtocolo);
           return Padding(
             padding: const EdgeInsets.all(10),
             child: Column(children: [
@@ -188,7 +181,8 @@ class _MainHomeState extends State<HomePage> {
                               ),
                               onTap: () {
                                 menuProtocolo(
-                                    protocoloFiltro[index].id.toString(), protocoloFiltro);
+                                    protocoloFiltro[index].id.toString(),
+                                    protocoloFiltro);
                               },
                             ),
                           ),

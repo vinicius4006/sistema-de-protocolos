@@ -5,7 +5,8 @@ import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
 import 'package:protocolo_app/src/shared/models/itens_protocolo.dart';
 
 class RadioOps extends StatefulWidget {
-   RadioOps({Key? key, required this.listaParametros, required this.numCat}) : super(key: key);
+  RadioOps({Key? key, required this.listaParametros, required this.numCat})
+      : super(key: key);
 
   String listaParametros;
   String numCat;
@@ -14,30 +15,30 @@ class RadioOps extends StatefulWidget {
 }
 
 class _RadioOpsState extends State<RadioOps> {
-late List<String> listaProntaParamentros;
-late int select;
-@override
+  late List<String> listaProntaParamentros;
+  late int select;
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    var separateString = widget.listaParametros.replaceAll('[', ''); //Isso aqui pode mudar
+    var separateString =
+        widget.listaParametros.replaceAll('[', ''); //Isso aqui pode mudar
     separateString = separateString.replaceAll(']', '');
     separateString = separateString.replaceAll('"', '');
-     listaProntaParamentros = separateString.split(',');
-     select = -1;
+    listaProntaParamentros = separateString.split(',');
+    select = -1;
   }
-
-
 
   @override
   void dispose() {
     log('Dispose RadioOps');
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     log('Build RadioOps');
-     return ListView.builder(
+    return ListView.builder(
         physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         itemCount: listaProntaParamentros.length,
@@ -49,28 +50,27 @@ late int select;
                     Border.all(color: Theme.of(context).primaryColor, width: 2),
                 borderRadius: BorderRadius.circular(12)),
             child: RadioListTile(
-                title: Text(
-                  listaProntaParamentros[index],
-                  style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w700,
-                      color: Theme.of(context).primaryColor),
-                ),
-                activeColor: Theme.of(context).primaryColor,
-                value: index,
-                groupValue: select,
-                onChanged: (value) {
-                  debugPrint('Mostrar Primeiro: $value');
-                    criarProtocoloState.addFormItensProtocolo(ItensProtocolo(imagem: '', inicio: 't', itemveiculo: widget.numCat, valor: (value as int).toString()));
-                  setState(() {
-                    select = value;
-                  });
-                  
-                },
+              title: Text(
+                listaProntaParamentros[index],
+                style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                    color: Theme.of(context).primaryColor),
               ),
-             
-          
-           
+              activeColor: Theme.of(context).primaryColor,
+              value: index,
+              groupValue: select,
+              onChanged: (value) {
+                criarProtocoloState.addFormItensProtocolo(ItensProtocolo(
+                    imagem: '',
+                    inicio: 't',
+                    itemveiculo: widget.numCat,
+                    valor: (value as int).toString()));
+                setState(() {
+                  select = value;
+                });
+              },
+            ),
           );
         });
   }

@@ -5,10 +5,8 @@ import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/criarProtocolo.dart';
 import 'package:protocolo_app/src/view/homepage/appHomePage.dart';
 import 'package:protocolo_app/src/view/login/login.dart';
-import 'package:provider/provider.dart';
 
 import '../../controllers/login_controller.dart';
-import '../../controllers/startProtocolo_controller.dart';
 import '../../shared/models/protocolo.dart';
 
 class Home extends StatefulWidget {
@@ -42,7 +40,6 @@ class _HomeState extends State<Home> {
             return IconButton(
                 onPressed: () {
                   _telaCriarProtocolo(context);
-                  context.read<ProtocoloModelo>().inicioIsFalse = false;
                 },
                 icon: const Icon(Icons.add_outlined));
           }),
@@ -66,15 +63,9 @@ class _HomeState extends State<Home> {
                     if (response.isTapConfirmButton) {
                       Route route = MaterialPageRoute(
                           builder: (context) => const LoginProtocolo());
-                      context.read<LoginController>().reset();
-                      context
-                          .read<LoginController>()
-                          .controllerUsername
-                          .clear();
-                      context
-                          .read<LoginController>()
-                          .controllerPassword
-                          .clear();
+                      loginControllerState.reset();
+                      loginControllerState.controllerUsername.value.clear();
+                      loginControllerState.controllerPassword.value.clear();
                       Navigator.pop(context, route);
 
                       return;

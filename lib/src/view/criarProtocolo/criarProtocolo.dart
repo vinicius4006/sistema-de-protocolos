@@ -1,16 +1,12 @@
-import 'dart:async';
 import 'dart:convert';
-import 'dart:developer' as dev;
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
 import 'package:protocolo_app/src/controllers/login_controller.dart';
-import 'package:protocolo_app/src/controllers/startProtocolo_controller.dart';
 
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
@@ -18,7 +14,6 @@ import 'package:protocolo_app/src/shared/models/itens_protocolo.dart';
 import 'package:protocolo_app/src/shared/models/protocolo.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/app_Assinatura.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/app_formVeiculo.dart';
-import 'package:provider/provider.dart';
 
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 
@@ -31,88 +26,23 @@ class CriarProtocolo extends StatefulWidget {
 
 class _CriarProtocoloState extends State<CriarProtocolo> {
   // List<String> motoristas = [''];
-  List<String> veiculos = [''];
-
-
-  bool _loading = true;
   GlobalKey<ArtDialogState>? _artDialogKey;
-  ProtocoloModelo protocoloModelo = ProtocoloModelo();
-  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     _artDialogKey = GlobalKey<ArtDialogState>();
-
-    loopVeiculo(VeiculoData().loadPlacas());
-
     super.initState();
   }
 
   @override
   void dispose() {
-    veiculoSelecionar.dispose();
+    chamandoApiReqState.veiculoSelecionar.value.clear();
+    chamandoApiReqState.veiculos.clear();
     criarProtocoloState.resetVeiculoSelecionado();
-
-
+    criarProtocoloState.scrollController = ScrollController();
     super.dispose();
     debugPrint('Dispose CriarProtocolo');
   }
-
-  scrollTo(int index) async {
-    debugPrint('Scroll Index: ${index}');
-    // Timer(Duration(milliseconds: 580), () {
-    //   setState(() {
-    //     context.read<ProtocoloModelo>().listaDeCoresCheck[index] = Colors.red;
-    //   });
-    // });
-
-    final listaKeyScroll =
-        context.read<ProtocoloModelo>().listaKey[index].currentContext!;
-
-    await Scrollable.ensureVisible(
-      listaKeyScroll,
-      duration: const Duration(milliseconds: 600),
-    );
-  }
-
-  scrollToTop() async {
-    _scrollController.animateTo(0,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.fastOutSlowIn);
-
-        for(var item in criarProtocoloState.listaItensProtocolo.value){
-          dev.log('ITEM: ${item.toJson()}');
-        }
-  }
-
-  scrollToBottom() async {
-    try{
-var data = await context.read<chamandoApiReq>().retornarSeMotoOuCarro(
-        int.parse(criarProtocoloState.veiculoSelecionado.value.substring(10)));
-    double time = data[1]['id'] != '2' ? 8000 : 20000;
-    _scrollController.animateTo(time,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.fastOutSlowIn);
-    } catch(e) {
-      debugPrint('Motivo de não rolar: $e');
-    }
-    
-  }
-
-  loopVeiculo(Future lista) async {
-    for (var item in await lista) {
-      veiculos.add(item['placa'] + ' - ' + item['id']);
-    }
-  }
-
-  Future<List<Protocolo>> retornarProtocolos() async {
-    final responseTodosOsProtocolos = await Dio().get('$URLSERVER/protocolos');
-    return responseTodosOsProtocolos.data;
-  }
-
-  final veiculoSelecionar = TextEditingController();
-
-  var data;
 
   DateTime now = DateTime.now();
 
@@ -136,7 +66,7 @@ var data = await context.read<chamandoApiReq>().retornarSeMotoOuCarro(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             FloatingActionButton.small(
-              onPressed: (() => scrollToTop()),
+              onPressed: (() => criarProtocoloState.scrollToTop()),
               child: const Icon(Icons.arrow_upward),
               heroTag: null,
             ),
@@ -145,18 +75,18 @@ var data = await context.read<chamandoApiReq>().retornarSeMotoOuCarro(
             ),
             FloatingActionButton.small(
               heroTag: null,
-              onPressed: (() => scrollToBottom()),
+              onPressed: (() => criarProtocoloState.scrollToBottom()),
               child: const Icon(Icons.arrow_downward),
             ),
           ],
         ),
         body: Form(
-          key: context.read<ProtocoloModelo>().formKey,
+          key: criarProtocoloState.formKey,
           child: SizedBox(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             child: ListView(
-              controller: _scrollController,
+              controller: criarProtocoloState.scrollController,
               children: <Widget>[
                 const SizedBox(
                   height: 20.0,
@@ -193,32 +123,32 @@ var data = await context.read<chamandoApiReq>().retornarSeMotoOuCarro(
                 const SizedBox(
                   height: 20.0,
                 ),
-                CustomDropdown.search(
-                  controller: veiculoSelecionar,
-                  hintText: 'Selecione o Veículo',
-                  excludeSelected: false,
-                  items: veiculos,
-                  onChanged: (value) {
-                    criarProtocoloState.changeVeiculoSelecionado(value);
-                    context.read<ProtocoloModelo>().listaItensProtocolo.clear();
-                    context.read<ProtocoloModelo>().listaKey.clear();
-                    context.read<ProtocoloModelo>().controller.clear();
-                    //verficar se está limpando msm, mudar essas variaveis de reset
-                    context.read<ProtocoloModelo>().selectRadioVerificacao = -1;
-                    context.read<ProtocoloModelo>().changeListaVerificacao = [
-                      false
-                    ];
-                    // setState(() {
-                    //   veiculoSelecionado = value;
-                    //   context.read<ProtocoloModelo>().listaDeCoresCheck.clear();
-
-                    //   // data = context
-                    //   //     .read<chamandoApiReq>()
-                    //   //     .retornarSeMotoOuCarro(
-                    //   //         int.parse(veiculoSelecionado.substring(10)));
-                    // });
-                  },
-                ),
+                FutureBuilder(
+                    future: chamandoApiReqState.loadPlacas(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return Center(
+                          child: Text(''),
+                        );
+                      } else {
+                        return ValueListenableBuilder(
+                          valueListenable:
+                              chamandoApiReqState.veiculoSelecionar,
+                          builder: (context,
+                                  TextEditingController veiculoSelecionar, _) =>
+                              CustomDropdown.search(
+                            controller: veiculoSelecionar,
+                            hintText: 'Selecione o Veículo',
+                            excludeSelected: false,
+                            items: snapshot.data as List<String>,
+                            onChanged: (value) {
+                              criarProtocoloState
+                                  .changeVeiculoSelecionado(value);
+                            },
+                          ),
+                        );
+                      }
+                    }),
                 const SizedBox(
                   height: 20.0,
                 ),
@@ -242,7 +172,6 @@ var data = await context.read<chamandoApiReq>().retornarSeMotoOuCarro(
                               ),
                             ),
                 ),
-              
 
                 const SizedBox(
                   height: 20.0,
@@ -261,59 +190,41 @@ var data = await context.read<chamandoApiReq>().retornarSeMotoOuCarro(
                             primary: Theme.of(context).primaryColor),
                         onPressed: (() async {
                           try {
-                            var tamanhoVeiculo = await context
-                                .read<chamandoApiReq>()
+                            var tamanhoVeiculo = await chamandoApiReqState
                                 .retornarSeMotoOuCarro(int.parse(
                                     criarProtocoloState.veiculoSelecionado.value
                                         .substring(10)));
-                            var listaItensDoVeiculo = criarProtocoloState.listaItensProtocolo.value;
-                            if (context
-                                    .read<ProtocoloModelo>()
-                                    .formKey
-                                    .currentState!
+
+                            var listaItensDoVeiculo =
+                                criarProtocoloState.listaItensProtocolo.value;
+                            if (criarProtocoloState.formKey.currentState!
                                     .validate() &&
                                 listaItensDoVeiculo.length ==
                                     tamanhoVeiculo.length &&
-                                context
-                                    .read<ProtocoloModelo>()
-                                    .controller
-                                    .isNotEmpty) {
-                              String assinaturaInicial = await context
-                                  .read<ProtocoloModelo>()
-                                  .controller
-                                  .toPngBytes()
-                                  .then((value) {
+                                criarProtocoloState
+                                    .assinaturaController.value.isNotEmpty) {
+                              String assinaturaInicial =
+                                  await criarProtocoloState
+                                      .assinaturaController.value
+                                      .toPngBytes()
+                                      .then((value) {
                                 final Uint8List data = value!;
                                 String base64Image = base64Encode(data);
                                 return base64Image;
                               });
 
-                              // context.read<ProtocoloModelo>().addFormProtocolo(
-                              //     dataInicio,
-                              //     "",
-                              //     criarProtocoloState.veiculoSelecionado.value
-                              //         .substring(10),
-                              //     criarProtocoloState.veiculoSelecionado.value
-                              //         .substring(0, 7),
-                              //     "",
-                              //     "",
-                              //     "",
-                              //     "",
-                              //     context.read<LoginController>().username,
-                              //     "",
-                              //     assinaturaInicial,
-                              //     "");
-
                               criarProtocoloState.novoProtocolo(Protocolo(
-                                id: Random().nextInt(10000).toString(),
-                                inicio: DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.now()),
-                                veiculo: criarProtocoloState.veiculoSelecionado.value
-                                       .substring(10),
-                                placa: criarProtocoloState.veiculoSelecionado.value
-                                       .substring(0, 7),
-                                digitador: context.read<LoginController>().username,
-                                assinaturaInicial: assinaturaInicial
-                                ));
+                                  id: Random().nextInt(10000).toString(),
+                                  inicio: DateFormat('dd/MM/yyyy hh:mm a')
+                                      .format(DateTime.now()),
+                                  veiculo: criarProtocoloState
+                                      .veiculoSelecionado.value
+                                      .substring(10),
+                                  placa: criarProtocoloState
+                                      .veiculoSelecionado.value
+                                      .substring(0, 7),
+                                  digitador: loginControllerState.username,
+                                  assinaturaInicial: assinaturaInicial));
 
                               Navigator.of(context).pop();
                               ArtSweetAlert.show(
@@ -323,9 +234,8 @@ var data = await context.read<chamandoApiReq>().retornarSeMotoOuCarro(
                                     title: 'Protocolo Criado',
                                   ));
                             } else {
-                              List<ItensProtocolo> listaOrganizada = context
-                                  .read<ProtocoloModelo>()
-                                  .listaItensProtocolo;
+                              List<ItensProtocolo> listaOrganizada =
+                                  listaItensDoVeiculo;
                               List<String> listaCheckIdLista = [];
                               List<String> listaCheckIdVeiculo = [];
                               for (var item in tamanhoVeiculo) {
@@ -340,15 +250,11 @@ var data = await context.read<chamandoApiReq>().retornarSeMotoOuCarro(
                                 if (listaCheckIdVeiculo.contains(item)) {
                                   debugPrint('True');
                                 } else {
-                                  debugPrint(
-                                      'INDEX: ${listaCheckIdLista.indexOf(item)}');
-                                  scrollTo(listaCheckIdLista.indexOf(item));
+                                  criarProtocoloState.scrollTo(
+                                      listaCheckIdLista.indexOf(item));
                                 }
                               }
 
-                              for(var item in context.read<ProtocoloModelo>().listaItensProtocolo){
-                                debugPrint('${item.toJson()}');
-                              }
                               if (listaCheckIdVeiculo.length ==
                                   listaCheckIdLista.length) {
                                 ArtSweetAlert.show(
