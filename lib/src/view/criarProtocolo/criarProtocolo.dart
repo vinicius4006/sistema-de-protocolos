@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
@@ -40,6 +41,8 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
     chamandoApiReqState.veiculos.clear();
     criarProtocoloState.resetVeiculoSelecionado();
     criarProtocoloState.scrollController = ScrollController();
+    criarProtocoloState.assinaturaController.value.clear();
+    criarProtocoloState.scrollVisible.value = false;
     super.dispose();
     debugPrint('Dispose CriarProtocolo');
   }
@@ -62,23 +65,30 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
           centerTitle: true,
           title: const Text('Criação de Protocolo'),
         ),
-        floatingActionButton: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            FloatingActionButton.small(
-              onPressed: (() => criarProtocoloState.scrollToTop()),
-              child: const Icon(Icons.arrow_upward),
-              heroTag: null,
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            FloatingActionButton.small(
-              heroTag: null,
-              onPressed: (() => criarProtocoloState.scrollToBottom()),
-              child: const Icon(Icons.arrow_downward),
-            ),
-          ],
+        floatingActionButton: ValueListenableBuilder(
+          valueListenable: criarProtocoloState.scrollVisible,
+          builder: (context, bool scrollVisible, _) => scrollVisible
+              ? Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    FloatingActionButton.small(
+                      onPressed: (() => criarProtocoloState.scrollToTop()),
+                      child: const Icon(Icons.arrow_upward),
+                      heroTag: null,
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    FloatingActionButton.small(
+                      heroTag: null,
+                      onPressed: (() => criarProtocoloState.scrollToBottom(
+                          criarProtocoloState.listaKey[
+                              criarProtocoloState.listaKey.length - 1])),
+                      child: const Icon(Icons.arrow_downward),
+                    ),
+                  ],
+                )
+              : Text(''),
         ),
         body: Form(
           key: criarProtocoloState.formKey,
@@ -140,7 +150,15 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                                 VeiculoForm(
                                   placa: veiculoSelecionado,
                                 ),
-                                Assinatura(),
+                                FutureBuilder(
+                                    future: Future.delayed(Duration(seconds: 1),
+                                        () {
+                                      return true;
+                                    }),
+                                    builder: ((context, snapshot) =>
+                                        !snapshot.hasData
+                                            ? Text('')
+                                            : Assinatura())),
                               ],
                             )
                           : Center(

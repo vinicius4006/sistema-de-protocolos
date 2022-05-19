@@ -97,16 +97,6 @@ class _CameraState extends State<Camera> {
             Navigator.pop(context);
           },
         ),
-        // ListTile(
-        //   leading: const Icon(Icons.photo_camera_back),
-        //   title: const Text('Mostrar Foto'),
-        //   onTap: () {
-        //     _showPhoto(criarProtocoloState
-        //         .listaItensProtocolo.value[widget.indexGlobal].imagem
-        //         .toString());
-        //     Navigator.pop(context);
-        //   },
-        // ),
       ]),
     );
   }

@@ -26,6 +26,7 @@ class _CriarProtocolo extends ChangeNotifier {
           penColor: Colors.black,
           exportBackgroundColor: Colors.grey));
   final ValueNotifier<List<Color>> listaCoresCard = ValueNotifier([]);
+  final ValueNotifier<bool> scrollVisible = ValueNotifier(false);
 
   ScrollController scrollController = ScrollController();
   final GlobalKey<FormState> formKey = (GlobalKey<FormState>());
@@ -33,8 +34,10 @@ class _CriarProtocolo extends ChangeNotifier {
 
   changeVeiculoSelecionado(String veiculoNovo) {
     veiculoSelecionado.value = '';
+    scrollVisible.value = false;
     Timer(Duration(seconds: 2), () {
       veiculoSelecionado.value = veiculoNovo;
+      Timer(Duration(seconds: 2), () => scrollVisible.value = true);
     });
   }
 
@@ -233,11 +236,18 @@ class _CriarProtocolo extends ChangeNotifier {
         curve: Curves.fastOutSlowIn);
   }
 
-  scrollToBottom() async {
+  scrollToBottom(GlobalKey key) async {
     try {
-      scrollController.animateTo(scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.fastOutSlowIn);
+      final listaKeyScroll = key.currentContext!;
+
+      await Scrollable.ensureVisible(
+        listaKeyScroll,
+        duration: const Duration(milliseconds: 600),
+      );
+
+      // scrollController.animateTo(7000,
+      //     duration: const Duration(milliseconds: 500),
+      //     curve: Curves.fastOutSlowIn);
     } catch (e) {
       debugPrint('Motivo de não rolar: $e');
     }

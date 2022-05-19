@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
 import 'package:protocolo_app/src/view/finalizacaoProtocolo/appInfoItensProtocolo.dart';
@@ -17,12 +19,15 @@ class _FinalizacaoState extends State<Finalizacao> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    Timer(Duration(seconds: 2),
+        () => criarProtocoloState.scrollVisible.value = true);
   }
 
   @override
   void dispose() {
     debugPrint('Dispose Finalizacao');
     criarProtocoloState.scrollController = ScrollController();
+    criarProtocoloState.scrollVisible.value = false;
     super.dispose();
   }
 
@@ -36,23 +41,30 @@ class _FinalizacaoState extends State<Finalizacao> {
         title: const Text('Finalização de Protocolo'),
         centerTitle: true,
       ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          FloatingActionButton.small(
-            onPressed: (() => criarProtocoloState.scrollToTop()),
-            child: const Icon(Icons.arrow_upward),
-            heroTag: null,
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          FloatingActionButton.small(
-            heroTag: null,
-            onPressed: (() => criarProtocoloState.scrollToBottom()),
-            child: const Icon(Icons.arrow_downward),
-          ),
-        ],
+      floatingActionButton: ValueListenableBuilder(
+        valueListenable: criarProtocoloState.scrollVisible,
+        builder: (context, bool scrollVisible, _) => scrollVisible
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  FloatingActionButton.small(
+                    onPressed: (() => criarProtocoloState.scrollToTop()),
+                    child: const Icon(Icons.arrow_upward),
+                    heroTag: null,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  FloatingActionButton.small(
+                    heroTag: null,
+                    onPressed: (() => criarProtocoloState.scrollToBottom(
+                        criarProtocoloState.listaKey[
+                            criarProtocoloState.listaKey.length - 1])),
+                    child: const Icon(Icons.arrow_downward),
+                  ),
+                ],
+              )
+            : Text(''),
       ),
       body: SingleChildScrollView(
         controller: criarProtocoloState.scrollController,

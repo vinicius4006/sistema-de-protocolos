@@ -88,7 +88,8 @@ class _MainHomeState extends State<HomePage> {
       ArtSweetAlert.show(
           context: context,
           artDialogArgs: ArtDialogArgs(
-              type: ArtSweetAlertType.info, title: "Exibição em instantes!"));
+              type: ArtSweetAlertType.info,
+              title: "Sugestões do que exibir..."));
       return;
     }
   }
