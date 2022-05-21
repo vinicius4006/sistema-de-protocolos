@@ -4,6 +4,7 @@ import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
+import 'package:protocolo_app/src/controllers/login_controller.dart';
 
 import 'package:protocolo_app/src/shared/models/itens_protocolo.dart';
 import 'package:protocolo_app/src/shared/models/lista_itens_protocolo.dart';
@@ -149,7 +150,7 @@ class _CriarProtocolo extends ChangeNotifier {
     List<String>? listaImg = [];
 
     for (ItensProtocolo item in lista) {
-      if (item.protocolo == id) {
+      if (item.protocolo == id && item.imagem != null) {
         listaImg.add(item.imagem.toString());
       }
     }
@@ -221,6 +222,15 @@ class _CriarProtocolo extends ChangeNotifier {
     listaCoresCard.notifyListeners();
   }
 
+  trocarTodosPorGreen() {
+    // listaCoresCard.value.forEach((element) {
+    //   if (element == Colors.redAccent) {
+    //     element = Colors.green;
+    //   }
+    // });
+    // listaCoresCard.notifyListeners();
+  }
+
   scrollTo(int index) async {
     final listaKeyScroll = criarProtocoloState.listaKey[index].currentContext!;
     criarProtocoloState.trocarCordCardRed(index);
@@ -231,6 +241,7 @@ class _CriarProtocolo extends ChangeNotifier {
   }
 
   scrollToTop() async {
+    debugPrint('${loginControllerState.token}');
     scrollController.animateTo(0,
         duration: const Duration(milliseconds: 500),
         curve: Curves.fastOutSlowIn);

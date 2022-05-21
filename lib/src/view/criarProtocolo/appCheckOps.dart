@@ -46,6 +46,7 @@ class _CheckOpsState extends State<CheckOps> {
 
   //Verifico e excluo do array
   void itemChange(bool val, int index) {
+    criarProtocoloState.trocarTodosPorGreen();
     setState(() {
       changeLista[index] = val;
 

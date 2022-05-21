@@ -61,6 +61,7 @@ class _RadioOpsState extends State<RadioOps> {
               value: index,
               groupValue: select,
               onChanged: (value) {
+                criarProtocoloState.trocarTodosPorGreen();
                 criarProtocoloState.addFormItensProtocolo(ItensProtocolo(
                     imagem: '',
                     inicio: 't',

@@ -21,7 +21,7 @@ class _GetImagemBase64State extends State<GetImagemBase64> {
   Widget build(BuildContext context) {
     debugPrint('Build GetImagemBase64');
     if (widget.imagem64.isEmpty || widget.imagem64 == '') {
-      return const Text('Não foi tirado foto alguma');
+      return const Text('Não há imagem');
     } else {
       const Base64Codec base64 = Base64Codec();
       var bytes = base64.decode(widget.imagem64);

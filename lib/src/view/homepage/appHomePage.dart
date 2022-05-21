@@ -4,6 +4,7 @@ import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
 import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
 import 'package:protocolo_app/src/controllers/homePageController.dart';
 import 'package:protocolo_app/src/view/finalizacaoProtocolo/finalizacaoProtocolo.dart';
@@ -32,10 +33,7 @@ class _MainHomeState extends State<HomePage> {
     super.dispose();
   }
 
-  void menuProtocolo(String id, List<Protocolo> listaProtocolo) async {
-    var protocoloCheck =
-        listaProtocolo.where((element) => element.id == id).toList();
-    debugPrint('${protocoloCheck[0].fim}');
+  void menuProtocolo(String id) async {
     ArtDialogResponse response = await ArtSweetAlert.show(
         barrierDismissible: false,
         context: context,
@@ -44,15 +42,14 @@ class _MainHomeState extends State<HomePage> {
           denyButtonText: "Exibir",
           denyButtonColor: Colors.blueGrey,
           cancelButtonText: 'Cancelar',
-          confirmButtonText:
-              protocoloCheck[0].fim != null ? 'Imprimir' : 'Finalizar',
+          confirmButtonText: 'Finalizar',
         ));
 
     if (response == null) {
       return;
     }
 
-    if (response.isTapConfirmButton && protocoloCheck[0].fim == null) {
+    if (response.isTapConfirmButton) {
       showDialog(
           context: context,
           builder: (_) {
@@ -74,14 +71,6 @@ class _MainHomeState extends State<HomePage> {
                 )));
       });
       return;
-    } else if (response.isTapConfirmButton && protocoloCheck[0].fim != null) {
-      ArtSweetAlert.show(
-          context: context,
-          artDialogArgs: ArtDialogArgs(
-              type: ArtSweetAlertType.info,
-              title:
-                  "Imprimindo através da Júpiter I.A!\nNão se preoucupe \nEm breve estará na sua mesa"));
-      return;
     }
 
     if (response.isTapDenyButton) {
@@ -100,7 +89,7 @@ class _MainHomeState extends State<HomePage> {
 
     return Scaffold(
         body: FutureBuilder(
-      future: homePageState.retornarProtocolos(),
+      future: chamandoApiReqState.retornarProtocolos(true),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Center(
@@ -158,25 +147,30 @@ class _MainHomeState extends State<HomePage> {
                               ),
                               title: Text(
                                 'Placa: ' +
-                                    protocoloFiltro[index].placa.toString(),
+                                    homePageState.placaPorVeiculo(
+                                        protocoloFiltro[index]
+                                            .veiculo
+                                            .toString()),
                                 style: TextStyle(
                                     fontWeight: FontWeight.w700, fontSize: 20),
                               ),
                               subtitle: Text(
                                 '\n' 'Início: ' +
-                                    protocoloFiltro[index].inicio.toString() +
+                                    DateFormat('dd/MM/yyyy - kk:mm')
+                                        .format(DateTime.parse(
+                                            protocoloFiltro[index]
+                                                .inicio
+                                                .toString()))
+                                        .toString() +
                                     '\n'
                                         '\n'
-                                        'Final: ' +
-                                    (protocoloFiltro[index].fim ??
-                                            'Ainda não finalizado')
-                                        .toString(),
+                                        'Final: Ainda não finalizado',
                                 style: TextStyle(fontWeight: FontWeight.w900),
                               ),
                               onTap: () {
                                 menuProtocolo(
-                                    protocoloFiltro[index].id.toString(),
-                                    protocoloFiltro);
+                                  protocoloFiltro[index].id.toString(),
+                                );
                               },
                             ),
                           ),

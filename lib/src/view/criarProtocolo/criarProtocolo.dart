@@ -214,9 +214,6 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                                   veiculo: criarProtocoloState
                                       .veiculoSelecionado.value
                                       .substring(10),
-                                  placa: criarProtocoloState
-                                      .veiculoSelecionado.value
-                                      .substring(0, 7),
                                   digitador: loginControllerState.username,
                                   assinaturaInicial: assinaturaInicial));
 

@@ -14,8 +14,6 @@ class VeiculoForm extends StatefulWidget {
 }
 
 class _VeiculoFormState extends State<VeiculoForm> {
-  final bool _loading = true;
-
   @override
   void initState() {
     super.initState();

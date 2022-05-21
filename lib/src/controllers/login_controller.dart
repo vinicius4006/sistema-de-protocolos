@@ -7,6 +7,7 @@ const String URL =
 class _LoginController extends ChangeNotifier {
   String username = '';
   String password = '';
+  String token = '';
   final ValueNotifier<TextEditingController> controllerUsername =
       ValueNotifier(TextEditingController());
   final ValueNotifier<TextEditingController> controllerPassword =
@@ -18,7 +19,8 @@ class _LoginController extends ChangeNotifier {
   }
 
   Future<bool> login() async {
-    // LoginModel loginModel = LoginModel(username: username, password: password);
+    //conection
+
     final dio = Dio();
     Response response;
     FormData formData =
@@ -28,6 +30,7 @@ class _LoginController extends ChangeNotifier {
           data: formData,
           options: Options(contentType: Headers.formUrlEncodedContentType));
       if (response.data['token'] != null) {
+        token = response.data['token'];
         return true;
       } else {
         debugPrint('NAO DEU CERTO');

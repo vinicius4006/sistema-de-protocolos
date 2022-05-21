@@ -8,11 +8,9 @@ class Protocolo {
   String? nomemotorista;
   String? observacao;
   String? observacaoFinal;
-  String? placa;
   String? veiculo;
   String? assinaturaInicial;
   String? assinaturaFinal;
-  
 
   Protocolo(
       {this.digitador,
@@ -24,11 +22,9 @@ class Protocolo {
       this.nomemotorista,
       this.observacao,
       this.observacaoFinal,
-      this.placa,
       this.veiculo,
       this.assinaturaInicial,
-      this.assinaturaFinal
-      });
+      this.assinaturaFinal});
 
   Protocolo.fromJson(Map<String, dynamic> json) {
     digitador = json['digitador'];
@@ -40,7 +36,6 @@ class Protocolo {
     nomemotorista = json['nomemotorista'];
     observacao = json['observacao'];
     observacaoFinal = json['observacao_final'];
-    placa = json['placa'];
     veiculo = json['veiculo'];
     assinaturaInicial = json['assinaturaInicial'];
     assinaturaFinal = json['assinaturaFinal'];
@@ -57,7 +52,6 @@ class Protocolo {
     data['nomemotorista'] = nomemotorista;
     data['observacao'] = observacao;
     data['observacao_final'] = observacaoFinal;
-    data['placa'] = placa;
     data['veiculo'] = veiculo;
     data['assinaturaInicial'] = assinaturaInicial;
     data['assinaturaFinal'] = assinaturaFinal;

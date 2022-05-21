@@ -1,10 +1,12 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
 import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
 
 import 'package:protocolo_app/src/view/criarProtocolo/appCamera.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/appCheckOps.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/appRadioOps.dart';
+import 'package:protocolo_app/src/view/finalizacaoProtocolo/appStatusAnterior.dart';
 
 class CardForm extends StatefulWidget {
   CardForm(
@@ -81,6 +83,20 @@ class _CardFormState extends State<CardForm> {
                 ),
               ),
             ]),
+            const SizedBox(
+              height: 20,
+            ),
+            ValueListenableBuilder(
+                valueListenable: chamandoApiReqState.statusAnterior,
+                builder: (context, bool statusAnterior, _) {
+                  if (statusAnterior) {
+                    return StatusAnterior(
+                      indexGlobal: widget.indexGlobal,
+                    );
+                  } else {
+                    return Container();
+                  }
+                }),
             const SizedBox(
               height: 20,
             ),

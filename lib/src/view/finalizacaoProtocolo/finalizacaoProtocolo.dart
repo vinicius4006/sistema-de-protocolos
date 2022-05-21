@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
 import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
 import 'package:protocolo_app/src/view/finalizacaoProtocolo/appInfoItensProtocolo.dart';
 import 'package:protocolo_app/src/view/finalizacaoProtocolo/appInfoProtocolo.dart';
@@ -28,6 +29,7 @@ class _FinalizacaoState extends State<Finalizacao> {
     debugPrint('Dispose Finalizacao');
     criarProtocoloState.scrollController = ScrollController();
     criarProtocoloState.scrollVisible.value = false;
+    chamandoApiReqState.statusAnterior.value = false;
     super.dispose();
   }
 

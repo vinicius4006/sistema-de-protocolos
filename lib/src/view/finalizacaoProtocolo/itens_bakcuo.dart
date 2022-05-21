@@ -7,21 +7,24 @@ import 'package:intl/intl.dart';
 import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
 import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
 import 'package:protocolo_app/src/controllers/login_controller.dart';
+import 'package:protocolo_app/src/shared/models/itensVeiculo.dart';
 import 'package:protocolo_app/src/shared/models/itens_protocolo.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/app_Assinatura.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/app_formVeiculo.dart';
+import 'package:protocolo_app/src/view/finalizacaoProtocolo/appGetImagem.dart';
 
-class InfoItensProtocolo extends StatefulWidget {
-  InfoItensProtocolo({Key? key, required this.id}) : super(key: key);
+class InfoItensProtocoloBackup extends StatefulWidget {
+  InfoItensProtocoloBackup({Key? key, required this.id}) : super(key: key);
   String id;
   @override
-  State<InfoItensProtocolo> createState() => _InfoItensProtocoloState();
+  State<InfoItensProtocoloBackup> createState() =>
+      _InfoItensProtocoloBackupState();
 }
 
-class _InfoItensProtocoloState extends State<InfoItensProtocolo> {
+class _InfoItensProtocoloBackupState extends State<InfoItensProtocoloBackup> {
   @override
   void dispose() {
-    debugPrint('Dispose InfoItensProtocolo');
+    debugPrint('Dispose InfoItensProtocoloBackup');
     super.dispose();
   }
 
@@ -82,7 +85,7 @@ class _InfoItensProtocoloState extends State<InfoItensProtocolo> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('Build InfoItensProtocolo');
+    debugPrint('Build InfoItensProtocoloBackup');
     return FutureBuilder(
         future: chamandoApiReqState.retornarItensProtocoloId(widget.id),
         builder: ((context, snapshot) {
@@ -91,7 +94,7 @@ class _InfoItensProtocoloState extends State<InfoItensProtocolo> {
           } else {
             List<dynamic> listaItensProtocoloId =
                 snapshot.data as List<dynamic>;
-
+            debugPrint('${listaItensProtocoloId}');
             String tipoVeiculo =
                 (listaItensProtocoloId[1] as ItensProtocolo).itemveiculo == '2'
                     ? '0'
@@ -99,6 +102,92 @@ class _InfoItensProtocoloState extends State<InfoItensProtocolo> {
 
             return Column(
               children: [
+                const SizedBox(
+                  height: 20.0,
+                ),
+                const Text(
+                  'Status Inicial',
+                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.w400),
+                ),
+                Text(
+                  tipoVeiculo == '0' ? 'Carro' : 'Moto',
+                  style: const TextStyle(
+                      fontSize: 50, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(
+                  height: 20.0,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: FutureBuilder(
+                    future:
+                        criarProtocoloState.dadosDoTipo(tipoVeiculo, context),
+                    builder: ((context, snapshot) {
+                      //resolver problema nullo
+
+                      List<ItensVeiculos> data =
+                          ((snapshot.data ?? []) as List).map((item) {
+                        return ItensVeiculos.fromJson(item);
+                      }).toList();
+
+                      if (!snapshot.hasData) {
+                        return const Center(
+                            child: Text(
+                          '...',
+                          style: TextStyle(
+                              fontSize: 50, fontWeight: FontWeight.bold),
+                        ));
+                      } else {
+                        return ListView.builder(
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: data.length,
+                            itemBuilder: (context, index) {
+                              //debugPrint('Contando Tamanho: $index');
+                              return Card(
+                                elevation: 2,
+                                child: ListTile(
+                                  leading: const Icon(Icons.arrow_right),
+                                  title: Text('Descrição: ' +
+                                      data[index].descricao.toString()),
+                                  subtitle: Text('...')
+                                  // EditarStatus(
+                                  //     listaItensVeiculos: data,
+                                  //     listaItens: criarProtocoloState
+                                  //         .pegarDadosItensStatus(
+                                  //             listaItensProtocoloId, widget.id),
+                                  //     index: index)
+                                  ,
+                                  onTap: () {
+                                    ArtSweetAlert.show(
+                                        context: context,
+                                        artDialogArgs: ArtDialogArgs(
+                                            title: "Foto tirada",
+                                            customColumns: [
+                                              Container(
+                                                  margin: const EdgeInsets.only(
+                                                      bottom: 12.0),
+                                                  child: GetImagemBase64(
+                                                      imagem64: criarProtocoloState
+                                                              .pegarImgPorStatus(
+                                                                  listaItensProtocoloId,
+                                                                  widget.id)
+                                                              .isEmpty
+                                                          ? ''
+                                                          : criarProtocoloState
+                                                              .pegarImgPorStatus(
+                                                                  listaItensProtocoloId,
+                                                                  widget
+                                                                      .id)[index]))
+                                            ]));
+                                  },
+                                ),
+                              );
+                            });
+                      }
+                    }),
+                  ),
+                ),
                 const SizedBox(
                   height: 20.0,
                 ),

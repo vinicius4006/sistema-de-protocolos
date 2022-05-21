@@ -21,6 +21,8 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   void dispose() {
+    loginControllerState.token = '';
+
     debugPrint('Dispose Home');
     super.dispose();
   }
