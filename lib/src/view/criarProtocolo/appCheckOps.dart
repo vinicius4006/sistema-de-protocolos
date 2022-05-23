@@ -6,11 +6,16 @@ import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
 import 'package:protocolo_app/src/shared/models/itens_protocolo.dart';
 
 class CheckOps extends StatefulWidget {
-  CheckOps({Key? key, required this.listaParametros, required this.numCat})
+  CheckOps(
+      {Key? key,
+      required this.listaParametros,
+      required this.numCat,
+      required this.indexGlobal})
       : super(key: key);
 
   String listaParametros;
   String numCat;
+  int indexGlobal;
   @override
   State<CheckOps> createState() => _CheckOpsState();
 }
@@ -46,14 +51,17 @@ class _CheckOpsState extends State<CheckOps> {
 
   //Verifico e excluo do array
   void itemChange(bool val, int index) {
-    criarProtocoloState.trocarTodosPorGreen();
     setState(() {
       changeLista[index] = val;
 
       if (changeLista[index]) {
         checkSelect.add(index);
+        criarProtocoloState.trocarCorCardGreen(widget.indexGlobal);
       } else {
         checkSelect.remove(index);
+        if (checkSelect.isEmpty) {
+          criarProtocoloState.trocarCordCardRed(widget.indexGlobal);
+        }
       }
     });
     criarProtocoloState.addFormItensProtocolo(ItensProtocolo(

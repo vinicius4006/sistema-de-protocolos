@@ -22,6 +22,7 @@ class _chamandoApiReq extends ChangeNotifier {
   final ValueNotifier<bool> statusAnterior = ValueNotifier(false);
   List<ItensVeiculos> listaItensVeiculo = [];
   List<ItensProtocolo> listaItensProtocoloId = [];
+  double scrollVeiculo = 7000.00;
 
   loadPlacas() async {
     final response = await Dio()
@@ -47,6 +48,9 @@ class _chamandoApiReq extends ChangeNotifier {
 
         final responseTipo =
             await Dio().get('$BASEURL/retornarItensVeiculo?tipo=$tipo');
+        responseTipo.data['results'][1]['id'] == '2'
+            ? scrollVeiculo = 18400.00
+            : scrollVeiculo = 7000.00;
 
         return responseTipo.data['results'];
       } else {
@@ -61,6 +65,7 @@ class _chamandoApiReq extends ChangeNotifier {
     try {
       final responseTipo =
           await Dio().get('$BASEURL/retornarItensVeiculo?tipo=$change');
+
       return responseTipo.data['results'];
     } catch (e) {
       debugPrint('Motivo de não retornarSeMotoOuCarroPorBooleano: $e');
@@ -106,6 +111,9 @@ class _chamandoApiReq extends ChangeNotifier {
   Future<List<dynamic>> retornarItensProtocoloId(String id) async {
     final responseItensProtocolosPorId =
         await Dio().get('${URL}retornarItensPorProtocolo?id=${id}');
+    responseItensProtocolosPorId.data['itensprotocolo'][1]['itemveiculo'] == '2'
+        ? scrollVeiculo = 20000.00
+        : scrollVeiculo = 7000.00;
 
     List<dynamic> listaItensProtocolo =
         (responseItensProtocolosPorId.data['itensprotocolo'] as List)

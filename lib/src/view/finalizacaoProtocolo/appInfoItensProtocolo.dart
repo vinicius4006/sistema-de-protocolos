@@ -109,7 +109,12 @@ class _InfoItensProtocoloState extends State<InfoItensProtocolo> {
                 VeiculoForm(
                   placa: tipoVeiculo,
                 ),
-                Assinatura(),
+                FutureBuilder(
+                    future: Future.delayed(Duration(seconds: 2), () {
+                      return true;
+                    }),
+                    builder: ((context, snapshot) =>
+                        !snapshot.hasData ? Text('') : Assinatura())),
                 const SizedBox(
                   height: 20.0,
                 ),

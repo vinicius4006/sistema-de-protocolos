@@ -37,6 +37,7 @@ class _EditarStatusState extends State<EditarStatus> {
               .replaceAll('[', '')
               .replaceAll(']', '')
               .replaceAll('{', '')
+              .replaceAll('}', '')
               .replaceAll('"', '')
               .split(',')[int.parse(widget.itensProtocolo.valor.toString())]
               .toString());

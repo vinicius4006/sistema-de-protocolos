@@ -105,10 +105,14 @@ class _CardFormState extends State<CardForm> {
                 margin: const EdgeInsets.fromLTRB(10, 40, 0, 0),
                 child: widget.input == 'radio'
                     ? RadioOps(
-                        listaParametros: widget.ops, numCat: widget.numCat)
+                        listaParametros: widget.ops,
+                        numCat: widget.numCat,
+                        indexGlobal: widget.indexGlobal,
+                      )
                     : CheckOps(
                         listaParametros: widget.ops,
                         numCat: widget.numCat,
+                        indexGlobal: widget.indexGlobal,
                       )),
             Container(
               padding: const EdgeInsets.symmetric(vertical: 25),

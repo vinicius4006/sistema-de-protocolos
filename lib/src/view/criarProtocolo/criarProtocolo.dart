@@ -38,11 +38,11 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
   @override
   void dispose() {
     chamandoApiReqState.veiculoSelecionar.value.clear();
-    chamandoApiReqState.veiculos.clear();
     criarProtocoloState.resetVeiculoSelecionado();
     criarProtocoloState.scrollController = ScrollController();
     criarProtocoloState.assinaturaController.value.clear();
     criarProtocoloState.scrollVisible.value = false;
+
     super.dispose();
     debugPrint('Dispose CriarProtocolo');
   }
@@ -81,9 +81,7 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                     ),
                     FloatingActionButton.small(
                       heroTag: null,
-                      onPressed: (() => criarProtocoloState.scrollToBottom(
-                          criarProtocoloState.listaKey[
-                              criarProtocoloState.listaKey.length - 1])),
+                      onPressed: (() => criarProtocoloState.scrollToBottom()),
                       child: const Icon(Icons.arrow_downward),
                     ),
                   ],

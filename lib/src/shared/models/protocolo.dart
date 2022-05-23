@@ -37,8 +37,8 @@ class Protocolo {
     observacao = json['observacao'];
     observacaoFinal = json['observacao_final'];
     veiculo = json['veiculo'];
-    assinaturaInicial = json['assinaturaInicial'];
-    assinaturaFinal = json['assinaturaFinal'];
+    assinaturaInicial = json['assinatura_inicial'];
+    assinaturaFinal = json['assinatura_final'];
   }
 
   Map<String, dynamic> toJson() {
@@ -53,8 +53,8 @@ class Protocolo {
     data['observacao'] = observacao;
     data['observacao_final'] = observacaoFinal;
     data['veiculo'] = veiculo;
-    data['assinaturaInicial'] = assinaturaInicial;
-    data['assinaturaFinal'] = assinaturaFinal;
+    data['assinatura_inicial'] = assinaturaInicial;
+    data['assinatura_final'] = assinaturaFinal;
     return data;
   }
 }

@@ -4,7 +4,6 @@ import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
-import 'package:protocolo_app/src/controllers/login_controller.dart';
 
 import 'package:protocolo_app/src/shared/models/itens_protocolo.dart';
 import 'package:protocolo_app/src/shared/models/lista_itens_protocolo.dart';
@@ -130,7 +129,7 @@ class _CriarProtocolo extends ChangeNotifier {
     var result =
         await chamandoApiReqState.retornarSeMotoOuCarroPorBooleano(tipo);
     return result;
-  }
+  } // essa funcao é para verificacao do tamanho do array
 
   List<String> pegarDadosItensStatus(List<dynamic> lista, String id) {
     List<String>? listaItens = [];
@@ -222,43 +221,42 @@ class _CriarProtocolo extends ChangeNotifier {
     listaCoresCard.notifyListeners();
   }
 
-  trocarTodosPorGreen() {
-    // listaCoresCard.value.forEach((element) {
-    //   if (element == Colors.redAccent) {
-    //     element = Colors.green;
-    //   }
-    // });
-    // listaCoresCard.notifyListeners();
+  trocarCorCardGreen(int index) {
+    if (listaCoresCard.value[index] == Colors.redAccent) {
+      listaCoresCard.value[index] = Colors.green;
+    }
+    listaCoresCard.notifyListeners();
   }
 
   scrollTo(int index) async {
-    final listaKeyScroll = criarProtocoloState.listaKey[index].currentContext!;
+    final keyScroll = criarProtocoloState.listaKey[index].currentContext!;
+    //final keyColor = criarProtocoloState.listaKey[index].currentWidget!;
     criarProtocoloState.trocarCordCardRed(index);
     await Scrollable.ensureVisible(
-      listaKeyScroll,
+      keyScroll,
       duration: const Duration(milliseconds: 600),
     );
   }
 
   scrollToTop() async {
-    debugPrint('${loginControllerState.token}');
+    // debugPrint('${loginControllerState.token}');
     scrollController.animateTo(0,
         duration: const Duration(milliseconds: 500),
         curve: Curves.fastOutSlowIn);
   }
 
-  scrollToBottom(GlobalKey key) async {
+  scrollToBottom() async {
     try {
-      final listaKeyScroll = key.currentContext!;
+      // final keyScroll = await key.currentContext!;
 
-      await Scrollable.ensureVisible(
-        listaKeyScroll,
-        duration: const Duration(milliseconds: 600),
-      );
-
-      // scrollController.animateTo(7000,
-      //     duration: const Duration(milliseconds: 500),
-      //     curve: Curves.fastOutSlowIn);
+      // await Scrollable.ensureVisible(
+      //   keyScroll,
+      //   duration: const Duration(milliseconds: 600),
+      // );
+      debugPrint('SCROLL: ${chamandoApiReqState.scrollVeiculo}');
+      scrollController.animateTo(chamandoApiReqState.scrollVeiculo,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.fastOutSlowIn);
     } catch (e) {
       debugPrint('Motivo de não rolar: $e');
     }

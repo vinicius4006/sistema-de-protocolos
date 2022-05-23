@@ -60,7 +60,10 @@ class _InfoProtocoloState extends State<InfoProtocolo> {
                           .retornarPessoaPorMotorista(widget.id),
                       builder: (context, snapshot) {
                         if (!snapshot.hasData) {
-                          return Text('');
+                          return Text(
+                            'Procurando motorista...',
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          );
                         } else {
                           String nome = snapshot.data as String;
                           return Text('Motorista: \n${nome}',

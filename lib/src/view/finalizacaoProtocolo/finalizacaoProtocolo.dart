@@ -59,9 +59,7 @@ class _FinalizacaoState extends State<Finalizacao> {
                   ),
                   FloatingActionButton.small(
                     heroTag: null,
-                    onPressed: (() => criarProtocoloState.scrollToBottom(
-                        criarProtocoloState.listaKey[
-                            criarProtocoloState.listaKey.length - 1])),
+                    onPressed: (() => criarProtocoloState.scrollToBottom()),
                     child: const Icon(Icons.arrow_downward),
                   ),
                 ],

@@ -14,7 +14,14 @@ class StatusAnterior extends StatefulWidget {
 
 class _StatusAnteriorState extends State<StatusAnterior> {
   @override
+  void dispose() {
+    debugPrint('Dispose Status Anterior');
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    debugPrint('Build Status Anterior');
     return Card(
       elevation: 2,
       child: ListTile(

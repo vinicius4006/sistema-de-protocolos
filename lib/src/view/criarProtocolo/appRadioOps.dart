@@ -5,11 +5,16 @@ import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
 import 'package:protocolo_app/src/shared/models/itens_protocolo.dart';
 
 class RadioOps extends StatefulWidget {
-  RadioOps({Key? key, required this.listaParametros, required this.numCat})
+  RadioOps(
+      {Key? key,
+      required this.listaParametros,
+      required this.numCat,
+      required this.indexGlobal})
       : super(key: key);
 
   String listaParametros;
   String numCat;
+  int indexGlobal;
   @override
   State<RadioOps> createState() => _RadioOpsState();
 }
@@ -61,7 +66,7 @@ class _RadioOpsState extends State<RadioOps> {
               value: index,
               groupValue: select,
               onChanged: (value) {
-                criarProtocoloState.trocarTodosPorGreen();
+                criarProtocoloState.trocarCorCardGreen(widget.indexGlobal);
                 criarProtocoloState.addFormItensProtocolo(ItensProtocolo(
                     imagem: '',
                     inicio: 't',
