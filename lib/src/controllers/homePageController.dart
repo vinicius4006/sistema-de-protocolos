@@ -14,9 +14,7 @@ class _HomePage extends ChangeNotifier {
           .toList()
           .where((protocolo) => (protocolo.id.toString() +
                   ' - ' +
-                  DateFormat('dd/MM/yyyy - kk:mm')
-                      .format(DateTime.parse(protocolo.inicio.toString()))
-                      .toString() +
+                  DateFormat('dd/MM/yyyy - kk:mm').format(protocolo.inicio!) +
                   ' - ' +
                   homePageState.placaPorVeiculo(protocolo.veiculo.toString()))
               .toLowerCase()

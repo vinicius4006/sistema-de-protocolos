@@ -3,10 +3,8 @@ import 'dart:typed_data';
 
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
 import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
-import 'package:protocolo_app/src/controllers/login_controller.dart';
 import 'package:protocolo_app/src/shared/models/itensVeiculo.dart';
 import 'package:protocolo_app/src/shared/models/itens_protocolo.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/app_Assinatura.dart';
@@ -15,7 +13,7 @@ import 'package:protocolo_app/src/view/finalizacaoProtocolo/appGetImagem.dart';
 
 class InfoItensProtocoloBackup extends StatefulWidget {
   InfoItensProtocoloBackup({Key? key, required this.id}) : super(key: key);
-  String id;
+  int id;
   @override
   State<InfoItensProtocoloBackup> createState() =>
       _InfoItensProtocoloBackupState();
@@ -66,11 +64,8 @@ class _InfoItensProtocoloBackupState extends State<InfoItensProtocoloBackup> {
         String base64Image = base64Encode(data);
         return base64Image;
       });
-      criarProtocoloState.addFormProtocoloEnd(
-          widget.id,
-          DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.now()),
-          loginControllerState.username,
-          assinaturaFinal);
+      // criarProtocoloState.addFormProtocoloEnd(
+      //     DateTime.now(), loginControllerState.username, assinaturaFinal);
 
       //FALTAR FINALIZAR OS FORM DE FINALIZACAO
       Navigator.pop(context);

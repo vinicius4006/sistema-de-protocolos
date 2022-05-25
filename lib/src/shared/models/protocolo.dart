@@ -1,14 +1,14 @@
 class Protocolo {
   String? digitador;
   String? digitadorFinal;
-  String? fim;
-  String? id;
-  String? inicio;
-  String? motorista;
+  DateTime? fim;
+  int? id;
+  DateTime? inicio;
+  int? motorista;
   String? nomemotorista;
   String? observacao;
   String? observacaoFinal;
-  String? veiculo;
+  int? veiculo;
   String? assinaturaInicial;
   String? assinaturaFinal;
 
@@ -29,14 +29,15 @@ class Protocolo {
   Protocolo.fromJson(Map<String, dynamic> json) {
     digitador = json['digitador'];
     digitadorFinal = json['digitador_final'];
-    fim = json['fim'];
-    id = json['id'];
-    inicio = json['inicio'];
-    motorista = json['motorista'];
-    nomemotorista = json['nomemotorista'];
+    //fim = json['fim'];
+    id = int.parse(json['id']);
+    inicio = DateTime.parse(json['inicio']);
+    motorista =
+        json['motorista'].toString().isEmpty ? 0 : int.parse(json['motorista']);
+    nomemotorista = json['nomemotorista'] ?? '';
     observacao = json['observacao'];
     observacaoFinal = json['observacao_final'];
-    veiculo = json['veiculo'];
+    veiculo = int.parse(json['veiculo']);
     assinaturaInicial = json['assinatura_inicial'];
     assinaturaFinal = json['assinatura_final'];
   }

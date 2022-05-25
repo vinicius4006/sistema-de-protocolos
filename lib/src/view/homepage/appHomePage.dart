@@ -33,7 +33,7 @@ class _MainHomeState extends State<HomePage> {
     super.dispose();
   }
 
-  void menuProtocolo(String id) async {
+  void menuProtocolo(int id) async {
     ArtDialogResponse response = await ArtSweetAlert.show(
         barrierDismissible: false,
         context: context,
@@ -157,10 +157,7 @@ class _MainHomeState extends State<HomePage> {
                               subtitle: Text(
                                 '\n' 'Início: ' +
                                     DateFormat('dd/MM/yyyy - kk:mm')
-                                        .format(DateTime.parse(
-                                            protocoloFiltro[index]
-                                                .inicio
-                                                .toString()))
+                                        .format(protocoloFiltro[index].inicio!)
                                         .toString() +
                                     '\n'
                                         '\n'
@@ -169,7 +166,7 @@ class _MainHomeState extends State<HomePage> {
                               ),
                               onTap: () {
                                 menuProtocolo(
-                                  protocoloFiltro[index].id.toString(),
+                                  protocoloFiltro[index].id!,
                                 );
                               },
                             ),

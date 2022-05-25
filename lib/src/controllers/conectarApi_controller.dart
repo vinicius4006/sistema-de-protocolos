@@ -94,21 +94,25 @@ class _chamandoApiReq extends ChangeNotifier {
     })).toList().reversed.toList();
   }
 
-  Future<Protocolo> retornarProtocolosPorId(bool filtrado, String id) async {
+  Future<Protocolo> retornarProtocolosPorId(bool filtrado, int id) async {
     final responseProtocoloPorId = await Dio()
         .get('${URL}retornarProtocolos?nao_finalizados=${filtrado}&id=${id}');
     return Protocolo.fromJson(responseProtocoloPorId.data['protocolos'][0]);
   }
 
-  Future<String> retornarPessoaPorMotorista(String id) async {
+  Future<String> retornarPessoaPorMotorista(int id) async {
     final responsePessoaPorMotoristaId =
         await Dio().get('${URL}retornarPessoaPorMotorista?motorista=${id}');
-    Pessoa pessoa =
-        Pessoa.fromJson(responsePessoaPorMotoristaId.data['pessoa'][0]);
-    return pessoa.nome.toString();
+    if (responsePessoaPorMotoristaId.data['pessoa'].toString() == '[]') {
+      return '';
+    } else {
+      Pessoa pessoa =
+          Pessoa.fromJson(responsePessoaPorMotoristaId.data['pessoa'][0]);
+      return pessoa.nome.toString();
+    }
   }
 
-  Future<List<dynamic>> retornarItensProtocoloId(String id) async {
+  Future<List<dynamic>> retornarItensProtocoloId(int id) async {
     final responseItensProtocolosPorId =
         await Dio().get('${URL}retornarItensPorProtocolo?id=${id}');
     responseItensProtocolosPorId.data['itensprotocolo'][1]['itemveiculo'] == '2'

@@ -15,7 +15,7 @@ class Camera extends StatefulWidget {
       : super(key: key);
 
   String input;
-  String numCat;
+  int numCat;
   int indexGlobal;
   @override
   State<Camera> createState() => _CameraState();
@@ -40,10 +40,9 @@ class _CameraState extends State<Camera> {
           io.File(criarProtocoloState.foto.value).readAsBytesSync();
       String base64Image = base64Encode(imageBytes);
       criarProtocoloState.addFormItensProtocolo(ItensProtocolo(
-          imagem: base64Image,
-          inicio: 't',
-          itemveiculo: widget.numCat,
-          valor: ''));
+        imagem: base64Image,
+        itemveiculo: widget.numCat,
+      ));
     } catch (e) {
       print('Falha em pegar a imagem: $e');
     }
@@ -66,10 +65,9 @@ class _CameraState extends State<Camera> {
           io.File(criarProtocoloState.foto.value).readAsBytesSync();
       String base64Image = base64Encode(imageBytes);
       criarProtocoloState.addFormItensProtocolo(ItensProtocolo(
-          imagem: base64Image,
-          inicio: 't',
-          itemveiculo: widget.numCat,
-          valor: ''));
+        imagem: base64Image,
+        itemveiculo: widget.numCat,
+      ));
     } catch (e) {
       print('Falha em capturar a imagem: $e');
     }

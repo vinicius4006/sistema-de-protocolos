@@ -8,7 +8,7 @@ import 'package:protocolo_app/src/view/finalizacaoProtocolo/appGetImagem.dart';
 
 class InfoProtocolo extends StatefulWidget {
   InfoProtocolo({Key? key, required this.id}) : super(key: key);
-  String id;
+  int id;
   @override
   State<InfoProtocolo> createState() => _InfoProtocoloState();
 }
@@ -57,7 +57,7 @@ class _InfoProtocoloState extends State<InfoProtocolo> {
                   ListTile(
                     title: FutureBuilder(
                       future: chamandoApiReqState
-                          .retornarPessoaPorMotorista(widget.id),
+                          .retornarPessoaPorMotorista(protocolo.motorista!),
                       builder: (context, snapshot) {
                         if (!snapshot.hasData) {
                           return Text(
@@ -66,7 +66,8 @@ class _InfoProtocoloState extends State<InfoProtocolo> {
                           );
                         } else {
                           String nome = snapshot.data as String;
-                          return Text('Motorista: \n${nome}',
+                          return Text(
+                              'Motorista: \n${nome == '' ? 'Não constado' : nome}',
                               style: const TextStyle(
                                   fontWeight: FontWeight.w500, fontSize: 18));
                         }

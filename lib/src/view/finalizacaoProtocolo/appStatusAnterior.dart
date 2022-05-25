@@ -27,6 +27,7 @@ class _StatusAnteriorState extends State<StatusAnterior> {
       child: ListTile(
         leading: const Icon(Icons.arrow_right),
         title: EditarStatus(
+          indexGlobal: widget.indexGlobal,
           itensVeiculos:
               chamandoApiReqState.listaItensVeiculo[widget.indexGlobal],
           itensProtocolo:
@@ -39,7 +40,10 @@ class _StatusAnteriorState extends State<StatusAnterior> {
                   ArtDialogArgs(title: "Foto tirada", customColumns: [
                 Container(
                     margin: const EdgeInsets.only(bottom: 12.0),
-                    child: GetImagemBase64(imagem64: ''))
+                    child: GetImagemBase64(
+                        imagem64: chamandoApiReqState
+                            .listaItensProtocoloId[widget.indexGlobal].imagem
+                            .toString()))
               ]));
         },
       ),

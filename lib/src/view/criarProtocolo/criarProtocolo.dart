@@ -1,10 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
 import 'package:protocolo_app/src/controllers/login_controller.dart';
@@ -42,7 +40,7 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
     criarProtocoloState.scrollController = ScrollController();
     criarProtocoloState.assinaturaController.value.clear();
     criarProtocoloState.scrollVisible.value = false;
-
+    criarProtocoloState.listaInput.clear();
     super.dispose();
     debugPrint('Dispose CriarProtocolo');
   }
@@ -195,33 +193,42 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                                     tamanhoVeiculo.length &&
                                 criarProtocoloState
                                     .assinaturaController.value.isNotEmpty) {
-                              String assinaturaInicial =
-                                  await criarProtocoloState
-                                      .assinaturaController.value
-                                      .toPngBytes()
-                                      .then((value) {
-                                final Uint8List data = value!;
-                                String base64Image = base64Encode(data);
-                                return base64Image;
-                              });
+                              bool checkToken = await loginControllerState
+                                  .verificarAssinaturaDaToken();
+                              if (checkToken) {
+                                String assinaturaInicial =
+                                    await criarProtocoloState
+                                        .assinaturaController.value
+                                        .toPngBytes()
+                                        .then((value) {
+                                  final Uint8List data = value!;
+                                  String base64Image = base64Encode(data);
+                                  return base64Image;
+                                });
 
-                              criarProtocoloState.novoProtocolo(Protocolo(
-                                  id: Random().nextInt(10000).toString(),
-                                  inicio: DateFormat('dd/MM/yyyy hh:mm a')
-                                      .format(DateTime.now()),
-                                  veiculo: criarProtocoloState
-                                      .veiculoSelecionado.value
-                                      .substring(10),
-                                  digitador: loginControllerState.username,
-                                  assinaturaInicial: assinaturaInicial));
+                                criarProtocoloState.novoProtocolo(Protocolo(
+                                    veiculo: int.parse(criarProtocoloState
+                                        .veiculoSelecionado.value
+                                        .substring(10)),
+                                    digitador: loginControllerState.username,
+                                    assinaturaInicial: assinaturaInicial));
+                                Navigator.of(context).pop();
 
-                              Navigator.of(context).pop();
-                              ArtSweetAlert.show(
-                                  context: context,
-                                  artDialogArgs: ArtDialogArgs(
-                                    type: ArtSweetAlertType.success,
-                                    title: 'Protocolo Criado',
-                                  ));
+                                ArtSweetAlert.show(
+                                    context: context,
+                                    artDialogArgs: ArtDialogArgs(
+                                      type: ArtSweetAlertType.success,
+                                      title: 'Protocolo Criado',
+                                    ));
+                              } else {
+                                ArtSweetAlert.show(
+                                    context: context,
+                                    artDialogArgs: ArtDialogArgs(
+                                        type: ArtSweetAlertType.danger,
+                                        title: "Usuário e senha negados",
+                                        text:
+                                            "Parece que há problema com os seus dados!"));
+                              }
                             } else {
                               List<ItensProtocolo> listaOrganizada =
                                   listaItensDoVeiculo;
@@ -259,7 +266,7 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                                 context: context,
                                 artDialogArgs: ArtDialogArgs(
                                   type: ArtSweetAlertType.info,
-                                  title: "Escolha o veículo",
+                                  title: "Ocorreu algum problema...",
                                 ));
                           }
                         }),

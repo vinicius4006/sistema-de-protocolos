@@ -15,13 +15,13 @@ class CardForm extends StatefulWidget {
       required this.ops,
       required this.input,
       required this.indexGlobal,
-      this.numCat = ''})
+      required this.numCat})
       : super(key: key);
 
   final String title;
   final String ops;
   final String input;
-  final String numCat;
+  final int numCat;
   final int indexGlobal;
 
   @override
@@ -33,6 +33,7 @@ class _CardFormState extends State<CardForm> {
   void initState() {
     super.initState();
     criarProtocoloState.changeButton.value.add(false);
+    criarProtocoloState.listaInput.add(widget.input);
   }
 
   @override

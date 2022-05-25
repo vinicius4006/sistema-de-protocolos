@@ -35,7 +35,7 @@ class _VeiculoFormState extends State<VeiculoForm> {
   Widget exibirListaDeCard(List<ItensVeiculos>? data) {
     try {
       return Column(children: [
-        data![2].tipoVeiculo == '0'
+        data![2].tipoVeiculo == 0
             ? const Text('Carro',
                 style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold))
             : const Text('Moto',
@@ -57,7 +57,7 @@ class _VeiculoFormState extends State<VeiculoForm> {
                 title: data[index].descricao.toString(),
                 ops: data[index].parametros.toString(),
                 input: data[index].input.toString(),
-                numCat: data[index].id.toString(),
+                numCat: data[index].id!,
               );
             }),
       ]);

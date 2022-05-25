@@ -41,6 +41,23 @@ class _LoginController extends ChangeNotifier {
       return false;
     }
   }
+
+  Future<bool> verificarAssinaturaDaToken() async {
+    final dio = Dio();
+    Response response;
+    FormData formData = FormData.fromMap({'token': token, 'senha': password});
+
+    response = await dio.post(
+        'http://10.1.2.218/api/view/ProtocoloFrota/verificarAssinaturaDaToken',
+        data: formData,
+        options: Options(contentType: Headers.formUrlEncodedContentType));
+
+    if ((response.data as String).contains('1')) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
 
 final _LoginController loginControllerState = _LoginController();

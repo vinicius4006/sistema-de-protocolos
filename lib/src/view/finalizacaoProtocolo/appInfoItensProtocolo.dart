@@ -3,17 +3,17 @@ import 'dart:typed_data';
 
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
 import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
 import 'package:protocolo_app/src/controllers/login_controller.dart';
 import 'package:protocolo_app/src/shared/models/itens_protocolo.dart';
+import 'package:protocolo_app/src/shared/models/protocolo.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/app_Assinatura.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/app_formVeiculo.dart';
 
 class InfoItensProtocolo extends StatefulWidget {
   InfoItensProtocolo({Key? key, required this.id}) : super(key: key);
-  String id;
+  int id;
   @override
   State<InfoItensProtocolo> createState() => _InfoItensProtocoloState();
 }
@@ -63,11 +63,10 @@ class _InfoItensProtocoloState extends State<InfoItensProtocolo> {
         String base64Image = base64Encode(data);
         return base64Image;
       });
-      criarProtocoloState.addFormProtocoloEnd(
-          widget.id,
-          DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.now()),
-          loginControllerState.username,
-          assinaturaFinal);
+      criarProtocoloState.novoProtocolo(Protocolo(
+          id: widget.id,
+          assinaturaFinal: assinaturaFinal,
+          digitadorFinal: loginControllerState.username));
 
       //FALTAR FINALIZAR OS FORM DE FINALIZACAO
       Navigator.pop(context);
@@ -93,7 +92,7 @@ class _InfoItensProtocoloState extends State<InfoItensProtocolo> {
                 snapshot.data as List<dynamic>;
 
             String tipoVeiculo =
-                (listaItensProtocoloId[1] as ItensProtocolo).itemveiculo == '2'
+                (listaItensProtocoloId[1] as ItensProtocolo).itemveiculo == 2
                     ? '0'
                     : '1';
 
@@ -165,7 +164,19 @@ class _InfoItensProtocoloState extends State<InfoItensProtocolo> {
                             showCompleteCampo(context);
                           }
                         } else {
-                          showConfirmDialog(context);
+                          bool checkToken = await loginControllerState
+                              .verificarAssinaturaDaToken();
+                          if (checkToken) {
+                            showConfirmDialog(context);
+                          } else {
+                            ArtSweetAlert.show(
+                                context: context,
+                                artDialogArgs: ArtDialogArgs(
+                                    type: ArtSweetAlertType.danger,
+                                    title: "Usuário e senha negados",
+                                    text:
+                                        "Parece que há problema com os seus dados!"));
+                          }
                         }
                       },
                       child: const Text(

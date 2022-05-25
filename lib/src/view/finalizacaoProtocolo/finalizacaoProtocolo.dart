@@ -9,7 +9,7 @@ import 'package:protocolo_app/src/view/finalizacaoProtocolo/appInfoProtocolo.dar
 class Finalizacao extends StatefulWidget {
   Finalizacao({Key? key, required this.id}) : super(key: key);
 
-  String id;
+  int id;
 
   @override
   State<Finalizacao> createState() => _FinalizacaoState();
@@ -30,6 +30,7 @@ class _FinalizacaoState extends State<Finalizacao> {
     criarProtocoloState.scrollController = ScrollController();
     criarProtocoloState.scrollVisible.value = false;
     chamandoApiReqState.statusAnterior.value = false;
+    criarProtocoloState.listaInput.clear();
     super.dispose();
   }
 
