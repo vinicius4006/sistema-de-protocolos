@@ -57,11 +57,11 @@ class _CheckOpsState extends State<CheckOps> {
 
       if (changeLista[index]) {
         checkSelect.add(index);
-        criarProtocoloState.trocarCorCardGreen(widget.indexGlobal);
+        criarProtocoloState.trocarCorCardInicial(widget.indexGlobal, context);
       } else {
         checkSelect.remove(index);
         if (checkSelect.isEmpty) {
-          criarProtocoloState.trocarCordCardRed(widget.indexGlobal);
+          criarProtocoloState.trocarCordCardRed(widget.indexGlobal, context);
         }
       }
     });
@@ -92,8 +92,8 @@ class _CheckOpsState extends State<CheckOps> {
           return Container(
             margin: const EdgeInsets.fromLTRB(10, 0, 10, 8),
             decoration: BoxDecoration(
-                border:
-                    Border.all(color: Theme.of(context).primaryColor, width: 2),
+                border: Border.all(
+                    color: Theme.of(context).colorScheme.primary, width: 2),
                 borderRadius: BorderRadius.circular(12)),
             child: Padding(
               padding: const EdgeInsets.all(10.0),
@@ -105,7 +105,7 @@ class _CheckOpsState extends State<CheckOps> {
                     style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w700,
-                        color: Theme.of(context).primaryColor),
+                        color: Theme.of(context).colorScheme.primary),
                   ),
                   const SizedBox(
                     width: 15,

@@ -39,7 +39,7 @@ class _MainHomeState extends State<HomePage> {
         context: context,
         artDialogArgs: ArtDialogArgs(
           showCancelBtn: true,
-          denyButtonText: "Exibir",
+          //denyButtonText: "Veículo",
           denyButtonColor: Colors.blueGrey,
           cancelButtonText: 'Cancelar',
           confirmButtonText: 'Finalizar',
@@ -74,11 +74,6 @@ class _MainHomeState extends State<HomePage> {
     }
 
     if (response.isTapDenyButton) {
-      ArtSweetAlert.show(
-          context: context,
-          artDialogArgs: ArtDialogArgs(
-              type: ArtSweetAlertType.info,
-              title: "Sugestões do que exibir..."));
       return;
     }
   }
@@ -104,7 +99,7 @@ class _MainHomeState extends State<HomePage> {
             child: Column(children: [
               Ink(
                 decoration: ShapeDecoration(
-                    color: Theme.of(context).primaryColor,
+                    color: Theme.of(context).colorScheme.primary,
                     shape: CircleBorder()),
                 child: IconButton(
                     color: Colors.white,
@@ -136,7 +131,7 @@ class _MainHomeState extends State<HomePage> {
                           itemCount: protocoloFiltro.length,
                           itemBuilder: (context, index) => Card(
                             key: ValueKey(protocoloFiltro[index].id),
-                            color: Colors.lightGreen,
+                            color: Theme.of(context).colorScheme.secondary,
                             elevation: 4,
                             margin: const EdgeInsets.symmetric(vertical: 10),
                             child: ListTile(

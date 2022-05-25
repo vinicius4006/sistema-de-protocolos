@@ -52,8 +52,8 @@ class _RadioOpsState extends State<RadioOps> {
           return Container(
             margin: const EdgeInsets.fromLTRB(5, 0, 10, 8),
             decoration: BoxDecoration(
-                border:
-                    Border.all(color: Theme.of(context).primaryColor, width: 2),
+                border: Border.all(
+                    color: Theme.of(context).colorScheme.primary, width: 2),
                 borderRadius: BorderRadius.circular(12)),
             child: RadioListTile(
               title: Text(
@@ -61,13 +61,14 @@ class _RadioOpsState extends State<RadioOps> {
                 style: TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w700,
-                    color: Theme.of(context).primaryColor),
+                    color: Theme.of(context).colorScheme.primary),
               ),
-              activeColor: Theme.of(context).primaryColor,
+              activeColor: Theme.of(context).colorScheme.primary,
               value: index,
               groupValue: select,
               onChanged: (value) {
-                criarProtocoloState.trocarCorCardGreen(widget.indexGlobal);
+                criarProtocoloState.trocarCorCardInicial(
+                    widget.indexGlobal, context);
                 criarProtocoloState.addFormItensProtocolo(ItensProtocolo(
                     itemveiculo: widget.numCat, valor: value as int));
                 setState(() {

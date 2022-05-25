@@ -10,9 +10,6 @@ String BASEURL = 'http://frota.jupiter.com.br/api/view/JSON';
 
 String URL = 'http://10.1.2.218/api/view/ProtocoloFrota/';
 
-//MOCK
-String URLSERVER = 'http://10.1.2.218:3000';
-
 class _chamandoApiReq extends ChangeNotifier {
   final ValueNotifier<TextEditingController> veiculoSelecionar =
       ValueNotifier(TextEditingController());

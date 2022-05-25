@@ -32,6 +32,7 @@ class _CriarProtocolo extends ChangeNotifier {
   final GlobalKey<FormState> formKey = (GlobalKey<FormState>());
   final List<GlobalKey> listaKey = [];
   final List<String> listaInput = [];
+  bool checkFirstCheckOrRadio = false;
 
   changeVeiculoSelecionado(String veiculoNovo) {
     veiculoSelecionado.value = '';
@@ -60,7 +61,7 @@ class _CriarProtocolo extends ChangeNotifier {
       ...protocoloNovo.toJson(),
       ...listaItens.toJson()
     };
-    log('$protocoloComItens');
+
     FormData formData = FormData.fromMap(protocoloComItens);
     final responseProtocolo = await Dio()
         .post('$BASEURL/salvarProtocolo',
@@ -68,10 +69,8 @@ class _CriarProtocolo extends ChangeNotifier {
             options: Options(contentType: Headers.formUrlEncodedContentType))
         .then((response) {
       log('SUCESSO: ${response.data}');
-      return response.data;
     }).catchError((onError) {
       debugPrint('Motivo do erro: $onError');
-      return false;
     });
 
     protocolo.value = protocoloNovo;
@@ -93,35 +92,6 @@ class _CriarProtocolo extends ChangeNotifier {
         ? debugPrint('')
         : listaItensProtocolo.value.add(itensProtocolo);
   }
-
-  // addFormProtocoloEnd(
-  //     DateTime dataFim, String digitadorFinal, String assinaturaFinal) async {
-  //   //Organizo antes de mandar para o servidor
-  //   listaItensProtocolo.value.sort(((a, b) =>
-  //       (int.parse(a.itemveiculo.toString()))
-  //           .compareTo(int.parse(b.itemveiculo.toString()))));
-
-  //   //listaProtocolo.add(protocolo);
-
-  //   //MANDANDO PARA O SERVIDOR
-  //   final responseProtocoloFinalizado = await Dio()
-  //       .patch('$BASEURL/protocolos/', data: {
-  //         "digitador_final": digitadorFinal,
-  //         "fim": dataFim,
-  //         "assinaturaFinal": assinaturaFinal
-  //       }) //"assinaturaFinal": assinaturaFinal
-  //       .then((response) => debugPrint('SUCESSO: ${response.data}'))
-  //       .catchError((onError) => debugPrint('Motivo do erro na att: $onError'));
-
-  //   var listaItensProtocoloJson =
-  //       ListaItensProtocolo(itensProtocolo: listaItensProtocolo.value).toJson();
-  //   final responseItensProtocolo = await Dio()
-  //       .post('$BASEURL/itens_protocolos', data: listaItensProtocoloJson)
-  //       .then((response) => debugPrint('SUCESSO: ${response.data}'))
-  //       .catchError((onError) => debugPrint('Motivo do erro: $onError'));
-  //   protocolo.notifyListeners();
-  //   //O envio dos formularios com att está no start Protocolo
-  // }
 
   Future dadosDoTipo(String tipo, BuildContext context) async {
     var result =
@@ -212,24 +182,24 @@ class _CriarProtocolo extends ChangeNotifier {
     changeButton.notifyListeners();
   }
 
-  trocarCordCardRed(int index) {
-    if (listaCoresCard.value[index] == Colors.green) {
+  trocarCordCardRed(int index, context) {
+    if (listaCoresCard.value[index] == Theme.of(context).colorScheme.primary) {
       listaCoresCard.value[index] = Colors.redAccent;
     }
     listaCoresCard.notifyListeners();
   }
 
-  trocarCorCardGreen(int index) {
+  trocarCorCardInicial(int index, context) {
     if (listaCoresCard.value[index] == Colors.redAccent) {
-      listaCoresCard.value[index] = Colors.green;
+      listaCoresCard.value[index] = Theme.of(context).colorScheme.primary;
     }
     listaCoresCard.notifyListeners();
   }
 
-  scrollTo(int index) async {
+  scrollTo(int index, context) async {
     final keyScroll = criarProtocoloState.listaKey[index].currentContext!;
     //final keyColor = criarProtocoloState.listaKey[index].currentWidget!;
-    criarProtocoloState.trocarCordCardRed(index);
+    criarProtocoloState.trocarCordCardRed(index, context);
     await Scrollable.ensureVisible(
       keyScroll,
       duration: const Duration(milliseconds: 600),
@@ -237,7 +207,6 @@ class _CriarProtocolo extends ChangeNotifier {
   }
 
   scrollToTop() async {
-    // debugPrint('${loginControllerState.token}');
     scrollController.animateTo(0,
         duration: const Duration(milliseconds: 500),
         curve: Curves.fastOutSlowIn);

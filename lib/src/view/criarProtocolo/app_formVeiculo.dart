@@ -50,7 +50,8 @@ class _VeiculoFormState extends State<VeiculoForm> {
             shrinkWrap: true,
             itemBuilder: (context, index) {
               criarProtocoloState.listaKey.add(GlobalKey());
-              criarProtocoloState.listaCoresCard.value.add(Colors.green);
+              criarProtocoloState.listaCoresCard.value
+                  .add(Theme.of(context).colorScheme.primary);
               return CardForm(
                 key: criarProtocoloState.listaKey[index],
                 indexGlobal: index,

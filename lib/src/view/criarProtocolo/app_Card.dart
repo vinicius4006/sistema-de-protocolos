@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
 import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
 import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
@@ -51,7 +52,7 @@ class _CardFormState extends State<CardForm> {
       child: Card(
         elevation: 8,
         color: Colors.grey[100],
-        shadowColor: Theme.of(context).primaryColor,
+        shadowColor: Theme.of(context).colorScheme.primary,
         margin: const EdgeInsets.fromLTRB(30, 10, 30, 10),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         child: Column(
@@ -128,7 +129,7 @@ class _CardFormState extends State<CardForm> {
                             padding: const EdgeInsets.all(15),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15)),
-                            primary: Theme.of(context).primaryColor),
+                            primary: Theme.of(context).colorScheme.secondary),
                         onPressed: () {
                           criarProtocoloState.exibirFotoTemporaria(
                               widget.numCat, context, widget.indexGlobal);
@@ -145,17 +146,37 @@ class _CardFormState extends State<CardForm> {
                             padding: const EdgeInsets.all(15),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15)),
-                            primary: Theme.of(context).primaryColor),
+                            primary: Theme.of(context).colorScheme.primary),
                         onPressed: (() {
-                          showModalBottomSheet(
-                              context: context,
-                              builder: (context) {
-                                return Camera(
-                                  input: widget.input,
-                                  numCat: widget.numCat,
-                                  indexGlobal: widget.indexGlobal,
-                                );
-                              });
+                          criarProtocoloState.listaItensProtocolo.value
+                              .forEach((element) {
+                            if (element.itemveiculo == widget.numCat) {
+                              criarProtocoloState.checkFirstCheckOrRadio = true;
+                            } else {
+                              criarProtocoloState.checkFirstCheckOrRadio =
+                                  false;
+                            }
+                          });
+                          if (criarProtocoloState
+                                  .listaItensProtocolo.value.isEmpty ||
+                              !criarProtocoloState.checkFirstCheckOrRadio) {
+                            ArtSweetAlert.show(
+                                context: context,
+                                artDialogArgs: ArtDialogArgs(
+                                  type: ArtSweetAlertType.info,
+                                  title: "Primeiro selecione!",
+                                ));
+                          } else {
+                            showModalBottomSheet(
+                                context: context,
+                                builder: (context) {
+                                  return Camera(
+                                    input: widget.input,
+                                    numCat: widget.numCat,
+                                    indexGlobal: widget.indexGlobal,
+                                  );
+                                });
+                          }
                         }),
                         child: Text(
                           'Tire a Foto',

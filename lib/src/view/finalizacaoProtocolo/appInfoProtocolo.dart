@@ -49,7 +49,7 @@ class _InfoProtocoloState extends State<InfoProtocolo> {
                               fontWeight: FontWeight.w500, fontSize: 15)),
                       leading: Icon(
                         Icons.article,
-                        color: Colors.green[500],
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                   ),
@@ -73,7 +73,8 @@ class _InfoProtocoloState extends State<InfoProtocolo> {
                         }
                       },
                     ),
-                    leading: Icon(Icons.people, color: Colors.green[500]),
+                    leading: Icon(Icons.people,
+                        color: Theme.of(context).colorScheme.primary),
                   ),
                   const Divider(),
                   ListTile(
@@ -82,13 +83,13 @@ class _InfoProtocoloState extends State<InfoProtocolo> {
                         style: const TextStyle(
                             fontWeight: FontWeight.w500, fontSize: 18)),
                     leading: Icon(Icons.calendar_today_outlined,
-                        color: Colors.green[500]),
+                        color: Theme.of(context).colorScheme.primary),
                   ),
                   const Divider(),
                   ListTile(
                     leading: Icon(
                       Icons.assignment_outlined,
-                      color: Colors.green[500],
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                     title: const Text(
                       'Assinatura Inicial',
