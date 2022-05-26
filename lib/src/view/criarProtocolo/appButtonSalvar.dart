@@ -70,6 +70,7 @@ class _ButtonEnviarState extends State<ButtonEnviar> {
           criarProtocoloState.novoProtocolo(Protocolo(
               veiculo: int.parse(
                   criarProtocoloState.veiculoSelecionado.value.substring(10)),
+              motorista: criarProtocoloState.motoristaSelecionado,
               digitador: loginControllerState.username,
               assinaturaInicial: assinaturaInicial));
           Navigator.of(context).pop();
@@ -114,7 +115,7 @@ class _ButtonEnviarState extends State<ButtonEnviar> {
         }
       }),
       child: const Text(
-        'Criar',
+        'Salvar',
         style: TextStyle(
             color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
       ),

@@ -14,6 +14,7 @@ const BASEURL = 'http://10.1.2.218/api/view/ProtocoloFrota';
 
 class _CriarProtocolo extends ChangeNotifier {
   final ValueNotifier<String> veiculoSelecionado = ValueNotifier('');
+  int motoristaSelecionado = 0; // precisa?
   final ValueNotifier<Protocolo> protocolo = ValueNotifier(Protocolo());
   final ValueNotifier<List<ItensProtocolo>> listaItensProtocolo =
       ValueNotifier([]); // notificando para quem?
@@ -32,18 +33,29 @@ class _CriarProtocolo extends ChangeNotifier {
   final GlobalKey<FormState> formKey = (GlobalKey<FormState>());
   final List<GlobalKey> listaKey = []; //cada card tem uma key
   final List<String> listaInput = [];
+  final ValueNotifier<bool> showLoadingAndButton = ValueNotifier(false);
 
   changeVeiculoSelecionado(String veiculoNovo) {
     veiculoSelecionado.value = '';
     scrollVisible.value = false;
+    showLoadingAndButton.value = true;
     Timer(Duration(seconds: 2), () {
       veiculoSelecionado.value = veiculoNovo;
+      chamandoApiReqState.veiculoSelecionar.notifyListeners();
       Timer(Duration(seconds: 2), () => scrollVisible.value = true);
     });
   }
 
+  changeMotoristaSelecionado(int motorista) {
+    Timer(Duration(seconds: 2), (() {
+      motoristaSelecionado = motorista;
+      chamandoApiReqState.motoristaSelecionar.notifyListeners();
+    }));
+  }
+
   resetVeiculoSelecionado() {
     veiculoSelecionado.value = '';
+    motoristaSelecionado = 0;
   }
 
   refreshPage() {

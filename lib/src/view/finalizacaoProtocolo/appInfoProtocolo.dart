@@ -56,8 +56,8 @@ class _InfoProtocoloState extends State<InfoProtocolo> {
                   const Divider(),
                   ListTile(
                     title: FutureBuilder(
-                      future: chamandoApiReqState
-                          .retornarPessoaPorMotorista(protocolo.motorista!),
+                      future: chamandoApiReqState.retornarPessoaPorMotorista(
+                          protocolo.motorista!, false),
                       builder: (context, snapshot) {
                         if (!snapshot.hasData) {
                           return Text(

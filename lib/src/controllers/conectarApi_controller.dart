@@ -13,6 +13,8 @@ String URL = 'http://10.1.2.218/api/view/ProtocoloFrota/';
 class _chamandoApiReq extends ChangeNotifier {
   final ValueNotifier<TextEditingController> veiculoSelecionar =
       ValueNotifier(TextEditingController());
+  final ValueNotifier<TextEditingController> motoristaSelecionar =
+      ValueNotifier(TextEditingController());
   final List<String> veiculos = [];
   final ValueNotifier<List<Placas>> listaPlacas =
       ValueNotifier([]); //precisa ser notificado?
@@ -97,15 +99,27 @@ class _chamandoApiReq extends ChangeNotifier {
     return Protocolo.fromJson(responseProtocoloPorId.data['protocolos'][0]);
   }
 
-  Future<String> retornarPessoaPorMotorista(int id) async {
-    final responsePessoaPorMotoristaId =
-        await Dio().get('${URL}retornarPessoaPorMotorista?motorista=${id}');
+  Future<dynamic> retornarPessoaPorMotorista(int id, bool todos) async {
+    late List<Pessoa> listaPessoas;
+    final responsePessoaPorMotoristaId = await Dio()
+        .get('${URL}retornarPessoaPorMotorista?pessoa=${todos ? '' : id}');
     if (responsePessoaPorMotoristaId.data['pessoa'].toString() == '[]') {
       return '';
     } else {
-      Pessoa pessoa =
-          Pessoa.fromJson(responsePessoaPorMotoristaId.data['pessoa'][0]);
-      return pessoa.nome.toString();
+      if (todos) {
+        listaPessoas =
+            await (responsePessoaPorMotoristaId.data['pessoa'] as List)
+                .map((pessoa) => Pessoa.fromJson(pessoa))
+                .toList()
+                .reversed
+                .toList();
+        return listaPessoas;
+      } else {
+        Pessoa pessoa =
+            Pessoa.fromJson(responsePessoaPorMotoristaId.data['pessoa'][0]);
+
+        return pessoa.nome.toString();
+      }
     }
   }
 

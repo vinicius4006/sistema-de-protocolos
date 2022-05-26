@@ -6,7 +6,8 @@ import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
 
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
-import 'package:protocolo_app/src/view/criarProtocolo/appButtonCriar.dart';
+import 'package:protocolo_app/src/shared/models/pessoa_motorista.dart';
+import 'package:protocolo_app/src/view/criarProtocolo/appButtonSalvar.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/app_Assinatura.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/app_formVeiculo.dart';
 
@@ -31,11 +32,13 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
   @override
   void dispose() {
     chamandoApiReqState.veiculoSelecionar.value.clear();
+    chamandoApiReqState.motoristaSelecionar.value.clear();
     criarProtocoloState.resetVeiculoSelecionado();
     criarProtocoloState.scrollController = ScrollController();
     criarProtocoloState.assinaturaController.value.clear();
     criarProtocoloState.scrollVisible.value = false;
     criarProtocoloState.listaInput.clear();
+    criarProtocoloState.showLoadingAndButton.value = false;
 
     super.dispose();
     debugPrint('Dispose CriarProtocolo');
@@ -93,11 +96,44 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                 const SizedBox(
                   height: 20.0,
                 ),
-                const Text(
-                  'Veículos',
-                  style: TextStyle(fontSize: 20.0),
-                  textAlign: TextAlign.center,
+                const SizedBox(
+                  height: 20.0,
                 ),
+                FutureBuilder(
+                    future:
+                        chamandoApiReqState.retornarPessoaPorMotorista(0, true),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return Center(
+                          child: Text(''),
+                        );
+                      } else {
+                        return ValueListenableBuilder(
+                            valueListenable:
+                                chamandoApiReqState.motoristaSelecionar,
+                            builder: (context,
+                                TextEditingController motoristaSelecionar, _) {
+                              return CustomDropdown.search(
+                                controller: motoristaSelecionar,
+                                hintText: 'Selecione o Motorista',
+                                excludeSelected: false,
+                                items: (snapshot.data as List<Pessoa>)
+                                    .map((e) => e.nome.toString())
+                                    .toList(),
+                                onChanged: (value) {
+                                  (snapshot.data as List<Pessoa>)
+                                      .forEach((element) {
+                                    if (element.nome == value) {
+                                      criarProtocoloState
+                                          .changeMotoristaSelecionado(
+                                              int.parse(element.id.toString()));
+                                    }
+                                  });
+                                },
+                              );
+                            });
+                      }
+                    }),
                 const SizedBox(
                   height: 20.0,
                 ),
@@ -150,21 +186,74 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                                             : Assinatura())),
                               ],
                             )
-                          : Center(
-                              child: LoadingAnimationWidget.waveDots(
-                                color: Theme.of(context).colorScheme.primary,
-                                size: 100,
-                              ),
+                          : ValueListenableBuilder(
+                              valueListenable:
+                                  criarProtocoloState.showLoadingAndButton,
+                              builder: (context, bool showLoadingAndButton, _) {
+                                return Visibility(
+                                  visible: showLoadingAndButton,
+                                  child: Center(
+                                    child: LoadingAnimationWidget.waveDots(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      size: 100,
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                 ),
                 const SizedBox(
                   height: 20.0,
                 ),
-                Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                        child: ButtonEnviar())),
+                const SizedBox(
+                  height: 20.0,
+                ),
+                ValueListenableBuilder(
+                    valueListenable: criarProtocoloState.showLoadingAndButton,
+                    builder: (context, bool showLoadingAndButton, _) {
+                      return Visibility(
+                        visible: !showLoadingAndButton,
+                        child: Padding(
+                          padding: const EdgeInsets.all(50.0),
+                          child: Center(
+                              child: Stack(children: [
+                            Container(
+                              height: 300,
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.primary,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(40)),
+                              ),
+                            ),
+                            Container(
+                              width: 240.0,
+                              height: 240.0,
+                              margin: EdgeInsets.all(25),
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                      fit: BoxFit.fill,
+                                      image:
+                                          AssetImage('assets/img-mobile.png'))),
+                            ),
+                          ])),
+                        ),
+                      );
+                    }),
+                ValueListenableBuilder(
+                  valueListenable: criarProtocoloState.showLoadingAndButton,
+                  builder: (context, bool showLoadingAndButton, _) {
+                    return Visibility(
+                      visible: showLoadingAndButton,
+                      child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 15),
+                              child: ButtonEnviar())),
+                    );
+                  },
+                ),
               ],
             ),
           ),
