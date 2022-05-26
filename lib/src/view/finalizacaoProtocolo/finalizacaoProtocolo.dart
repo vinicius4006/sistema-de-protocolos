@@ -32,6 +32,7 @@ class _FinalizacaoState extends State<Finalizacao> {
     chamandoApiReqState.statusAnterior.value = false;
     criarProtocoloState.listaInput.clear();
     criarProtocoloState.assinaturaController.value.clear();
+
     super.dispose();
   }
 

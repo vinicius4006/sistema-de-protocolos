@@ -36,6 +36,7 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
     criarProtocoloState.assinaturaController.value.clear();
     criarProtocoloState.scrollVisible.value = false;
     criarProtocoloState.listaInput.clear();
+
     super.dispose();
     debugPrint('Dispose CriarProtocolo');
   }

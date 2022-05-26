@@ -22,51 +22,19 @@ class _ButtonEnviarState extends State<ButtonEnviar> {
         int.parse(criarProtocoloState.veiculoSelecionado.value.substring(10)));
 
     var listaItensDoVeiculo = criarProtocoloState.listaItensProtocolo.value;
-    if (criarProtocoloState.formKey.currentState!.validate() &&
-        listaItensDoVeiculo.length == tamanhoVeiculo.length &&
-        criarProtocoloState.assinaturaController.value.isNotEmpty) {
-      bool checkToken = await loginControllerState.verificarAssinaturaDaToken();
-      if (checkToken) {
-        String assinaturaInicial = await criarProtocoloState
-            .assinaturaController.value
-            .toPngBytes()
-            .then((value) {
-          final Uint8List data = value!;
-          String base64Image = base64Encode(data);
-          return base64Image;
-        });
 
-        criarProtocoloState.novoProtocolo(Protocolo(
-            veiculo: int.parse(
-                criarProtocoloState.veiculoSelecionado.value.substring(10)),
-            digitador: loginControllerState.username,
-            assinaturaInicial: assinaturaInicial));
-        Navigator.of(context).pop();
-
-        ArtSweetAlert.show(
-            context: context,
-            artDialogArgs: ArtDialogArgs(
-              type: ArtSweetAlertType.success,
-              title: 'Protocolo Criado',
-            ));
-      } else {
-        ArtSweetAlert.show(
-            context: context,
-            artDialogArgs: ArtDialogArgs(
-                type: ArtSweetAlertType.danger,
-                title: "Usuário e senha negados",
-                text: "Parece que há problemas com os seus dados!"));
-      }
-    } else {
+    if (criarProtocoloState.formKey.currentState!.validate()) {
       List<ItensProtocolo> listaOrganizada = listaItensDoVeiculo;
       List<String> listaCheckIdLista = [];
       List<String> listaCheckIdVeiculo = [];
       for (var item in tamanhoVeiculo) {
         listaCheckIdLista.add(item['id']);
       }
-      for (var item in listaOrganizada) {
-        listaCheckIdVeiculo.add(item.itemveiculo.toString());
-      }
+      listaOrganizada.forEach((element) {
+        if (element.valor != null) {
+          listaCheckIdVeiculo.add(element.itemveiculo.toString());
+        }
+      });
 
       for (var item in listaCheckIdLista.reversed) {
         if (listaCheckIdVeiculo.contains(item)) {
@@ -76,14 +44,50 @@ class _ButtonEnviarState extends State<ButtonEnviar> {
               listaCheckIdLista.indexOf(item), context);
         }
       }
-
-      if (listaCheckIdVeiculo.length == listaCheckIdLista.length) {
+      if (criarProtocoloState.assinaturaController.value.isEmpty) {
         ArtSweetAlert.show(
             context: context,
             artDialogArgs: ArtDialogArgs(
               type: ArtSweetAlertType.info,
-              title: "Verifique sua assinatura",
+              title: "Não esqueça sua assinatura",
             ));
+      }
+
+      if (listaItensDoVeiculo.length == tamanhoVeiculo.length &&
+          criarProtocoloState.assinaturaController.value.isNotEmpty) {
+        bool checkToken =
+            await loginControllerState.verificarAssinaturaDaToken();
+        if (checkToken) {
+          String assinaturaInicial = await criarProtocoloState
+              .assinaturaController.value
+              .toPngBytes()
+              .then((value) {
+            final Uint8List data = value!;
+            String base64Image = base64Encode(data);
+            return base64Image;
+          });
+
+          criarProtocoloState.novoProtocolo(Protocolo(
+              veiculo: int.parse(
+                  criarProtocoloState.veiculoSelecionado.value.substring(10)),
+              digitador: loginControllerState.username,
+              assinaturaInicial: assinaturaInicial));
+          Navigator.of(context).pop();
+
+          ArtSweetAlert.show(
+              context: context,
+              artDialogArgs: ArtDialogArgs(
+                type: ArtSweetAlertType.success,
+                title: 'Protocolo Criado',
+              ));
+        } else {
+          ArtSweetAlert.show(
+              context: context,
+              artDialogArgs: ArtDialogArgs(
+                  type: ArtSweetAlertType.danger,
+                  title: "Usuário e senha negados",
+                  text: "Parece que há problemas com os seus dados!"));
+        }
       }
     }
   }

@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
 import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
 import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
@@ -148,35 +147,15 @@ class _CardFormState extends State<CardForm> {
                                 borderRadius: BorderRadius.circular(15)),
                             primary: Theme.of(context).colorScheme.primary),
                         onPressed: (() {
-                          criarProtocoloState.listaItensProtocolo.value
-                              .forEach((element) {
-                            if (element.itemveiculo == widget.numCat) {
-                              criarProtocoloState.checkFirstCheckOrRadio = true;
-                            } else {
-                              criarProtocoloState.checkFirstCheckOrRadio =
-                                  false;
-                            }
-                          });
-                          if (criarProtocoloState
-                                  .listaItensProtocolo.value.isEmpty ||
-                              !criarProtocoloState.checkFirstCheckOrRadio) {
-                            ArtSweetAlert.show(
-                                context: context,
-                                artDialogArgs: ArtDialogArgs(
-                                  type: ArtSweetAlertType.info,
-                                  title: "Primeiro selecione!",
-                                ));
-                          } else {
-                            showModalBottomSheet(
-                                context: context,
-                                builder: (context) {
-                                  return Camera(
-                                    input: widget.input,
-                                    numCat: widget.numCat,
-                                    indexGlobal: widget.indexGlobal,
-                                  );
-                                });
-                          }
+                          showModalBottomSheet(
+                              context: context,
+                              builder: (context) {
+                                return Camera(
+                                  input: widget.input,
+                                  numCat: widget.numCat,
+                                  indexGlobal: widget.indexGlobal,
+                                );
+                              });
                         }),
                         child: Text(
                           'Tire a Foto',

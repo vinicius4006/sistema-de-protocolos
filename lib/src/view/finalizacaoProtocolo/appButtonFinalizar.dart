@@ -18,20 +18,6 @@ class ButtonFinalizar extends StatefulWidget {
 }
 
 class _ButtonFinalizarState extends State<ButtonFinalizar> {
-  showCompleteCampo(BuildContext context) async {
-    try {
-      ArtDialogResponse response = await ArtSweetAlert.show(
-          context: context,
-          artDialogArgs: ArtDialogArgs(
-            type: ArtSweetAlertType.info,
-            title: "Não esqueça da assinatura!",
-          ));
-    } catch (e) {
-      debugPrint('Motivo do erro da mensagem: $e');
-      return const Text('');
-    }
-  }
-
   showConfirmDialog(BuildContext context) async {
     ArtDialogResponse response = await ArtSweetAlert.show(
         barrierDismissible: false,
@@ -56,19 +42,27 @@ class _ButtonFinalizarState extends State<ButtonFinalizar> {
         String base64Image = base64Encode(data);
         return base64Image;
       });
-      criarProtocoloState.novoProtocolo(Protocolo(
-          id: widget.id,
-          assinaturaFinal: assinaturaFinal,
-          digitadorFinal: loginControllerState.username));
+      bool checkToken = await loginControllerState.verificarAssinaturaDaToken();
+      if (checkToken) {
+        criarProtocoloState.novoProtocolo(Protocolo(
+            id: widget.id,
+            assinaturaFinal: assinaturaFinal,
+            digitadorFinal: loginControllerState.username));
+        Navigator.pop(context);
 
-      //FALTAR FINALIZAR OS FORM DE FINALIZACAO
-      Navigator.pop(context);
-
-      ArtSweetAlert.show(
-          context: context,
-          artDialogArgs: ArtDialogArgs(
-              type: ArtSweetAlertType.success, title: "Finalizado!"));
-      return;
+        ArtSweetAlert.show(
+            context: context,
+            artDialogArgs: ArtDialogArgs(
+                type: ArtSweetAlertType.success, title: "Finalizado!"));
+        return;
+      } else {
+        ArtSweetAlert.show(
+            context: context,
+            artDialogArgs: ArtDialogArgs(
+                type: ArtSweetAlertType.danger,
+                title: "Usuário e senha negados",
+                text: "Parece que há problemas com os seus dados!"));
+      }
     }
   }
 
@@ -85,43 +79,39 @@ class _ButtonFinalizarState extends State<ButtonFinalizar> {
         var tamanhoVeiculo =
             await criarProtocoloState.dadosDoTipo(widget.tipoVeiculo, context);
         var listaItensDoVeiculo = criarProtocoloState.listaItensProtocolo.value;
+        List<ItensProtocolo> listaOrganizada = listaItensDoVeiculo;
+        List<String> listaCheckIdLista = [];
+        List<String> listaCheckIdVeiculo = [];
+        for (var item in tamanhoVeiculo) {
+          listaCheckIdLista.add(item['id']);
+        }
+        listaOrganizada.forEach((element) {
+          if (element.valor != null) {
+            listaCheckIdVeiculo.add(element.itemveiculo.toString());
+          }
+        });
 
-        if (criarProtocoloState.assinaturaController.value.isEmpty ||
-            tamanhoVeiculo.length != listaItensDoVeiculo.length) {
-          List<ItensProtocolo> listaOrganizada = listaItensDoVeiculo;
-          List<String> listaCheckIdLista = [];
-          List<String> listaCheckIdVeiculo = [];
-          for (var item in tamanhoVeiculo) {
-            listaCheckIdLista.add(item['id']);
-          }
-          for (var item in listaOrganizada) {
-            listaCheckIdVeiculo.add(item.itemveiculo.toString());
-          }
-
-          for (var item in listaCheckIdLista.reversed) {
-            if (listaCheckIdVeiculo.contains(item)) {
-              debugPrint('True');
-            } else {
-              criarProtocoloState.scrollTo(
-                  listaCheckIdLista.indexOf(item), context);
-            }
-          }
-          if (listaCheckIdVeiculo.length == listaCheckIdLista.length) {
-            showCompleteCampo(context);
-          }
-        } else {
-          bool checkToken =
-              await loginControllerState.verificarAssinaturaDaToken();
-          if (checkToken) {
-            showConfirmDialog(context);
+        for (var item in listaCheckIdLista.reversed) {
+          if (listaCheckIdVeiculo.contains(item)) {
+            debugPrint('True');
           } else {
-            ArtSweetAlert.show(
-                context: context,
-                artDialogArgs: ArtDialogArgs(
-                    type: ArtSweetAlertType.danger,
-                    title: "Usuário e senha negados",
-                    text: "Parece que há problema com os seus dados!"));
+            criarProtocoloState.scrollTo(
+                listaCheckIdLista.indexOf(item), context);
           }
+        }
+
+        if (criarProtocoloState.assinaturaController.value.isEmpty) {
+          ArtSweetAlert.show(
+              context: context,
+              artDialogArgs: ArtDialogArgs(
+                type: ArtSweetAlertType.info,
+                title: "Não esqueça sua assinatura",
+              ));
+        }
+
+        if (listaCheckIdVeiculo.length == listaCheckIdLista.length &&
+            criarProtocoloState.assinaturaController.value.isNotEmpty) {
+          showConfirmDialog(context);
         }
       },
       child: const Text(

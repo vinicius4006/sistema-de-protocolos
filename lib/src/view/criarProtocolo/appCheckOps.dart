@@ -66,18 +66,20 @@ class _CheckOpsState extends State<CheckOps> {
       }
     });
     checkSelect.sort();
-    checkSelect.isNotEmpty
-        ? criarProtocoloState.addFormItensProtocolo(ItensProtocolo(
-            itemveiculo: widget.numCat,
-            valor: int.parse(checkSelect.reversed
-                .toString()
-                .replaceAll('(', '')
-                .replaceAll(')', '')
-                .split(',')
-                .join('')
-                .replaceAll(' ', ''))))
-        : criarProtocoloState
-            .addFormItensProtocolo(ItensProtocolo(itemveiculo: widget.numCat));
+    if (checkSelect.isNotEmpty) {
+      criarProtocoloState.addFormItensProtocolo(ItensProtocolo(
+          itemveiculo: widget.numCat,
+          valor: int.parse(checkSelect.reversed
+              .toString()
+              .replaceAll('(', '')
+              .replaceAll(')', '')
+              .split(',')
+              .join('')
+              .replaceAll(' ', ''))));
+    } else {
+      criarProtocoloState.addFormItensProtocolo(
+          ItensProtocolo(itemveiculo: widget.numCat, valor: 11));
+    }
   }
 
   @override

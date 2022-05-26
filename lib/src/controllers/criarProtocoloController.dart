@@ -30,9 +30,8 @@ class _CriarProtocolo extends ChangeNotifier {
 
   ScrollController scrollController = ScrollController();
   final GlobalKey<FormState> formKey = (GlobalKey<FormState>());
-  final List<GlobalKey> listaKey = [];
+  final List<GlobalKey> listaKey = []; //cada card tem uma key
   final List<String> listaInput = [];
-  bool checkFirstCheckOrRadio = false;
 
   changeVeiculoSelecionado(String veiculoNovo) {
     veiculoSelecionado.value = '';
@@ -81,9 +80,15 @@ class _CriarProtocolo extends ChangeNotifier {
 
     for (var elemento in listaItensProtocolo.value) {
       if (elemento.itemveiculo == itensProtocolo.itemveiculo) {
-        itensProtocolo.valor == null
-            ? elemento.imagem = itensProtocolo.imagem
-            : elemento.valor = itensProtocolo.valor;
+        if (itensProtocolo.valor == null) {
+          elemento.imagem = itensProtocolo.imagem;
+        } else if (itensProtocolo.valor == 11) {
+          //checkbox
+          elemento.valor = null;
+        } else {
+          elemento.valor = itensProtocolo.valor;
+        }
+
         _listaChecagem = true;
         debugPrint('${elemento.toJson()}');
       }
