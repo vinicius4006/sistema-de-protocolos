@@ -11,7 +11,7 @@ import 'package:protocolo_app/src/shared/models/protocolo.dart';
 class ButtonFinalizar extends StatefulWidget {
   ButtonFinalizar({Key? key, required this.tipoVeiculo, required this.id})
       : super(key: key);
-  String tipoVeiculo;
+  int tipoVeiculo;
   int id;
   @override
   State<ButtonFinalizar> createState() => _ButtonFinalizarState();

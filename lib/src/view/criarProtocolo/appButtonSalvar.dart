@@ -18,8 +18,8 @@ class ButtonEnviar extends StatefulWidget {
 
 class _ButtonEnviarState extends State<ButtonEnviar> {
   verificacaoForm() async {
-    var tamanhoVeiculo = await chamandoApiReqState.retornarSeMotoOuCarro(
-        int.parse(criarProtocoloState.veiculoSelecionado.value.substring(10)));
+    var tamanhoVeiculo = await chamandoApiReqState
+        .retornarSeMotoOuCarro(criarProtocoloState.veiculoSelecionado.value);
 
     var listaItensDoVeiculo = criarProtocoloState.listaItensProtocolo.value;
 
@@ -68,9 +68,8 @@ class _ButtonEnviarState extends State<ButtonEnviar> {
           });
 
           criarProtocoloState.novoProtocolo(Protocolo(
-              veiculo: int.parse(
-                  criarProtocoloState.veiculoSelecionado.value.substring(10)),
-              motorista: criarProtocoloState.motoristaSelecionado,
+              veiculo: criarProtocoloState.veiculoSelecionado.value,
+              motorista: criarProtocoloState.motoristaSelecionado.value,
               digitador: loginControllerState.username,
               assinaturaInicial: assinaturaInicial));
           Navigator.of(context).pop();

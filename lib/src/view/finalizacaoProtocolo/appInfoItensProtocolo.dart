@@ -31,10 +31,10 @@ class _InfoItensProtocoloState extends State<InfoItensProtocolo> {
             List<dynamic> listaItensProtocoloId =
                 snapshot.data as List<dynamic>;
 
-            String tipoVeiculo =
+            int tipoVeiculo =
                 (listaItensProtocoloId[1] as ItensProtocolo).itemveiculo == 2
-                    ? '0'
-                    : '1';
+                    ? 0
+                    : 1;
 
             return Column(
               children: [
@@ -46,7 +46,7 @@ class _InfoItensProtocoloState extends State<InfoItensProtocolo> {
                   style: TextStyle(fontSize: 30, fontWeight: FontWeight.w400),
                 ),
                 VeiculoForm(
-                  placa: tipoVeiculo,
+                  veiculo: tipoVeiculo,
                 ),
                 FutureBuilder(
                     future: Future.delayed(Duration(seconds: 2), () {

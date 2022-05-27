@@ -2,16 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
 
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
-import 'package:protocolo_app/src/shared/models/pessoa_motorista.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/appButtonSalvar.dart';
+import 'package:protocolo_app/src/view/criarProtocolo/appSearch.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/app_Assinatura.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/app_formVeiculo.dart';
-
-import 'package:animated_custom_dropdown/custom_dropdown.dart';
 
 class CriarProtocolo extends StatefulWidget {
   const CriarProtocolo({Key? key}) : super(key: key);
@@ -31,8 +28,8 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
 
   @override
   void dispose() {
-    chamandoApiReqState.veiculoSelecionar.value.clear();
-    chamandoApiReqState.motoristaSelecionar.value.clear();
+    criarProtocoloState.veiculoSelecionar.clear();
+    criarProtocoloState.motoristaSelecionar.clear();
     criarProtocoloState.resetVeiculoSelecionado();
     criarProtocoloState.scrollController = ScrollController();
     criarProtocoloState.assinaturaController.value.clear();
@@ -91,89 +88,20 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
               controller: criarProtocoloState.scrollController,
               children: <Widget>[
                 const SizedBox(
-                  height: 20.0,
+                  height: 60.0,
                 ),
-                const SizedBox(
-                  height: 20.0,
-                ),
-                const SizedBox(
-                  height: 20.0,
-                ),
-                FutureBuilder(
-                    future:
-                        chamandoApiReqState.retornarPessoaPorMotorista(0, true),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return Center(
-                          child: Text(''),
-                        );
-                      } else {
-                        return ValueListenableBuilder(
-                            valueListenable:
-                                chamandoApiReqState.motoristaSelecionar,
-                            builder: (context,
-                                TextEditingController motoristaSelecionar, _) {
-                              return CustomDropdown.search(
-                                controller: motoristaSelecionar,
-                                hintText: 'Selecione o Motorista',
-                                excludeSelected: false,
-                                items: (snapshot.data as List<Pessoa>)
-                                    .map((e) => e.nome.toString())
-                                    .toList(),
-                                onChanged: (value) {
-                                  (snapshot.data as List<Pessoa>)
-                                      .forEach((element) {
-                                    if (element.nome == value) {
-                                      criarProtocoloState
-                                          .changeMotoristaSelecionado(
-                                              int.parse(element.id.toString()));
-                                    }
-                                  });
-                                },
-                              );
-                            });
-                      }
-                    }),
-                const SizedBox(
-                  height: 20.0,
-                ),
-                FutureBuilder(
-                    future: chamandoApiReqState.loadPlacas(),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return Center(
-                          child: Text(''),
-                        );
-                      } else {
-                        return ValueListenableBuilder(
-                          valueListenable:
-                              chamandoApiReqState.veiculoSelecionar,
-                          builder: (context,
-                                  TextEditingController veiculoSelecionar, _) =>
-                              CustomDropdown.search(
-                            controller: veiculoSelecionar,
-                            hintText: 'Selecione o Veículo',
-                            excludeSelected: false,
-                            items: snapshot.data as List<String>,
-                            onChanged: (value) {
-                              criarProtocoloState
-                                  .changeVeiculoSelecionado(value);
-                            },
-                          ),
-                        );
-                      }
-                    }),
+                Pesquisa(),
                 const SizedBox(
                   height: 20.0,
                 ),
                 ValueListenableBuilder(
                   valueListenable: criarProtocoloState.veiculoSelecionado,
-                  builder: (context, String veiculoSelecionado, _) =>
-                      veiculoSelecionado != ''
+                  builder: (context, int veiculoSelecionado, _) =>
+                      veiculoSelecionado != 0
                           ? Column(
                               children: [
                                 VeiculoForm(
-                                  placa: veiculoSelecionado,
+                                  veiculo: veiculoSelecionado,
                                 ),
                                 FutureBuilder(
                                     future: Future.delayed(Duration(seconds: 1),
@@ -202,12 +130,6 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                                 );
                               },
                             ),
-                ),
-                const SizedBox(
-                  height: 20.0,
-                ),
-                const SizedBox(
-                  height: 20.0,
                 ),
                 ValueListenableBuilder(
                     valueListenable: criarProtocoloState.showLoadingAndButton,

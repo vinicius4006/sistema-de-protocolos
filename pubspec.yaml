@@ -54,6 +54,7 @@ dependencies:
 
   scrollable_positioned_list: ^0.3.1
   crypto: ^3.0.2
+  searchfield: ^0.6.5
 
 
 

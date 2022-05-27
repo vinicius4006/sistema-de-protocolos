@@ -5,9 +5,9 @@ import 'package:protocolo_app/src/shared/models/itensVeiculo.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/app_Card.dart';
 
 class VeiculoForm extends StatefulWidget {
-  VeiculoForm({Key? key, this.placa}) : super(key: key);
+  VeiculoForm({Key? key, this.veiculo}) : super(key: key);
 
-  String? placa;
+  int? veiculo;
 
   @override
   State<VeiculoForm> createState() => _VeiculoFormState();
@@ -70,15 +70,14 @@ class _VeiculoFormState extends State<VeiculoForm> {
   }
 
   Widget showAll() {
-    if (widget.placa == null) {
+    if (widget.veiculo == null) {
       return const CircularProgressIndicator();
     } else {
       return FutureBuilder(
-          future: widget.placa!.length > 1
-              ? chamandoApiReqState
-                  .retornarSeMotoOuCarro(int.parse(widget.placa!.substring(10)))
+          future: widget.veiculo! > 1
+              ? chamandoApiReqState.retornarSeMotoOuCarro(widget.veiculo!)
               : chamandoApiReqState
-                  .retornarSeMotoOuCarroPorBooleano(widget.placa.toString()),
+                  .retornarSeMotoOuCarroPorBooleano(widget.veiculo!),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               List<ItensVeiculos> data = (snapshot.data as List).map((item) {

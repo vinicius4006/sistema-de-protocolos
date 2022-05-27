@@ -13,8 +13,10 @@ import 'package:signature/signature.dart';
 const BASEURL = 'http://10.1.2.218/api/view/ProtocoloFrota';
 
 class _CriarProtocolo extends ChangeNotifier {
-  final ValueNotifier<String> veiculoSelecionado = ValueNotifier('');
-  int motoristaSelecionado = 0; // precisa?
+  final TextEditingController veiculoSelecionar = TextEditingController();
+  final TextEditingController motoristaSelecionar = TextEditingController();
+  final ValueNotifier<int> veiculoSelecionado = ValueNotifier(0);
+  final ValueNotifier<int> motoristaSelecionado = ValueNotifier(0);
   final ValueNotifier<Protocolo> protocolo = ValueNotifier(Protocolo());
   final ValueNotifier<List<ItensProtocolo>> listaItensProtocolo =
       ValueNotifier([]); // notificando para quem?
@@ -35,27 +37,25 @@ class _CriarProtocolo extends ChangeNotifier {
   final List<String> listaInput = [];
   final ValueNotifier<bool> showLoadingAndButton = ValueNotifier(false);
 
-  changeVeiculoSelecionado(String veiculoNovo) {
-    veiculoSelecionado.value = '';
+  changeVeiculoSelecionado(int veiculoNovo) {
+    veiculoSelecionado.value = 0;
     scrollVisible.value = false;
     showLoadingAndButton.value = true;
     Timer(Duration(seconds: 2), () {
       veiculoSelecionado.value = veiculoNovo;
-      chamandoApiReqState.veiculoSelecionar.notifyListeners();
       Timer(Duration(seconds: 2), () => scrollVisible.value = true);
     });
   }
 
   changeMotoristaSelecionado(int motorista) {
     Timer(Duration(seconds: 2), (() {
-      motoristaSelecionado = motorista;
-      chamandoApiReqState.motoristaSelecionar.notifyListeners();
+      motoristaSelecionado.value = motorista;
     }));
   }
 
   resetVeiculoSelecionado() {
-    veiculoSelecionado.value = '';
-    motoristaSelecionado = 0;
+    veiculoSelecionado.value = 0;
+    motoristaSelecionado.value = 0;
   }
 
   refreshPage() {
@@ -110,7 +110,7 @@ class _CriarProtocolo extends ChangeNotifier {
         : listaItensProtocolo.value.add(itensProtocolo);
   }
 
-  Future dadosDoTipo(String tipo, BuildContext context) async {
+  Future dadosDoTipo(int tipo, BuildContext context) async {
     var result =
         await chamandoApiReqState.retornarSeMotoOuCarroPorBooleano(tipo);
     return result;

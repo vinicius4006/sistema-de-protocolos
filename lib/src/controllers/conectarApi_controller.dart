@@ -11,11 +11,6 @@ String BASEURL = 'http://frota.jupiter.com.br/api/view/JSON';
 String URL = 'http://10.1.2.218/api/view/ProtocoloFrota/';
 
 class _chamandoApiReq extends ChangeNotifier {
-  final ValueNotifier<TextEditingController> veiculoSelecionar =
-      ValueNotifier(TextEditingController());
-  final ValueNotifier<TextEditingController> motoristaSelecionar =
-      ValueNotifier(TextEditingController());
-  final List<String> veiculos = [];
   final ValueNotifier<List<Placas>> listaPlacas =
       ValueNotifier([]); //precisa ser notificado?
   final ValueNotifier<bool> statusAnterior = ValueNotifier(false);
@@ -28,11 +23,9 @@ class _chamandoApiReq extends ChangeNotifier {
         .get('$BASEURL/retornarVeiculosNaoProtocolados?nao_finalizados=');
 
     if (response.statusCode == 200) {
-      List<dynamic> data = response.data;
-      for (var item in await data) {
-        veiculos.add(item['placa'] + ' - ' + item['id']);
-      }
-      return veiculos;
+      return (response.data as List).map((e) {
+        return Placas.fromJson(e);
+      }).toList();
     } else {
       throw Exception('Falha ao carregar as placas');
     }
@@ -60,7 +53,7 @@ class _chamandoApiReq extends ChangeNotifier {
     }
   }
 
-  Future<List<dynamic>> retornarSeMotoOuCarroPorBooleano(String change) async {
+  Future<List<dynamic>> retornarSeMotoOuCarroPorBooleano(int change) async {
     try {
       final responseTipo =
           await Dio().get('$BASEURL/retornarItensVeiculo?tipo=$change');
