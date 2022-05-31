@@ -11,8 +11,7 @@ String BASEURL = 'http://frota.jupiter.com.br/api/view/JSON';
 String URL = 'http://10.1.2.218/api/view/ProtocoloFrota/';
 
 class _chamandoApiReq extends ChangeNotifier {
-  final ValueNotifier<List<Placas>> listaPlacas =
-      ValueNotifier([]); //precisa ser notificado?
+  List<Placas> listaPlacas = []; //precisa ser notificado?
   final ValueNotifier<bool> statusAnterior = ValueNotifier(false);
   List<ItensVeiculos> listaItensVeiculo = [];
   List<ItensProtocolo> listaItensProtocoloId = [];
@@ -65,31 +64,33 @@ class _chamandoApiReq extends ChangeNotifier {
     }
   }
 
-  Future<List<Protocolo>> retornarProtocolos(bool filtrado) async {
+  Future<List<Protocolo>> retornarProtocolos(
+      bool filtrado, int limit, int offset) async {
     await Future.delayed(Duration(seconds: 2));
-    final responseTodosOsProtocolos =
-        await Dio().get('${URL}retornarProtocolos?nao_finalizados=${filtrado}');
+    final responseTodosOsProtocolos = await Dio().get(
+        '${URL}retornarProtocolos?nao_finalizados=${filtrado}&limit=${limit}&offset=${offset}');
     listaPlacasPorProtocolo(
         responseTodosOsProtocolos.data['protocolos'] as List);
-    return (responseTodosOsProtocolos.data['protocolos'] as List)
-        .map((item) {
-          return Protocolo.fromJson(item);
-        })
-        .toList()
-        .reversed
-        .toList();
+    return (responseTodosOsProtocolos.data['protocolos'] as List).map((item) {
+      return Protocolo.fromJson(item);
+    }).toList();
   }
 
   Future<void> listaPlacasPorProtocolo(List lista) async {
-    listaPlacas.value = await (lista.map((item) {
+    listaPlacas = await (lista.map((item) {
       return Placas.fromJson(item);
     })).toList().reversed.toList();
   }
 
   Future<Protocolo> retornarProtocolosPorId(bool filtrado, int id) async {
-    final responseProtocoloPorId = await Dio()
-        .get('${URL}retornarProtocolos?nao_finalizados=${filtrado}&id=${id}');
-    return Protocolo.fromJson(responseProtocoloPorId.data['protocolos'][0]);
+    try {
+      final responseProtocoloPorId = await Dio()
+          .get('${URL}retornarProtocolos?nao_finalizados=${filtrado}&id=${id}');
+      return Protocolo.fromJson(responseProtocoloPorId.data['protocolos'][0]);
+    } catch (e) {
+      debugPrint('Erro retornarProtocolosPorId: $e');
+      return Protocolo();
+    }
   }
 
   Future<dynamic> retornarPessoaPorMotorista(int id, bool todos) async {
@@ -113,6 +114,42 @@ class _chamandoApiReq extends ChangeNotifier {
 
         return pessoa.nome.toString();
       }
+    }
+  }
+
+  Future<List<Pessoa>> getPessoa(String query) async {
+    debugPrint('CARREGOU');
+    final responsePessoaPorMotorista =
+        await Dio().get('${URL}retornarPessoaPorMotorista?nome=');
+    if (responsePessoaPorMotorista.statusCode == 200) {
+      return (responsePessoaPorMotorista.data['pessoa'] as List)
+          .map((item) => Pessoa.fromJson(item))
+          .where((element) {
+        final nomeLower = element.nome!.toLowerCase();
+        final queryLower = query.toLowerCase();
+
+        return nomeLower.contains(queryLower);
+      }).toList();
+    } else {
+      throw Exception();
+    }
+  }
+
+  Future<List<Placas>> getPlacas(String query) async {
+    final response = await Dio()
+        .get('$BASEURL/retornarVeiculosNaoProtocolados?nao_finalizados=');
+
+    if (response.statusCode == 200) {
+      return (response.data as List).map((e) {
+        return Placas.fromJson(e);
+      }).where((element) {
+        final placaLower = element.placa;
+        final queryUpper = query.toUpperCase();
+
+        return placaLower!.contains(queryUpper);
+      }).toList();
+    } else {
+      throw Exception('Falha ao carregar as placas');
     }
   }
 

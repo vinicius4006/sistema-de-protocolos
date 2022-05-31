@@ -18,8 +18,20 @@ class PesquisaBar extends StatefulWidget {
 }
 
 class _PesquisaBarState extends State<PesquisaBar> {
+  final veiculoSelecionar = TextEditingController();
+  final motoristaSelecionar = TextEditingController();
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    debugPrint('Dispose PesquisaBar');
+    veiculoSelecionar.clear();
+    motoristaSelecionar.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
+    debugPrint('Build PesquisaBar');
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
@@ -32,9 +44,7 @@ class _PesquisaBarState extends State<PesquisaBar> {
                 offset: Offset(0, 10))
           ]),
       child: CustomDropdown.search(
-        controller: widget.sePessoa
-            ? criarProtocoloState.motoristaSelecionar
-            : criarProtocoloState.veiculoSelecionar,
+        controller: widget.sePessoa ? motoristaSelecionar : veiculoSelecionar,
         hintText: '${widget.titulo}',
         excludeSelected: false,
         items: widget.lista.map((e) {

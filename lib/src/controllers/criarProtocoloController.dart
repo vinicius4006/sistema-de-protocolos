@@ -13,15 +13,17 @@ import 'package:signature/signature.dart';
 const BASEURL = 'http://10.1.2.218/api/view/ProtocoloFrota';
 
 class _CriarProtocolo extends ChangeNotifier {
-  final TextEditingController veiculoSelecionar = TextEditingController();
-  final TextEditingController motoristaSelecionar = TextEditingController();
+  //
+
   final ValueNotifier<int> veiculoSelecionado = ValueNotifier(0);
-  final ValueNotifier<int> motoristaSelecionado = ValueNotifier(0);
+  int motoristaSelecionado = 0;
+  //
   final ValueNotifier<Protocolo> protocolo = ValueNotifier(Protocolo());
   final ValueNotifier<List<ItensProtocolo>> listaItensProtocolo =
       ValueNotifier([]); // notificando para quem?
   final ValueNotifier<String> foto =
       ValueNotifier(''); // notificando para quem?
+  //
   final ValueNotifier<List<bool>> changeButton = ValueNotifier([]);
   final ValueNotifier<SignatureController> assinaturaController = ValueNotifier(
       SignatureController(
@@ -30,7 +32,7 @@ class _CriarProtocolo extends ChangeNotifier {
           exportBackgroundColor: Colors.grey));
   final ValueNotifier<List<Color>> listaCoresCard = ValueNotifier([]);
   final ValueNotifier<bool> scrollVisible = ValueNotifier(false);
-
+//
   ScrollController scrollController = ScrollController();
   final GlobalKey<FormState> formKey = (GlobalKey<FormState>());
   final List<GlobalKey> listaKey = []; //cada card tem uma key
@@ -49,13 +51,13 @@ class _CriarProtocolo extends ChangeNotifier {
 
   changeMotoristaSelecionado(int motorista) {
     Timer(Duration(seconds: 2), (() {
-      motoristaSelecionado.value = motorista;
+      motoristaSelecionado = motorista;
     }));
   }
 
   resetVeiculoSelecionado() {
     veiculoSelecionado.value = 0;
-    motoristaSelecionado.value = 0;
+    motoristaSelecionado = 0;
   }
 
   refreshPage() {

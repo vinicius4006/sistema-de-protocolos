@@ -1,8 +1,8 @@
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
 import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
-
 import 'package:protocolo_app/src/view/criarProtocolo/criarProtocolo.dart';
+
 import 'package:protocolo_app/src/view/homepage/appHomePage.dart';
 import 'package:protocolo_app/src/view/login/login.dart';
 
@@ -27,9 +27,8 @@ class _HomeState extends State<Home> {
     super.dispose();
   }
 
-  void _telaCriarProtocolo(BuildContext context) {
-    Route route =
-        MaterialPageRoute(builder: (context) => const CriarProtocolo());
+  void _telaCriarProtocolo(BuildContext context) async {
+    Route route = MaterialPageRoute(builder: (context) => CriarProtocolo());
     Navigator.push(context, route);
   }
 

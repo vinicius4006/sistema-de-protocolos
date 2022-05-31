@@ -100,14 +100,14 @@ class _ButtonFinalizarState extends State<ButtonFinalizar> {
           }
         }
 
-        if (criarProtocoloState.assinaturaController.value.isEmpty) {
-          ArtSweetAlert.show(
-              context: context,
-              artDialogArgs: ArtDialogArgs(
-                type: ArtSweetAlertType.info,
-                title: "Não esqueça sua assinatura",
-              ));
-        }
+        // if (criarProtocoloState.assinaturaController.value.isEmpty) {
+        //   ArtSweetAlert.show(
+        //       context: context,
+        //       artDialogArgs: ArtDialogArgs(
+        //         type: ArtSweetAlertType.info,
+        //         title: "Não esqueça sua assinatura",
+        //       ));
+        // }
 
         if (listaCheckIdVeiculo.length == listaCheckIdLista.length &&
             criarProtocoloState.assinaturaController.value.isNotEmpty) {

@@ -6,7 +6,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/appButtonSalvar.dart';
-import 'package:protocolo_app/src/view/criarProtocolo/appSearch.dart';
+import 'package:protocolo_app/src/view/criarProtocolo/appPesquisaBarra.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/app_Assinatura.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/app_formVeiculo.dart';
 
@@ -28,8 +28,6 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
 
   @override
   void dispose() {
-    criarProtocoloState.veiculoSelecionar.clear();
-    criarProtocoloState.motoristaSelecionar.clear();
     criarProtocoloState.resetVeiculoSelecionado();
     criarProtocoloState.scrollController = ScrollController();
     criarProtocoloState.assinaturaController.value.clear();
@@ -43,6 +41,7 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
 
   @override
   Widget build(BuildContext context) {
+    final _controller = TextEditingController();
     debugPrint('Build CriarProtocolo');
     return Scaffold(
         appBar: AppBar(
@@ -88,9 +87,10 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
               controller: criarProtocoloState.scrollController,
               children: <Widget>[
                 const SizedBox(
-                  height: 60.0,
+                  height: 30.0,
                 ),
-                Pesquisa(),
+                PesquisaBarra(boolSearch: true),
+                PesquisaBarra(boolSearch: false),
                 const SizedBox(
                   height: 20.0,
                 ),

@@ -44,14 +44,14 @@ class _ButtonEnviarState extends State<ButtonEnviar> {
               listaCheckIdLista.indexOf(item), context);
         }
       }
-      if (criarProtocoloState.assinaturaController.value.isEmpty) {
-        ArtSweetAlert.show(
-            context: context,
-            artDialogArgs: ArtDialogArgs(
-              type: ArtSweetAlertType.info,
-              title: "Não esqueça sua assinatura",
-            ));
-      }
+      // if (criarProtocoloState.assinaturaController.value.isEmpty) {
+      //   ArtSweetAlert.show(
+      //       context: context,
+      //       artDialogArgs: ArtDialogArgs(
+      //         type: ArtSweetAlertType.info,
+      //         title: "Não esqueça sua assinatura",
+      //       ));
+      // }
 
       if (listaItensDoVeiculo.length == tamanhoVeiculo.length &&
           criarProtocoloState.assinaturaController.value.isNotEmpty) {
@@ -69,7 +69,7 @@ class _ButtonEnviarState extends State<ButtonEnviar> {
 
           criarProtocoloState.novoProtocolo(Protocolo(
               veiculo: criarProtocoloState.veiculoSelecionado.value,
-              motorista: criarProtocoloState.motoristaSelecionado.value,
+              motorista: criarProtocoloState.motoristaSelecionado,
               digitador: loginControllerState.username,
               assinaturaInicial: assinaturaInicial));
           Navigator.of(context).pop();

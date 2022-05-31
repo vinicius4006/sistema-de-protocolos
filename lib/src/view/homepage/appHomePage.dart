@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
-import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
 import 'package:protocolo_app/src/controllers/homePageController.dart';
 import 'package:protocolo_app/src/view/finalizacaoProtocolo/finalizacaoProtocolo.dart';
 
@@ -19,18 +18,31 @@ class HomePage extends StatefulWidget {
 }
 
 class _MainHomeState extends State<HomePage> {
-  final df = DateFormat('dd-MM-yyyy hh:mm a');
+  final _scrollController = ScrollController();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    homePageState.loadData();
+    chamandoApiReqState.loadPlacas();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent) {
+        homePageState.loadData();
+      }
+    });
   }
 
   @override
   void dispose() {
     debugPrint('Dispose HomePage');
     super.dispose();
+    _scrollController.dispose();
+    homePageState.x = 0;
+    homePageState.listProtocolo.value.clear();
+    homePageState.listaPlacaVeiculo.value.clear();
+    homePageState.refresh.value = false;
   }
 
   void menuProtocolo(int id) async {
@@ -51,6 +63,7 @@ class _MainHomeState extends State<HomePage> {
 
     if (response.isTapConfirmButton) {
       showDialog(
+          barrierDismissible: false,
           context: context,
           builder: (_) {
             return Center(
@@ -63,12 +76,20 @@ class _MainHomeState extends State<HomePage> {
         const Duration(seconds: 2),
         onTimeout: () => Navigator.pop(context),
       );
-
+      Protocolo finalizadoOuNao =
+          await chamandoApiReqState.retornarProtocolosPorId(true, id);
       Timer(const Duration(seconds: 2), () {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => Finalizacao(
-                  id: id,
-                )));
+        finalizadoOuNao.id != null
+            ? Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => Finalizacao(
+                      id: id,
+                    )))
+            : ArtSweetAlert.show(
+                context: context,
+                artDialogArgs: ArtDialogArgs(
+                    type: ArtSweetAlertType.info,
+                    title: "Protocolo já finalizado",
+                    text: "Lista já foi atualizada!"));
       });
       return;
     }
@@ -83,100 +104,146 @@ class _MainHomeState extends State<HomePage> {
     debugPrint('Build HomePage');
 
     return Scaffold(
-        body: FutureBuilder(
-      future: chamandoApiReqState.retornarProtocolos(true),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return Center(
-            child:
-                LoadingAnimationWidget.waveDots(color: Colors.green, size: 150),
-          );
-        } else {
-          List<Protocolo> listaProtocolo = (snapshot.data as List<Protocolo>);
-          homePageState.protocoloFilter('', listaProtocolo);
-          return Padding(
-            padding: const EdgeInsets.all(10),
-            child: Column(children: [
-              Ink(
-                decoration: ShapeDecoration(
-                    color: Theme.of(context).colorScheme.primary,
-                    shape: CircleBorder()),
-                child: IconButton(
-                    color: Colors.white,
-                    onPressed: () {
-                      criarProtocoloState.refreshPage();
-                    },
-                    icon: const Icon(Icons.refresh_rounded)),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              TextField(
-                onChanged: ((value) =>
-                    homePageState.protocoloFilter(value, listaProtocolo)),
-                decoration: const InputDecoration(
-                  labelText: 'Pesquisar',
-                  suffixIcon: Icon(Icons.search),
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Expanded(
+        body: Padding(
+      padding: const EdgeInsets.all(10),
+      child: Column(children: [
+        Ink(
+          decoration: ShapeDecoration(
+              color: Theme.of(context).colorScheme.primary,
+              shape: CircleBorder()),
+          child: IconButton(
+              color: Colors.white,
+              onPressed: () {
+                _scrollController.animateTo(0,
+                    duration: Duration(milliseconds: 500),
+                    curve: Curves.fastOutSlowIn);
+                homePageState.refresh.value = true;
+                homePageState.protocoloFilter('');
+              },
+              icon: const Icon(Icons.refresh_rounded)),
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        TextField(
+          onSubmitted: ((value) {
+            homePageState.refresh.value = true;
+            homePageState.protocoloFilter(value);
+          }),
+          decoration: const InputDecoration(
+            labelText: 'Pesquisar',
+            suffixIcon: Icon(Icons.search),
+          ),
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        ValueListenableBuilder(
+          valueListenable: homePageState.refresh,
+          builder: (context, bool refresh, _) {
+            if (refresh) {
+              return Center(
+                child: LoadingAnimationWidget.discreteCircle(
+                    color: Theme.of(context).colorScheme.secondary, size: 30),
+              );
+            } else {
+              return Expanded(
                   child: ValueListenableBuilder(
-                valueListenable: homePageState.protocoloFiltro,
-                builder: (context, List<Protocolo> protocoloFiltro, _) {
-                  return protocoloFiltro.isNotEmpty
-                      ? ListView.builder(
-                          itemCount: protocoloFiltro.length,
-                          itemBuilder: (context, index) => Card(
-                            key: ValueKey(protocoloFiltro[index].id),
-                            color: Theme.of(context).colorScheme.secondary,
-                            elevation: 4,
-                            margin: const EdgeInsets.symmetric(vertical: 10),
-                            child: ListTile(
-                              leading: Text(
-                                protocoloFiltro[index].id.toString(),
-                                style: const TextStyle(
-                                    fontSize: 24, fontWeight: FontWeight.w900),
-                              ),
-                              title: Text(
-                                'Placa: ' +
-                                    homePageState.placaPorVeiculo(
-                                        protocoloFiltro[index]
-                                            .veiculo
-                                            .toString()),
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w700, fontSize: 20),
-                              ),
-                              subtitle: Text(
-                                '\n' 'Início: ' +
-                                    DateFormat('dd/MM/yyyy - kk:mm')
-                                        .format(protocoloFiltro[index].inicio!)
-                                        .toString() +
-                                    '\n'
-                                        '\n'
-                                        'Final: Ainda não finalizado',
-                                style: TextStyle(fontWeight: FontWeight.w900),
-                              ),
-                              onTap: () {
-                                menuProtocolo(
-                                  protocoloFiltro[index].id!,
-                                );
-                              },
-                            ),
-                          ),
-                        )
-                      : const Text(
-                          'Protocolo não encontrado',
-                          style: TextStyle(fontSize: 24),
+                      valueListenable: homePageState.listProtocolo,
+                      builder: (context, List<Protocolo> listaProtocolo, _) {
+                        return ListView.separated(
+                          controller: _scrollController,
+                          itemCount: listaProtocolo.length + 1,
+                          itemBuilder: (context, index) => index <
+                                  listaProtocolo.length
+                              ? Card(
+                                  key: ValueKey(listaProtocolo[index].id),
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
+                                  elevation: 4,
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 10),
+                                  child: ListTile(
+                                    leading: Text(
+                                      listaProtocolo[index].id.toString(),
+                                      style: const TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.w900),
+                                    ),
+                                    title: ValueListenableBuilder(
+                                      valueListenable:
+                                          homePageState.listaPlacaVeiculo,
+                                      builder:
+                                          (context, List<String> placas, _) {
+                                        if (homePageState
+                                                .listProtocolo.value.length !=
+                                            1) {
+                                          homePageState.placaPorVeiculo(
+                                              listaProtocolo[index]
+                                                  .veiculo
+                                                  .toString());
+                                          return Text(
+                                            'Placa: ' +
+                                                '${!placas.asMap().containsKey(index) ? '...' : placas[index]}',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 20),
+                                          );
+                                        } else {
+                                          return Text(
+                                            'Placa: ' +
+                                                '${homePageState.placaPorVeiculo(homePageState.listProtocolo.value[0].veiculo.toString())}',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 20),
+                                          );
+                                        }
+                                      },
+                                    ),
+                                    subtitle: Text(
+                                      '\n' 'Início: ' +
+                                          DateFormat('dd/MM/yyyy - kk:mm')
+                                              .format(homePageState
+                                                  .listProtocolo
+                                                  .value[index]
+                                                  .inicio!)
+                                              .toString() +
+                                          '\n'
+                                              '\n'
+                                              'Final: Ainda não finalizado',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w900),
+                                    ),
+                                    onTap: () {
+                                      menuProtocolo(
+                                        listaProtocolo[index].id!,
+                                      );
+                                    },
+                                  ),
+                                )
+                              : Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 26),
+                                  child: Center(
+                                      child: homePageState.maisDados
+                                          ? LoadingAnimationWidget
+                                              .discreteCircle(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .secondary,
+                                                  size: 30)
+                                          : Text('Não há mais protocolos')),
+                                ),
+                          separatorBuilder: (context, index) {
+                            return Divider(
+                              height: 1,
+                            );
+                          },
                         );
-                },
-              ))
-            ]),
-          );
-        }
-      },
+                      }));
+            }
+          },
+        ),
+      ]),
     ));
   }
 }
