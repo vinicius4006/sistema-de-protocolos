@@ -6,26 +6,26 @@ import 'package:protocolo_app/src/shared/models/protocolo.dart';
 class _HomePage extends ChangeNotifier {
   final ValueNotifier<List<Protocolo>> listProtocolo = ValueNotifier([]);
   final ValueNotifier<List<String>> listaPlacaVeiculo = ValueNotifier([]);
-  final controllerFiltro = TextEditingController();
 
   int x = 0;
   bool maisDados = true;
   final ValueNotifier<bool> refresh = ValueNotifier(false);
 
   Future loadData() async {
-    const limit = 10;
+    if (maisDados) {
+      const limit = 10;
 
-    final List<Protocolo> response =
-        await chamandoApiReqState.retornarProtocolos(true, limit, x);
+      final List<Protocolo> response =
+          await chamandoApiReqState.retornarProtocolos(true, limit, x);
 
-    listProtocolo.value.addAll(response);
+      listProtocolo.value.addAll(response);
 
-    x = x + 10;
-    if (response.length < limit) {
-      maisDados = false;
+      x = x + 10;
+      if (response.length < limit) {
+        maisDados = false;
+      }
+      listProtocolo.notifyListeners();
     }
-    listProtocolo.notifyListeners();
-    listaPlacaVeiculo.notifyListeners();
 
     //homePageState.protocoloFilter('', response);
   }
@@ -66,7 +66,7 @@ class _HomePage extends ChangeNotifier {
         }
       }
     });
-    debugPrint('${placa}');
+    debugPrint('GERANDO: ${placa}');
     return placa;
   }
 }

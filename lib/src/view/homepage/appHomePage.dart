@@ -114,9 +114,6 @@ class _MainHomeState extends State<HomePage> {
           child: IconButton(
               color: Colors.white,
               onPressed: () {
-                _scrollController.animateTo(0,
-                    duration: Duration(milliseconds: 500),
-                    curve: Curves.fastOutSlowIn);
                 homePageState.refresh.value = true;
                 homePageState.protocoloFilter('');
               },

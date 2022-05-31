@@ -2,7 +2,6 @@ import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
-import 'package:protocolo_app/src/controllers/homePageController.dart';
 import 'package:protocolo_app/src/shared/models/protocolo.dart';
 import 'package:protocolo_app/src/view/finalizacaoProtocolo/appGetImagem.dart';
 
@@ -30,7 +29,7 @@ class _InfoProtocoloState extends State<InfoProtocolo> {
           return Text('...');
         } else {
           Protocolo protocolo = snapshot.data as Protocolo;
-          debugPrint('${protocolo.toJson()}');
+
           return SingleChildScrollView(
             child: Card(
               child: Column(
@@ -43,8 +42,7 @@ class _InfoProtocoloState extends State<InfoProtocolo> {
                         style: const TextStyle(
                             fontWeight: FontWeight.w500, fontSize: 24),
                       ),
-                      subtitle: Text(
-                          'Placa: ${homePageState.placaPorVeiculo(protocolo.veiculo.toString())}',
+                      subtitle: Text('Placa: ${chamandoApiReqState.placa}',
                           style: const TextStyle(
                               fontWeight: FontWeight.w500, fontSize: 15)),
                       leading: Icon(

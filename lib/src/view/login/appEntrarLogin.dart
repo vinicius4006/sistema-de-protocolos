@@ -83,8 +83,7 @@ class _EntrarState extends State<Entrar> {
                 artDialogArgs: ArtDialogArgs(
                     type: ArtSweetAlertType.danger,
                     title: "Usuário ou senha incorreta",
-                    text:
-                        "Se o problema persistir provavelmente o servidor se encontra OFFLINE"));
+                    text: "Se o problema persistir consulte o departamento"));
           }
         });
       }

@@ -38,6 +38,9 @@ class _CriarProtocolo extends ChangeNotifier {
   final List<GlobalKey> listaKey = []; //cada card tem uma key
   final List<String> listaInput = [];
   final ValueNotifier<bool> showLoadingAndButton = ValueNotifier(false);
+  TextEditingController controllerMotorista = TextEditingController();
+
+  TextEditingController controllerPlaca = TextEditingController();
 
   changeVeiculoSelecionado(int veiculoNovo) {
     veiculoSelecionado.value = 0;

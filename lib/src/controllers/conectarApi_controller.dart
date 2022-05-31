@@ -11,7 +11,8 @@ String BASEURL = 'http://frota.jupiter.com.br/api/view/JSON';
 String URL = 'http://10.1.2.218/api/view/ProtocoloFrota/';
 
 class _chamandoApiReq extends ChangeNotifier {
-  List<Placas> listaPlacas = []; //precisa ser notificado?
+  List<Placas> listaPlacas = []; // exibir no homepage
+  String placa = '';
   final ValueNotifier<bool> statusAnterior = ValueNotifier(false);
   List<ItensVeiculos> listaItensVeiculo = [];
   List<ItensProtocolo> listaItensProtocoloId = [];
@@ -86,6 +87,7 @@ class _chamandoApiReq extends ChangeNotifier {
     try {
       final responseProtocoloPorId = await Dio()
           .get('${URL}retornarProtocolos?nao_finalizados=${filtrado}&id=${id}');
+      placa = responseProtocoloPorId.data['protocolos'][0]['placa'];
       return Protocolo.fromJson(responseProtocoloPorId.data['protocolos'][0]);
     } catch (e) {
       debugPrint('Erro retornarProtocolosPorId: $e');
