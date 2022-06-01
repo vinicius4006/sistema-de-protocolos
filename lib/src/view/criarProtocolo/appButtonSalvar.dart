@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
-import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
+import 'package:protocolo_app/src/controllers/homePageApi_controller.dart';
 import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
 import 'package:protocolo_app/src/controllers/login_controller.dart';
 import 'package:protocolo_app/src/shared/models/itens_protocolo.dart';
@@ -44,14 +44,10 @@ class _ButtonEnviarState extends State<ButtonEnviar> {
               listaCheckIdLista.indexOf(item), context);
         }
       }
-      // if (criarProtocoloState.assinaturaController.value.isEmpty) {
-      //   ArtSweetAlert.show(
-      //       context: context,
-      //       artDialogArgs: ArtDialogArgs(
-      //         type: ArtSweetAlertType.info,
-      //         title: "Não esqueça sua assinatura",
-      //       ));
-      // }
+
+      if (criarProtocoloState.assinaturaController.value.isEmpty) {
+        criarProtocoloState.colorAssinatura.value = Colors.red;
+      }
 
       if (listaItensDoVeiculo.length == tamanhoVeiculo.length &&
           criarProtocoloState.assinaturaController.value.isNotEmpty) {
@@ -59,7 +55,7 @@ class _ButtonEnviarState extends State<ButtonEnviar> {
             await loginControllerState.verificarAssinaturaDaToken();
         if (checkToken) {
           String assinaturaInicial = await criarProtocoloState
-              .assinaturaController.value
+              .assinaturaController
               .toPngBytes()
               .then((value) {
             final Uint8List data = value!;

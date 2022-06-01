@@ -4,7 +4,7 @@ import 'dart:developer';
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
+import 'package:protocolo_app/src/controllers/homePageApi_controller.dart';
 
 import 'package:protocolo_app/src/shared/models/itens_protocolo.dart';
 import 'package:protocolo_app/src/shared/models/protocolo.dart';
@@ -25,11 +25,13 @@ class _CriarProtocolo extends ChangeNotifier {
       ValueNotifier(''); // notificando para quem?
   //
   final ValueNotifier<List<bool>> changeButton = ValueNotifier([]);
-  final ValueNotifier<SignatureController> assinaturaController = ValueNotifier(
-      SignatureController(
-          penStrokeWidth: 3,
-          penColor: Colors.black,
-          exportBackgroundColor: Colors.grey));
+  final SignatureController assinaturaController = SignatureController(
+      penStrokeWidth: 3,
+      penColor: Colors.black,
+      exportBackgroundColor: Colors.grey,
+      onDrawStart: () {
+        print('Começou');
+      });
   final ValueNotifier<List<Color>> listaCoresCard = ValueNotifier([]);
   final ValueNotifier<bool> scrollVisible = ValueNotifier(false);
 //
@@ -39,7 +41,7 @@ class _CriarProtocolo extends ChangeNotifier {
   final List<String> listaInput = [];
   final ValueNotifier<bool> showLoadingAndButton = ValueNotifier(false);
   TextEditingController controllerMotorista = TextEditingController();
-
+  final ValueNotifier<Color> colorAssinatura = ValueNotifier(Colors.white);
   TextEditingController controllerPlaca = TextEditingController();
 
   changeVeiculoSelecionado(int veiculoNovo) {
@@ -99,7 +101,7 @@ class _CriarProtocolo extends ChangeNotifier {
       if (elemento.itemveiculo == itensProtocolo.itemveiculo) {
         if (itensProtocolo.valor == null) {
           elemento.imagem = itensProtocolo.imagem;
-        } else if (itensProtocolo.valor == 11) {
+        } else if (itensProtocolo.valor == 111) {
           //checkbox
           elemento.valor = null;
         } else {
@@ -113,6 +115,8 @@ class _CriarProtocolo extends ChangeNotifier {
     _listaChecagem
         ? debugPrint('')
         : listaItensProtocolo.value.add(itensProtocolo);
+
+    debugPrint('${itensProtocolo.toJson()}');
   }
 
   Future dadosDoTipo(int tipo, BuildContext context) async {

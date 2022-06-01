@@ -68,17 +68,17 @@ class _CheckOpsState extends State<CheckOps> {
     checkSelect.sort();
     if (checkSelect.isNotEmpty) {
       criarProtocoloState.addFormItensProtocolo(ItensProtocolo(
-          itemveiculo: widget.numCat,
-          valor: int.parse(checkSelect.reversed
-              .toString()
-              .replaceAll('(', '')
-              .replaceAll(')', '')
-              .split(',')
-              .join('')
-              .replaceAll(' ', ''))));
+          itemveiculo: widget.numCat, valor: checkSelect.toString()));
+      //int.parse(checkSelect.reversed
+      // .toString()
+      // .replaceAll('(', '')
+      // .replaceAll(')', '')
+      // .split(',')
+      //.join('')
+      // .replaceAll(' ', ''))));
     } else {
       criarProtocoloState.addFormItensProtocolo(
-          ItensProtocolo(itemveiculo: widget.numCat, valor: 11));
+          ItensProtocolo(itemveiculo: widget.numCat, valor: 111));
     }
   }
 

@@ -4,7 +4,7 @@ import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
+import 'package:protocolo_app/src/controllers/homePageApi_controller.dart';
 import 'package:protocolo_app/src/controllers/homePageController.dart';
 import 'package:protocolo_app/src/view/finalizacaoProtocolo/finalizacaoProtocolo.dart';
 
@@ -19,6 +19,7 @@ class HomePage extends StatefulWidget {
 
 class _MainHomeState extends State<HomePage> {
   final _scrollController = ScrollController();
+  final _controllerTextFilter = TextEditingController();
 
   @override
   void initState() {
@@ -89,7 +90,7 @@ class _MainHomeState extends State<HomePage> {
                 artDialogArgs: ArtDialogArgs(
                     type: ArtSweetAlertType.info,
                     title: "Protocolo já finalizado",
-                    text: "Lista já foi atualizada!"));
+                    text: "Atualize a lista!"));
       });
       return;
     }
@@ -116,6 +117,7 @@ class _MainHomeState extends State<HomePage> {
               onPressed: () {
                 homePageState.refresh.value = true;
                 homePageState.protocoloFilter('');
+                _controllerTextFilter.clear();
               },
               icon: const Icon(Icons.refresh_rounded)),
         ),
@@ -123,6 +125,7 @@ class _MainHomeState extends State<HomePage> {
           height: 20,
         ),
         TextField(
+          controller: _controllerTextFilter,
           onSubmitted: ((value) {
             homePageState.refresh.value = true;
             homePageState.protocoloFilter(value);

@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
 import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
+import 'package:protocolo_app/src/controllers/homePageController.dart';
 import 'package:protocolo_app/src/controllers/login_controller.dart';
 import 'package:protocolo_app/src/shared/models/itens_protocolo.dart';
 import 'package:protocolo_app/src/shared/models/protocolo.dart';
@@ -34,8 +35,7 @@ class _ButtonFinalizarState extends State<ButtonFinalizar> {
     }
 
     if (response.isTapConfirmButton) {
-      String assinaturaFinal = await criarProtocoloState
-          .assinaturaController.value
+      String assinaturaFinal = await criarProtocoloState.assinaturaController
           .toPngBytes()
           .then((value) {
         final Uint8List data = value!;
@@ -49,6 +49,8 @@ class _ButtonFinalizarState extends State<ButtonFinalizar> {
             assinaturaFinal: assinaturaFinal,
             digitadorFinal: loginControllerState.username));
         Navigator.pop(context);
+        homePageState.refresh.value = true;
+        homePageState.protocoloFilter('');
 
         ArtSweetAlert.show(
             context: context,
@@ -100,14 +102,9 @@ class _ButtonFinalizarState extends State<ButtonFinalizar> {
           }
         }
 
-        // if (criarProtocoloState.assinaturaController.value.isEmpty) {
-        //   ArtSweetAlert.show(
-        //       context: context,
-        //       artDialogArgs: ArtDialogArgs(
-        //         type: ArtSweetAlertType.info,
-        //         title: "Não esqueça sua assinatura",
-        //       ));
-        // }
+        if (criarProtocoloState.assinaturaController.value.isEmpty) {
+          criarProtocoloState.colorAssinatura.value = Colors.red;
+        }
 
         if (listaCheckIdVeiculo.length == listaCheckIdLista.length &&
             criarProtocoloState.assinaturaController.value.isNotEmpty) {

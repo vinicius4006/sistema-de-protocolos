@@ -9,20 +9,17 @@ class EditarStatus extends StatefulWidget {
     required this.itensVeiculos,
     required this.itensProtocolo,
     required this.indexGlobal,
-
-    // required this.listaItens,
-    // required this.index
   }) : super(key: key);
   ItensVeiculos itensVeiculos;
-  ItensProtocolo itensProtocolo;
+  List<ItensProtocolo> itensProtocolo;
   int indexGlobal;
 
-  // int index;
   @override
   State<EditarStatus> createState() => _EditarStatusState();
 }
 
 class _EditarStatusState extends State<EditarStatus> {
+  List<int> listaCheck = [];
   @override
   void dispose() {
     debugPrint('Dispose EditarStatus');
@@ -32,44 +29,41 @@ class _EditarStatusState extends State<EditarStatus> {
   @override
   Widget build(BuildContext context) {
     debugPrint('Build EditarStatus');
-    //return Text('Status Anterior: ');
+
     if (criarProtocoloState.listaInput[widget.indexGlobal] == 'radio') {
-      // debugPrint('RADIOBUTTON: $index');
-      // debugPrint(
-      //     'Formato exibido RadioButton : ${listaItens[index].runtimeType}');
       return Text('Status anterior: \n' +
           widget.itensVeiculos.parametros
               .toString()
               .replaceAll('{', '')
               .replaceAll('}', '')
               .replaceAll('"', '')
-              .split(',')[widget.itensProtocolo.valor!]
+              .split(',')[widget.itensProtocolo[widget.indexGlobal].valor]
               .toString());
     } else {
+      widget.itensProtocolo.forEach((element) {
+        if (element.itemveiculo ==
+            widget.itensProtocolo[widget.indexGlobal].itemveiculo) {
+          listaCheck.add(element.valor);
+        }
+      });
+
       //checkbox
-      //debugPrint('Formato exibido CheckBox : ${listaItens[index].runtimeType}');
-      List<String> valorFinalEditadoExibir = [];
+      List<String> valorFinalEditado = [];
+
       List<String> valorEditadoParaExibir = widget.itensVeiculos.parametros
           .toString()
           .replaceAll('{', '')
           .replaceAll('}', '')
           .replaceAll('"', '')
           .split(',');
-      // debugPrint('ValorEditadoParaExibir: $valorEditadoParaExibir - $index');
-      String listaItensCopia = (widget.itensProtocolo.valor!.toString());
 
-      List<String> listaModificadaEditada = listaItensCopia.split('');
-      //debugPrint(
-      //  'ListaModificadaEditada: $index - $listaModificadaEditada - ${listaModificadaEditada.length}');
-      for (String item in listaModificadaEditada) {
-        valorFinalEditadoExibir.add(valorEditadoParaExibir[int.parse(item)]);
-      }
-      //debugPrint('Exibindo: $valorFinalEditadoExibir');
+      List<int> listaItensCheck = listaCheck;
+
+      listaItensCheck.forEach(
+          (element) => valorFinalEditado.add(valorEditadoParaExibir[element]));
+
       return Text('Status anterior: \n' +
-          valorFinalEditadoExibir
-              .toString()
-              .replaceAll('[', '')
-              .replaceAll(']', ''));
+          valorFinalEditado.toString().replaceAll('[', '').replaceAll(']', ''));
     }
   }
 }

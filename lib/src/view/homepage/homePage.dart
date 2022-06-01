@@ -1,6 +1,7 @@
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
 import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
+import 'package:protocolo_app/src/controllers/homePageController.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/criarProtocolo.dart';
 
 import 'package:protocolo_app/src/view/homepage/appHomePage.dart';
@@ -80,6 +81,10 @@ class _HomeState extends State<Home> {
         ),
         body: ValueListenableBuilder(
             valueListenable: criarProtocoloState.protocolo,
-            builder: (context, Protocolo protocolo, _) => HomePage()));
+            builder: (context, Protocolo protocolo, _) {
+              homePageState.refresh.value = true;
+              homePageState.protocoloFilter('');
+              return HomePage();
+            }));
   }
 }

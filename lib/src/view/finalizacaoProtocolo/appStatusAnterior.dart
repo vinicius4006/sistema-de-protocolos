@@ -1,6 +1,6 @@
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
-import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
+import 'package:protocolo_app/src/controllers/homePageApi_controller.dart';
 import 'package:protocolo_app/src/view/finalizacaoProtocolo/appEditarStatus.dart';
 import 'package:protocolo_app/src/view/finalizacaoProtocolo/appGetImagem.dart';
 
@@ -30,8 +30,7 @@ class _StatusAnteriorState extends State<StatusAnterior> {
           indexGlobal: widget.indexGlobal,
           itensVeiculos:
               chamandoApiReqState.listaItensVeiculo[widget.indexGlobal],
-          itensProtocolo:
-              chamandoApiReqState.listaItensProtocoloId[widget.indexGlobal],
+          itensProtocolo: chamandoApiReqState.listaItensProtocoloId,
         ),
         onTap: () {
           ArtSweetAlert.show(

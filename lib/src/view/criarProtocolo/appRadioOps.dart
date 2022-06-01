@@ -70,7 +70,8 @@ class _RadioOpsState extends State<RadioOps> {
                 criarProtocoloState.trocarCorCardInicial(
                     widget.indexGlobal, context);
                 criarProtocoloState.addFormItensProtocolo(ItensProtocolo(
-                    itemveiculo: widget.numCat, valor: value as int));
+                    itemveiculo: widget.numCat,
+                    valor: [value as int].toString()));
                 setState(() {
                   select = value;
                 });

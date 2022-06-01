@@ -1,7 +1,7 @@
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:protocolo_app/src/controllers/conectarApi_controller.dart';
+import 'package:protocolo_app/src/controllers/homePageApi_controller.dart';
 import 'package:protocolo_app/src/shared/models/protocolo.dart';
 import 'package:protocolo_app/src/view/finalizacaoProtocolo/appGetImagem.dart';
 

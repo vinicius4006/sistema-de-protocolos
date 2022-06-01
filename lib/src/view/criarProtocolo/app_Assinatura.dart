@@ -10,6 +10,7 @@ class Assinatura extends StatefulWidget {
 }
 
 class _AssinaturaState extends State<Assinatura> {
+  Color colorAssinatura = Colors.white;
   @override
   void initState() {
     // TODO: implement initState
@@ -20,6 +21,7 @@ class _AssinaturaState extends State<Assinatura> {
   void dispose() {
     debugPrint('Dispose Assinatura');
     super.dispose();
+    criarProtocoloState.colorAssinatura.value = Colors.white;
   }
 
   @override
@@ -28,20 +30,30 @@ class _AssinaturaState extends State<Assinatura> {
 
     return Center(
       child: ValueListenableBuilder(
-        valueListenable: criarProtocoloState.assinaturaController,
-        builder: (context, SignatureController controller, _) {
+        valueListenable: criarProtocoloState.colorAssinatura,
+        builder: (context, Color colorAssinatura, _) {
           return Column(
             children: [
               const Divider(),
-              Signature(
-                controller: controller,
-                height: 150,
-                width: 320,
-                backgroundColor: Colors.grey,
+              Stack(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(left: 21),
+                    height: 165,
+                    width: 350,
+                    color: colorAssinatura,
+                  ),
+                  Signature(
+                    controller: criarProtocoloState.assinaturaController,
+                    height: 150,
+                    width: 320,
+                    backgroundColor: Colors.grey,
+                  ),
+                ],
               ),
               IconButton(
                 onPressed: (() =>
-                    criarProtocoloState.assinaturaController.value.clear()),
+                    criarProtocoloState.assinaturaController.clear()),
                 icon: const Icon(Icons.clear),
                 color: Colors.redAccent,
               ),

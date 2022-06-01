@@ -25,7 +25,7 @@ class ListaItensProtocolo {
 class ItensProtocolo {
   int? protocolo;
   int? itemveiculo;
-  int? valor;
+  dynamic valor;
   bool? inicio;
   String? imagem;
 
