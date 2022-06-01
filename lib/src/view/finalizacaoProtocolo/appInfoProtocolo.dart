@@ -89,10 +89,16 @@ class _InfoProtocoloState extends State<InfoProtocolo> {
                       Icons.assignment_outlined,
                       color: Theme.of(context).colorScheme.primary,
                     ),
-                    title: const Text(
-                      'Assinatura Inicial',
-                      style:
-                          TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Assinatura Inicial',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500, fontSize: 18),
+                        ),
+                        Icon(Icons.image)
+                      ],
                     ),
                     onTap: () {
                       ArtSweetAlert.show(
