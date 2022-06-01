@@ -38,7 +38,7 @@ class _CriarProtocolo extends ChangeNotifier {
   ScrollController scrollController = ScrollController();
   final GlobalKey<FormState> formKey = (GlobalKey<FormState>());
   final List<GlobalKey> listaKey = []; //cada card tem uma key
-  final List<String> listaInput = [];
+  final List<String> listaInput = []; //tipo de card
   final ValueNotifier<bool> showLoadingAndButton = ValueNotifier(false);
   TextEditingController controllerMotorista = TextEditingController();
   final ValueNotifier<Color> colorAssinatura = ValueNotifier(Colors.white);
@@ -125,34 +125,6 @@ class _CriarProtocolo extends ChangeNotifier {
     return result;
   } // essa funcao é para verificacao do tamanho do array
 
-  List<int> pegarDadosItensStatus(List<dynamic> lista, String id) {
-    List<int>? listaItens = [];
-
-    for (ItensProtocolo item in lista) {
-      if (item.protocolo == id) {
-        listaItens.add(item.valor!);
-      }
-    }
-
-    return listaItens;
-
-    //atenção na lista que está add mais imagens que o permitido pois a lista não está reiniciando
-  }
-
-  List<String> pegarImgPorStatus(List<dynamic> lista, int id) {
-    List<String>? listaImg = [];
-
-    for (ItensProtocolo item in lista) {
-      if (item.protocolo == id && item.imagem != null) {
-        listaImg.add(item.imagem.toString());
-      }
-    }
-
-    return listaImg;
-
-    //atenção na lista que está add mais imagens que o permitido pois a lista não está reiniciando
-  }
-
   capturarPathFoto(String path) {
     foto.value = path;
   }
@@ -201,7 +173,6 @@ class _CriarProtocolo extends ChangeNotifier {
   }
 
   trocarButton(int index, bool troca) {
-    debugPrint('Index: ${index} Troca: ${troca}');
     if (changeButton.value[index] == false) {
       changeButton.value[index] = troca;
     }
@@ -224,7 +195,7 @@ class _CriarProtocolo extends ChangeNotifier {
 
   scrollTo(int index, context) async {
     final keyScroll = criarProtocoloState.listaKey[index].currentContext!;
-    //final keyColor = criarProtocoloState.listaKey[index].currentWidget!;
+
     criarProtocoloState.trocarCordCardRed(index, context);
     await Scrollable.ensureVisible(
       keyScroll,
@@ -240,13 +211,6 @@ class _CriarProtocolo extends ChangeNotifier {
 
   scrollToBottom() async {
     try {
-      // final keyScroll = await key.currentContext!;
-
-      // await Scrollable.ensureVisible(
-      //   keyScroll,
-      //   duration: const Duration(milliseconds: 600),
-      // );
-      debugPrint('SCROLL: ${chamandoApiReqState.scrollVeiculo}');
       scrollController.animateTo(chamandoApiReqState.scrollVeiculo,
           duration: const Duration(milliseconds: 500),
           curve: Curves.fastOutSlowIn);

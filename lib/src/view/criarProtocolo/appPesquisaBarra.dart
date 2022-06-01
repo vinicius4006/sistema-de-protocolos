@@ -34,7 +34,9 @@ class _PesquisaBarraState extends State<PesquisaBarra> {
                 ),
             decoration: InputDecoration(
                 prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
                 hintText: textoSelecionado(widget.boolSearch)),
           ),
           suggestionsCallback: (pattern) async {

@@ -67,7 +67,7 @@ class _HomePage extends ChangeNotifier {
         }
       }
     });
-    debugPrint('GERANDO: ${placa}');
+
     return placa;
   }
 }

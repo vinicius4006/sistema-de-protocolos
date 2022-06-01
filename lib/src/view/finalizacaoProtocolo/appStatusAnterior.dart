@@ -49,11 +49,3 @@ class _StatusAnteriorState extends State<StatusAnterior> {
     );
   }
 }
-
-// criarProtocoloState
-//                                 .pegarImgPorStatus(
-//                                     listaItensProtocoloId, widget.id)
-//                                 .isEmpty
-//                             ? ''
-//                             : criarProtocoloState.pegarImgPorStatus(
-//                                 listaItensProtocoloId, widget.id)[index]

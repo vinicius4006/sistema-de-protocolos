@@ -91,8 +91,8 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                 const SizedBox(
                   height: 30.0,
                 ),
-                PesquisaBarra(boolSearch: true),
-                PesquisaBarra(boolSearch: false),
+                PesquisaBarra(boolSearch: true), // true para pessoas
+                PesquisaBarra(boolSearch: false), //false para placas
                 const SizedBox(
                   height: 20.0,
                 ),

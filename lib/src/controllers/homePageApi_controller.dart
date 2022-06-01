@@ -120,7 +120,6 @@ class _chamandoApiReq extends ChangeNotifier {
   }
 
   Future<List<Pessoa>> getPessoa(String query) async {
-    debugPrint('CARREGOU');
     final responsePessoaPorMotorista =
         await Dio().get('${URL}retornarPessoaPorMotorista?nome=');
     if (responsePessoaPorMotorista.statusCode == 200) {
