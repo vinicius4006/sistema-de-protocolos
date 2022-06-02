@@ -15,6 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         title: 'Bem-vindo ao Sistema de Protocolos',
         theme: ThemeData(
+            //brightness: Brightness.dark,
             colorScheme: ColorScheme.fromSwatch()
                 .copyWith(primary: Colors.green, secondary: Color(0xff88c100))),
         home:

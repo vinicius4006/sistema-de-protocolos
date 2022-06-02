@@ -9,10 +9,13 @@ class _HomePage extends ChangeNotifier {
 
   int x = 0;
   bool maisDados = true;
+  int intScroll = 2;
   final ValueNotifier<bool> refresh = ValueNotifier(false);
 
-  Future loadData() async {
-    if (maisDados) {
+  Future loadData(int scrollInt) async {
+    if (maisDados && intScroll != scrollInt) {
+      intScroll = scrollInt;
+      // para que o loadData nao carregue no mesmo scroll
       const limit = 10;
 
       final List<Protocolo> response =
@@ -21,6 +24,7 @@ class _HomePage extends ChangeNotifier {
       listProtocolo.value.addAll(response);
 
       x = x + 10;
+
       if (response.length < limit) {
         maisDados = false;
       }
@@ -36,7 +40,7 @@ class _HomePage extends ChangeNotifier {
     if (keyword.isEmpty) {
       x = 0;
       maisDados = true;
-      loadData();
+      loadData(0);
       refresh.value = false;
     } else {
       maisDados = false;

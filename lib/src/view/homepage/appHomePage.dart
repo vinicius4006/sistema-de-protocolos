@@ -25,12 +25,12 @@ class _MainHomeState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    homePageState.loadData();
+
     chamandoApiReqState.loadPlacas();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
           _scrollController.position.maxScrollExtent) {
-        homePageState.loadData();
+        homePageState.loadData(_scrollController.position.pixels.toInt());
       }
     });
   }
@@ -44,6 +44,7 @@ class _MainHomeState extends State<HomePage> {
     homePageState.listProtocolo.value.clear();
     homePageState.listaPlacaVeiculo.value.clear();
     homePageState.refresh.value = false;
+    homePageState.intScroll = 0;
   }
 
   void menuProtocolo(int id) async {
@@ -118,6 +119,7 @@ class _MainHomeState extends State<HomePage> {
                 homePageState.refresh.value = true;
                 homePageState.protocoloFilter('');
                 _controllerTextFilter.clear();
+                homePageState.intScroll = 0;
               },
               icon: const Icon(Icons.refresh_rounded)),
         ),
@@ -157,6 +159,9 @@ class _MainHomeState extends State<HomePage> {
                           itemBuilder: (context, index) => index <
                                   listaProtocolo.length
                               ? Card(
+                                  shape: BeveledRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
                                   key: ValueKey(listaProtocolo[index].id),
                                   color:
                                       Theme.of(context).colorScheme.secondary,
@@ -164,11 +169,17 @@ class _MainHomeState extends State<HomePage> {
                                   margin:
                                       const EdgeInsets.symmetric(vertical: 10),
                                   child: ListTile(
-                                    leading: Text(
-                                      listaProtocolo[index].id.toString(),
-                                      style: const TextStyle(
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.w900),
+                                    leading: CircleAvatar(
+                                      maxRadius: 55.0,
+                                      backgroundColor: Colors.white,
+                                      child: Text(
+                                        listaProtocolo[index].id.toString(),
+                                        style: const TextStyle(
+                                            color:
+                                                Color.fromARGB(255, 82, 85, 62),
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w900),
+                                      ),
                                     ),
                                     title: ValueListenableBuilder(
                                       valueListenable:

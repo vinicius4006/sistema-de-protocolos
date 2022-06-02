@@ -115,8 +115,6 @@ class _CriarProtocolo extends ChangeNotifier {
     _listaChecagem
         ? debugPrint('')
         : listaItensProtocolo.value.add(itensProtocolo);
-
-    debugPrint('${itensProtocolo.toJson()}');
   }
 
   Future dadosDoTipo(int tipo, BuildContext context) async {
