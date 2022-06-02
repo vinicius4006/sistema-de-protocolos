@@ -4,7 +4,7 @@ import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:protocolo_app/src/controllers/homePageApi_controller.dart';
+import 'package:protocolo_app/src/controllers/Api_controller.dart';
 import 'package:protocolo_app/src/controllers/homePageController.dart';
 import 'package:protocolo_app/src/view/finalizacaoProtocolo/finalizacaoProtocolo.dart';
 
@@ -44,7 +44,7 @@ class _MainHomeState extends State<HomePage> {
     homePageState.listProtocolo.value.clear();
     homePageState.listaPlacaVeiculo.value.clear();
     homePageState.refresh.value = false;
-    homePageState.intScroll = 0;
+    homePageState.intScroll = 2;
   }
 
   void menuProtocolo(int id) async {

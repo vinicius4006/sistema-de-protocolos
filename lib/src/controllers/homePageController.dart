@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
-import 'package:protocolo_app/src/controllers/homePageApi_controller.dart';
+import 'package:protocolo_app/src/controllers/Api_controller.dart';
 import 'package:protocolo_app/src/shared/models/protocolo.dart';
 
 class _HomePage extends ChangeNotifier {
@@ -37,10 +37,11 @@ class _HomePage extends ChangeNotifier {
   protocoloFilter(String keyword) async {
     listProtocolo.value.clear();
     listaPlacaVeiculo.value.clear();
+    intScroll = 2;
     if (keyword.isEmpty) {
       x = 0;
       maisDados = true;
-      loadData(0);
+      loadData(100);
       refresh.value = false;
     } else {
       maisDados = false;

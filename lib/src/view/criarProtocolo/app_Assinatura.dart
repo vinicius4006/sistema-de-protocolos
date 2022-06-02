@@ -43,11 +43,17 @@ class _AssinaturaState extends State<Assinatura> {
                     width: 350,
                     color: colorAssinatura,
                   ),
-                  Signature(
-                    controller: criarProtocoloState.assinaturaController,
-                    height: 150,
-                    width: 320,
-                    backgroundColor: Colors.grey,
+                  GestureDetector(
+                    onPanStart: (details) =>
+                        criarProtocoloState // simulacao de arrasto
+                            .colorAssinatura
+                            .value = Colors.white,
+                    child: Signature(
+                      controller: criarProtocoloState.assinaturaController,
+                      height: 150,
+                      width: 320,
+                      backgroundColor: Colors.grey,
+                    ),
                   ),
                 ],
               ),

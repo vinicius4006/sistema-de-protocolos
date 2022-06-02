@@ -4,7 +4,7 @@ import 'dart:developer';
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:protocolo_app/src/controllers/homePageApi_controller.dart';
+import 'package:protocolo_app/src/controllers/Api_controller.dart';
 
 import 'package:protocolo_app/src/shared/models/itens_protocolo.dart';
 import 'package:protocolo_app/src/shared/models/protocolo.dart';
@@ -26,12 +26,10 @@ class _CriarProtocolo extends ChangeNotifier {
   //
   final ValueNotifier<List<bool>> changeButton = ValueNotifier([]);
   final SignatureController assinaturaController = SignatureController(
-      penStrokeWidth: 3,
-      penColor: Colors.black,
-      exportBackgroundColor: Colors.grey,
-      onDrawStart: () {
-        print('Começou');
-      });
+    penStrokeWidth: 3,
+    penColor: Colors.black,
+    exportBackgroundColor: Colors.grey,
+  );
   final ValueNotifier<List<Color>> listaCoresCard = ValueNotifier([]);
   final ValueNotifier<bool> scrollVisible = ValueNotifier(false);
 //
