@@ -18,19 +18,6 @@ class _chamandoApiReq extends ChangeNotifier {
   List<ItensProtocolo> listaItensProtocoloId = [];
   double scrollVeiculo = 7000.00;
 
-  loadPlacas() async {
-    final response = await Dio()
-        .get('$BASEURL/retornarVeiculosNaoProtocolados?nao_finalizados=');
-
-    if (response.statusCode == 200) {
-      return (response.data as List).map((e) {
-        return Placas.fromJson(e);
-      }).toList();
-    } else {
-      throw Exception('Falha ao carregar as placas');
-    }
-  }
-
   Future<List<dynamic>> retornarSeMotoOuCarro(int id) async {
     if (id != -1) {
       final response = await Dio().get('$BASEURL/retornarVeiculoPorId?id=$id');
@@ -78,9 +65,10 @@ class _chamandoApiReq extends ChangeNotifier {
   }
 
   Future<void> listaPlacasPorProtocolo(List lista) async {
-    listaPlacas = await (lista.map((item) {
+    var listaPlacasNew = await (lista.map((item) {
       return Placas.fromJson(item);
     })).toList().reversed.toList();
+    listaPlacas.addAll(listaPlacasNew);
   }
 
   Future<Protocolo> retornarProtocolosPorId(bool filtrado, int id) async {

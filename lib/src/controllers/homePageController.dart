@@ -10,6 +10,7 @@ class _HomePage extends ChangeNotifier {
   int x = 0;
   bool maisDados = true;
   int intScroll = 2;
+
   final ValueNotifier<bool> refresh = ValueNotifier(false);
 
   Future loadData(int scrollInt) async {
@@ -43,6 +44,7 @@ class _HomePage extends ChangeNotifier {
       maisDados = true;
       loadData(100);
       refresh.value = false;
+      chamandoApiReqState.listaPlacas.clear();
     } else {
       maisDados = false;
       final List<Protocolo> response =

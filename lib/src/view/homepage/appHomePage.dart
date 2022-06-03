@@ -26,7 +26,6 @@ class _MainHomeState extends State<HomePage> {
     // TODO: implement initState
     super.initState();
 
-    chamandoApiReqState.loadPlacas();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
           _scrollController.position.maxScrollExtent) {
@@ -45,6 +44,7 @@ class _MainHomeState extends State<HomePage> {
     homePageState.listaPlacaVeiculo.value.clear();
     homePageState.refresh.value = false;
     homePageState.intScroll = 2;
+    chamandoApiReqState.listaPlacas.clear();
   }
 
   void menuProtocolo(int id) async {
@@ -120,6 +120,7 @@ class _MainHomeState extends State<HomePage> {
                 homePageState.protocoloFilter('');
                 _controllerTextFilter.clear();
                 homePageState.intScroll = 0;
+                chamandoApiReqState.listaPlacas.clear();
               },
               icon: const Icon(Icons.refresh_rounded)),
         ),
