@@ -155,6 +155,7 @@ class _MainHomeState extends State<HomePage> {
                       valueListenable: homePageState.listProtocolo,
                       builder: (context, List<Protocolo> listaProtocolo, _) {
                         return ListView.separated(
+                          shrinkWrap: true,
                           controller: _scrollController,
                           itemCount: listaProtocolo.length + 1,
                           itemBuilder: (context, index) => index <
@@ -170,16 +171,21 @@ class _MainHomeState extends State<HomePage> {
                                   margin:
                                       const EdgeInsets.symmetric(vertical: 10),
                                   child: ListTile(
-                                    leading: CircleAvatar(
-                                      maxRadius: 55.0,
-                                      backgroundColor: Colors.white,
-                                      child: Text(
-                                        listaProtocolo[index].id.toString(),
-                                        style: const TextStyle(
-                                            color:
-                                                Color.fromARGB(255, 82, 85, 62),
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w900),
+                                    leading: Container(
+                                      width: 100,
+                                      height: 100,
+                                      decoration: new BoxDecoration(
+                                          color: Colors.white,
+                                          shape: BoxShape.circle),
+                                      child: Center(
+                                        child: Text(
+                                          listaProtocolo[index].id.toString(),
+                                          style: const TextStyle(
+                                              color: Color.fromARGB(
+                                                  255, 82, 85, 62),
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w900),
+                                        ),
                                       ),
                                     ),
                                     title: ValueListenableBuilder(

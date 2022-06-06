@@ -6,10 +6,9 @@ import 'package:protocolo_app/src/shared/models/pessoa_motorista.dart';
 import 'package:protocolo_app/src/shared/models/placas.dart';
 import 'package:protocolo_app/src/shared/models/protocolo.dart';
 
-String BASEURL = 'http://frota.jupiter.com.br/api/view/JSON';
+String BASEURL = 'http://10.1.2.218/api/view/ProtocoloFrota';
 
-String URL = 'http://10.1.2.218/api/view/ProtocoloFrota/';
-
+//https://api.jupiter.com.br
 class _chamandoApiReq extends ChangeNotifier {
   List<Placas> listaPlacas = []; // exibir no homepage
   String placa = '';
@@ -23,6 +22,7 @@ class _chamandoApiReq extends ChangeNotifier {
       final response = await Dio().get('$BASEURL/retornarVeiculoPorId?id=$id');
 
       if (response.statusCode == 200) {
+        debugPrint('${response.data}');
         var tipo = response.data['tipo'];
 
         final responseTipo =
@@ -55,13 +55,18 @@ class _chamandoApiReq extends ChangeNotifier {
   Future<List<Protocolo>> retornarProtocolos(
       bool filtrado, int limit, int offset) async {
     await Future.delayed(Duration(seconds: 2));
-    final responseTodosOsProtocolos = await Dio().get(
-        '${URL}retornarProtocolos?nao_finalizados=${filtrado}&limit=${limit}&offset=${offset}');
-    listaPlacasPorProtocolo(
-        responseTodosOsProtocolos.data['protocolos'] as List);
-    return (responseTodosOsProtocolos.data['protocolos'] as List).map((item) {
-      return Protocolo.fromJson(item);
-    }).toList();
+    try {
+      final responseTodosOsProtocolos = await Dio().get(
+          '$BASEURL/retornarProtocolos?nao_finalizados=${filtrado}&limit=${limit}&offset=${offset}');
+      listaPlacasPorProtocolo(
+          responseTodosOsProtocolos.data['protocolos'] as List);
+      return (responseTodosOsProtocolos.data['protocolos'] as List).map((item) {
+        return Protocolo.fromJson(item);
+      }).toList();
+    } catch (e) {
+      debugPrint('erro retornarProtocolos: $e');
+      return [];
+    }
   }
 
   Future<void> listaPlacasPorProtocolo(List lista) async {
@@ -73,8 +78,8 @@ class _chamandoApiReq extends ChangeNotifier {
 
   Future<Protocolo> retornarProtocolosPorId(bool filtrado, int id) async {
     try {
-      final responseProtocoloPorId = await Dio()
-          .get('${URL}retornarProtocolos?nao_finalizados=${filtrado}&id=${id}');
+      final responseProtocoloPorId = await Dio().get(
+          '${BASEURL}/retornarProtocolos?nao_finalizados=${filtrado}&id=${id}');
       placa = responseProtocoloPorId.data['protocolos'][0]['placa'];
       return Protocolo.fromJson(responseProtocoloPorId.data['protocolos'][0]);
     } catch (e) {
@@ -86,7 +91,7 @@ class _chamandoApiReq extends ChangeNotifier {
   Future<dynamic> retornarPessoaPorMotorista(int id, bool todos) async {
     late List<Pessoa> listaPessoas;
     final responsePessoaPorMotoristaId = await Dio()
-        .get('${URL}retornarPessoaPorMotorista?pessoa=${todos ? '' : id}');
+        .get('$BASEURL/retornarPessoaPorMotorista?pessoa=${todos ? '' : id}');
     if (responsePessoaPorMotoristaId.data['pessoa'].toString() == '[]') {
       return '';
     } else {
@@ -109,7 +114,7 @@ class _chamandoApiReq extends ChangeNotifier {
 
   Future<List<Pessoa>> getPessoa(String query) async {
     final responsePessoaPorMotorista =
-        await Dio().get('${URL}retornarPessoaPorMotorista?nome=');
+        await Dio().get('$BASEURL/retornarPessoaPorMotorista?nome=');
     if (responsePessoaPorMotorista.statusCode == 200) {
       return (responsePessoaPorMotorista.data['pessoa'] as List)
           .map((item) => Pessoa.fromJson(item))
@@ -144,7 +149,7 @@ class _chamandoApiReq extends ChangeNotifier {
 
   Future<List<dynamic>> retornarItensProtocoloId(int id) async {
     final responseItensProtocolosPorId =
-        await Dio().get('${URL}retornarItensPorProtocolo?id=${id}');
+        await Dio().get('$BASEURL/retornarItensPorProtocolo?id=${id}');
     responseItensProtocolosPorId.data['itensprotocolo'][1]['itemveiculo'] == '2'
         ? scrollVeiculo = 20000.00
         : scrollVeiculo = 7000.00;

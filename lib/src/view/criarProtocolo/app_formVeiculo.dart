@@ -28,6 +28,7 @@ class _VeiculoFormState extends State<VeiculoForm> {
     criarProtocoloState.assinaturaController.dispose;
     criarProtocoloState.listaCoresCard.value.clear();
     criarProtocoloState.listaKey.clear();
+    criarProtocoloState.assinaturaController.clear();
     debugPrint('Dispose VeiculoForm');
   }
 

@@ -1,10 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
-import 'package:protocolo_app/src/controllers/homePageController.dart';
 import 'package:protocolo_app/src/controllers/login_controller.dart';
 import 'package:protocolo_app/src/shared/models/itens_protocolo.dart';
 import 'package:protocolo_app/src/shared/models/protocolo.dart';
@@ -48,14 +49,33 @@ class _ButtonFinalizarState extends State<ButtonFinalizar> {
             id: widget.id,
             assinaturaFinal: assinaturaFinal,
             digitadorFinal: loginControllerState.username));
-        Navigator.pop(context);
-        homePageState.refresh.value = true;
-        homePageState.protocoloFilter('');
-
-        ArtSweetAlert.show(
+        showDialog(
+            barrierDismissible: false,
             context: context,
-            artDialogArgs: ArtDialogArgs(
-                type: ArtSweetAlertType.success, title: "Finalizado!"));
+            builder: (_) {
+              return Center(
+                child: LoadingAnimationWidget.discreteCircle(
+                    size: 80,
+                    color: Colors.orange,
+                    secondRingColor: Colors.green,
+                    thirdRingColor: Colors.indigo),
+              );
+            });
+        Timer(Duration(seconds: 2), (() {
+          ArtSweetAlert.show(
+              context: context,
+              artDialogArgs: ArtDialogArgs(
+                  type: ArtSweetAlertType.success,
+                  title: 'Finalizado!',
+                  confirmButtonText: 'OK',
+                  onConfirm: () {
+                    [1, 2, 3].forEach((element) {
+                      Navigator.pop(context);
+                    });
+                    criarProtocoloState.refreshPage();
+                  }));
+        }));
+
         return;
       } else {
         ArtSweetAlert.show(

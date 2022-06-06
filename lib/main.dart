@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Bem-vindo ao Sistema de Protocolos',
+        title: 'Protocolagem',
         theme: ThemeData(
             //brightness: Brightness.dark,
             colorScheme: ColorScheme.fromSwatch()

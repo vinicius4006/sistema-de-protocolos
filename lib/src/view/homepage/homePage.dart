@@ -28,6 +28,12 @@ class _HomeState extends State<Home> {
     super.dispose();
   }
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   void _telaCriarProtocolo(BuildContext context) async {
     Route route = MaterialPageRoute(builder: (context) => CriarProtocolo());
     Navigator.push(context, route);
