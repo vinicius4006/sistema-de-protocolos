@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
@@ -20,17 +18,14 @@ class ButtonEnviar extends StatefulWidget {
 
 class _ButtonEnviarState extends State<ButtonEnviar> {
   verificacaoForm() async {
-    var tamanhoVeiculo = await chamandoApiReqState
-        .retornarSeMotoOuCarro(criarProtocoloState.veiculoSelecionado.value);
-
     var listaItensDoVeiculo = criarProtocoloState.listaItensProtocolo.value;
 
     if (criarProtocoloState.formKey.currentState!.validate()) {
       List<ItensProtocolo> listaOrganizada = listaItensDoVeiculo;
       List<String> listaCheckIdLista = [];
       List<String> listaCheckIdVeiculo = [];
-      for (var item in tamanhoVeiculo) {
-        listaCheckIdLista.add(item['id']);
+      for (var item in criarProtocoloState.tamanhoVeiculo) {
+        listaCheckIdLista.add(item.toString());
       }
       listaOrganizada.forEach((element) {
         if (element.valor != null) {
@@ -51,58 +46,67 @@ class _ButtonEnviarState extends State<ButtonEnviar> {
         criarProtocoloState.colorAssinatura.value = Colors.red;
       }
 
-      if (listaItensDoVeiculo.length == tamanhoVeiculo.length &&
+      if (listaItensDoVeiculo.length ==
+              criarProtocoloState.tamanhoVeiculo.length &&
           criarProtocoloState.assinaturaController.value.isNotEmpty) {
-        bool checkToken =
-            await loginControllerState.verificarAssinaturaDaToken();
-        if (checkToken) {
-          String assinaturaInicial = await criarProtocoloState
-              .assinaturaController
-              .toPngBytes()
-              .then((value) {
-            final Uint8List data = value!;
-            String base64Image = base64Encode(data);
-            return base64Image;
-          });
-          criarProtocoloState.novoProtocolo(Protocolo(
-              veiculo: criarProtocoloState.veiculoSelecionado.value,
-              motorista: criarProtocoloState.motoristaSelecionado,
-              digitador: loginControllerState.username,
-              assinaturaInicial: assinaturaInicial));
-          showDialog(
-              barrierDismissible: false,
-              context: context,
-              builder: (_) {
-                return Center(
-                  child: LoadingAnimationWidget.discreteCircle(
-                      size: 80,
-                      color: Colors.orange,
-                      secondRingColor: Colors.green,
-                      thirdRingColor: Colors.indigo),
-                );
-              });
+        if (await chamandoApiReqState.verificarConexao()) {
+          bool checkToken =
+              await loginControllerState.verificarAssinaturaDaToken();
+          if (checkToken) {
+            showDialog(
+                barrierDismissible: false,
+                context: context,
+                builder: (_) {
+                  return Center(
+                    child: LoadingAnimationWidget.discreteCircle(
+                        size: 80,
+                        color: Colors.orange,
+                        secondRingColor: Colors.green,
+                        thirdRingColor: Colors.indigo),
+                  );
+                });
+            criarProtocoloState.mostraAssinaturaFeita = true;
+            criarProtocoloState.bytesAssinatura.value =
+                await criarProtocoloState.assinaturaController.toPngBytes();
+            await Future.delayed(Duration(milliseconds: 500));
+            String assinaturaBase64 = await criarProtocoloState.capture();
 
-          Timer(Duration(seconds: 2), (() {
+            criarProtocoloState.novoProtocolo(Protocolo(
+                veiculo: criarProtocoloState.veiculoSelecionado.value,
+                motorista: criarProtocoloState.motoristaSelecionado,
+                digitador: loginControllerState.username,
+                assinaturaInicial: assinaturaBase64));
+
+            Timer(Duration(seconds: 2), (() {
+              criarProtocoloState.bytesAssinatura.value = '';
+              ArtSweetAlert.show(
+                  context: context,
+                  artDialogArgs: ArtDialogArgs(
+                      type: ArtSweetAlertType.success,
+                      title: 'Protocolo Criado',
+                      confirmButtonText: 'OK',
+                      onConfirm: () {
+                        [1, 2, 3].forEach((element) {
+                          Navigator.pop(context);
+                        });
+                        criarProtocoloState.refreshPage();
+                      }));
+            }));
+          } else {
             ArtSweetAlert.show(
                 context: context,
                 artDialogArgs: ArtDialogArgs(
-                    type: ArtSweetAlertType.success,
-                    title: 'Protocolo Criado',
-                    confirmButtonText: 'OK',
-                    onConfirm: () {
-                      [1, 2, 3].forEach((element) {
-                        Navigator.pop(context);
-                      });
-                      criarProtocoloState.refreshPage();
-                    }));
-          }));
+                    type: ArtSweetAlertType.danger,
+                    title: "Usuário e senha negados",
+                    text: "Parece que há problemas com os seus dados!"));
+          }
         } else {
           ArtSweetAlert.show(
               context: context,
               artDialogArgs: ArtDialogArgs(
-                  type: ArtSweetAlertType.danger,
-                  title: "Usuário e senha negados",
-                  text: "Parece que há problemas com os seus dados!"));
+                  type: ArtSweetAlertType.warning,
+                  title: "Sem conexão",
+                  text: "Verifique se está devidamente conectado"));
         }
       }
     }

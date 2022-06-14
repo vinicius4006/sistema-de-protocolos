@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:ui' as ui;
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:protocolo_app/src/controllers/Api_controller.dart';
 
 import 'package:protocolo_app/src/shared/models/itens_protocolo.dart';
@@ -11,8 +13,9 @@ import 'package:protocolo_app/src/shared/models/protocolo.dart';
 import 'package:signature/signature.dart';
 
 const BASEURL = 'http://10.1.2.218/api/view/ProtocoloFrota';
-//https://api.jupiter.com.br
 
+// 'http://10.1.2.218/api/view/ProtocoloFrota'
+// 'https://api.jupiter.com.br/api/view/ProtocoloFrota'
 class _CriarProtocolo extends ChangeNotifier {
   //
 
@@ -27,12 +30,13 @@ class _CriarProtocolo extends ChangeNotifier {
   //
   final ValueNotifier<List<bool>> changeButton = ValueNotifier([]);
   final SignatureController assinaturaController = SignatureController(
-    penStrokeWidth: 3,
+    penStrokeWidth: 2,
     penColor: Colors.black,
-    exportBackgroundColor: Colors.grey,
+    exportBackgroundColor: Color(0x00000000),
   );
   final ValueNotifier<List<Color>> listaCoresCard = ValueNotifier([]);
   final ValueNotifier<bool> scrollVisible = ValueNotifier(false);
+  final List tamanhoVeiculo = [];
 //
   ScrollController scrollController = ScrollController();
   final GlobalKey<FormState> formKey = (GlobalKey<FormState>());
@@ -40,10 +44,14 @@ class _CriarProtocolo extends ChangeNotifier {
   final List<String> listaInput = []; //tipo de card
   final ValueNotifier<bool> showLoadingAndButton = ValueNotifier(false);
   TextEditingController controllerMotorista = TextEditingController();
-  final ValueNotifier<Color> colorAssinatura = ValueNotifier(Colors.white);
+  final ValueNotifier<Color> colorAssinatura = ValueNotifier(Colors.black);
   TextEditingController controllerPlaca = TextEditingController();
+  final GlobalKey keyImagem = GlobalKey();
+  final ValueNotifier<dynamic> bytesAssinatura = ValueNotifier('');
+  bool mostraAssinaturaFeita = false;
 
   changeVeiculoSelecionado(int veiculoNovo) {
+    tamanhoVeiculo.clear();
     veiculoSelecionado.value = 0;
     scrollVisible.value = false;
     showLoadingAndButton.value = true;
@@ -115,12 +123,6 @@ class _CriarProtocolo extends ChangeNotifier {
         ? debugPrint('')
         : listaItensProtocolo.value.add(itensProtocolo);
   }
-
-  Future dadosDoTipo(int tipo, BuildContext context) async {
-    var result =
-        await chamandoApiReqState.retornarSeMotoOuCarroPorBooleano(tipo);
-    return result;
-  } // essa funcao é para verificacao do tamanho do array
 
   capturarPathFoto(String path) {
     foto.value = path;
@@ -214,6 +216,16 @@ class _CriarProtocolo extends ChangeNotifier {
     } catch (e) {
       debugPrint('Motivo de não rolar: $e');
     }
+  }
+
+  capture() async {
+    RenderRepaintBoundary boundary =
+        keyImagem.currentContext!.findRenderObject() as RenderRepaintBoundary;
+    ui.Image image = await boundary.toImage(pixelRatio: 3.0);
+    final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    final pngBytes = byteData!.buffer.asUint8List();
+    String assinaturaBase64 = base64Encode(pngBytes);
+    return assinaturaBase64;
   }
 }
 

@@ -1,3 +1,4 @@
+import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:protocolo_app/src/controllers/Api_controller.dart';
@@ -42,10 +43,15 @@ class _PesquisaBarraState extends State<PesquisaBarra> {
           suggestionsCallback: (pattern) async {
             if (pattern.length > 2) {
               await Future.delayed(Duration(milliseconds: 200));
+              bool check = await chamandoApiReqState.verificarConexao();
               if (widget.boolSearch) {
-                return await chamandoApiReqState.getPessoa(pattern);
+                return check
+                    ? await chamandoApiReqState.getPessoa(pattern)
+                    : [Pessoa(nome: 'Sem conexão')];
               } else {
-                return await chamandoApiReqState.getPlacas(pattern);
+                return check
+                    ? await chamandoApiReqState.getPlacas(pattern)
+                    : [Placas(placa: 'Sem conexão')];
               }
             } else {
               return [];
@@ -74,25 +80,36 @@ class _PesquisaBarraState extends State<PesquisaBarra> {
                 ),
               ),
           keepSuggestionsOnSuggestionSelected: false,
-          onSuggestionSelected: (dynamic sugestao) {
-            if (widget.boolSearch) {
-              final pessoa = sugestao as Pessoa;
-              criarProtocoloState.controllerMotorista.text = pessoa.nome!;
-              criarProtocoloState
-                  .changeMotoristaSelecionado(int.parse(pessoa.id!));
-              ScaffoldMessenger.of(context)
-                ..removeCurrentSnackBar()
-                ..showSnackBar(SnackBar(
-                    content: Text('Motorista selecionado: ${pessoa.nome}')));
-            } else {
-              final placa = sugestao as Placas;
-              criarProtocoloState.controllerPlaca.text = placa.placa!;
-              criarProtocoloState.changeVeiculoSelecionado(placa.id!);
+          onSuggestionSelected: (dynamic sugestao) async {
+            if (await chamandoApiReqState.verificarConexao()) {
+              if (widget.boolSearch) {
+                final pessoa = sugestao as Pessoa;
+                criarProtocoloState.controllerMotorista.text = pessoa.nome!;
+                criarProtocoloState
+                    .changeMotoristaSelecionado(int.parse(pessoa.id!));
 
-              ScaffoldMessenger.of(context)
-                ..removeCurrentSnackBar()
-                ..showSnackBar(SnackBar(
-                    content: Text('Placa selecionadaa: ${placa.placa}')));
+                ScaffoldMessenger.of(context)
+                  ..removeCurrentSnackBar()
+                  ..showSnackBar(SnackBar(
+                      content: Text('Motorista selecionado: ${pessoa.nome}')));
+              } else {
+                final placa = sugestao as Placas;
+                criarProtocoloState.controllerPlaca.text = placa.placa!;
+
+                criarProtocoloState.changeVeiculoSelecionado(placa.id!);
+
+                ScaffoldMessenger.of(context)
+                  ..removeCurrentSnackBar()
+                  ..showSnackBar(SnackBar(
+                      content: Text('Placa selecionada: ${placa.placa}')));
+              }
+            } else {
+              ArtSweetAlert.show(
+                  context: context,
+                  artDialogArgs: ArtDialogArgs(
+                      type: ArtSweetAlertType.warning,
+                      title: "Sem conexão",
+                      text: "Verifique se está devidamente conectado"));
             }
           }),
     );

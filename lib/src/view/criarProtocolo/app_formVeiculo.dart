@@ -53,6 +53,7 @@ class _VeiculoFormState extends State<VeiculoForm> {
               criarProtocoloState.listaKey.add(GlobalKey());
               criarProtocoloState.listaCoresCard.value
                   .add(Theme.of(context).colorScheme.primary);
+              criarProtocoloState.tamanhoVeiculo.add(data[index].id!);
               return CardForm(
                 key: criarProtocoloState.listaKey[index],
                 indexGlobal: index,

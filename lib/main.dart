@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:protocolo_app/src/view/login/login.dart';
 
 void main() async {
@@ -18,8 +17,6 @@ class MyApp extends StatelessWidget {
             //brightness: Brightness.dark,
             colorScheme: ColorScheme.fromSwatch()
                 .copyWith(primary: Colors.green, secondary: Color(0xff88c100))),
-        home:
-            const LoginProtocolo() //const Home(title: 'Sistema de Protocolos'),
-        );
+        home: const LoginProtocolo());
   }
 }

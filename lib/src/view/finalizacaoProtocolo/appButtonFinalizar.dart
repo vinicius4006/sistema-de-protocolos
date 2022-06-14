@@ -1,10 +1,9 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:protocolo_app/src/controllers/Api_controller.dart';
 import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
 import 'package:protocolo_app/src/controllers/login_controller.dart';
 import 'package:protocolo_app/src/shared/models/itens_protocolo.dart';
@@ -36,19 +35,8 @@ class _ButtonFinalizarState extends State<ButtonFinalizar> {
     }
 
     if (response.isTapConfirmButton) {
-      String assinaturaFinal = await criarProtocoloState.assinaturaController
-          .toPngBytes()
-          .then((value) {
-        final Uint8List data = value!;
-        String base64Image = base64Encode(data);
-        return base64Image;
-      });
       bool checkToken = await loginControllerState.verificarAssinaturaDaToken();
       if (checkToken) {
-        criarProtocoloState.novoProtocolo(Protocolo(
-            id: widget.id,
-            assinaturaFinal: assinaturaFinal,
-            digitadorFinal: loginControllerState.username));
         showDialog(
             barrierDismissible: false,
             context: context,
@@ -61,6 +49,16 @@ class _ButtonFinalizarState extends State<ButtonFinalizar> {
                     thirdRingColor: Colors.indigo),
               );
             });
+        criarProtocoloState.mostraAssinaturaFeita = true;
+        criarProtocoloState.bytesAssinatura.value =
+            await criarProtocoloState.assinaturaController.toPngBytes();
+        await Future.delayed(Duration(milliseconds: 500));
+        String assinaturaBase64 = await criarProtocoloState.capture();
+        criarProtocoloState.novoProtocolo(Protocolo(
+            id: widget.id,
+            assinaturaFinal: assinaturaBase64,
+            digitadorFinal: loginControllerState.username));
+
         Timer(Duration(seconds: 2), (() {
           ArtSweetAlert.show(
               context: context,
@@ -98,14 +96,12 @@ class _ButtonFinalizarState extends State<ButtonFinalizar> {
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           primary: Theme.of(context).colorScheme.primary),
       onPressed: () async {
-        var tamanhoVeiculo =
-            await criarProtocoloState.dadosDoTipo(widget.tipoVeiculo, context);
         var listaItensDoVeiculo = criarProtocoloState.listaItensProtocolo.value;
         List<ItensProtocolo> listaOrganizada = listaItensDoVeiculo;
         List<String> listaCheckIdLista = [];
         List<String> listaCheckIdVeiculo = [];
-        for (var item in tamanhoVeiculo) {
-          listaCheckIdLista.add(item['id']);
+        for (var item in criarProtocoloState.tamanhoVeiculo) {
+          listaCheckIdLista.add(item.toString());
         }
         listaOrganizada.forEach((element) {
           if (element.valor != null) {
@@ -128,7 +124,16 @@ class _ButtonFinalizarState extends State<ButtonFinalizar> {
 
         if (listaCheckIdVeiculo.length == listaCheckIdLista.length &&
             criarProtocoloState.assinaturaController.value.isNotEmpty) {
-          showConfirmDialog(context);
+          if (await chamandoApiReqState.verificarConexao()) {
+            showConfirmDialog(context);
+          } else {
+            ArtSweetAlert.show(
+                context: context,
+                artDialogArgs: ArtDialogArgs(
+                    type: ArtSweetAlertType.warning,
+                    title: "Sem conexão",
+                    text: "Verifique se está devidamente conectado"));
+          }
         }
       },
       child: const Text(

@@ -19,7 +19,8 @@ class EditarStatus extends StatefulWidget {
 }
 
 class _EditarStatusState extends State<EditarStatus> {
-  List<int> listaCheck = [];
+  final List<int> listaCheck = [];
+  late int opRadio;
   @override
   void dispose() {
     debugPrint('Dispose EditarStatus');
@@ -31,18 +32,22 @@ class _EditarStatusState extends State<EditarStatus> {
     debugPrint('Build EditarStatus');
 
     if (criarProtocoloState.listaInput[widget.indexGlobal] == 'radio') {
+      widget.itensProtocolo.forEach((element) {
+        if (element.itemveiculo == widget.itensVeiculos.id) {
+          opRadio = element.valor;
+        }
+      });
       return Text('Status anterior: \n' +
           widget.itensVeiculos.parametros
               .toString()
               .replaceAll('{', '')
               .replaceAll('}', '')
               .replaceAll('"', '')
-              .split(',')[widget.itensProtocolo[widget.indexGlobal].valor]
+              .split(',')[opRadio]
               .toString());
     } else {
       widget.itensProtocolo.forEach((element) {
-        if (element.itemveiculo ==
-            widget.itensProtocolo[widget.indexGlobal].itemveiculo) {
+        if (element.itemveiculo == widget.itensVeiculos.id) {
           listaCheck.add(element.valor);
         }
       });

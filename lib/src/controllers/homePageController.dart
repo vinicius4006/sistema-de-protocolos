@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:intl/intl.dart';
 import 'package:protocolo_app/src/controllers/Api_controller.dart';
 import 'package:protocolo_app/src/shared/models/protocolo.dart';
 
@@ -10,6 +9,7 @@ class _HomePage extends ChangeNotifier {
   int x = 0;
   bool maisDados = true;
   int intScroll = 2;
+  late List<Protocolo> protocolosSeparados;
 
   final ValueNotifier<bool> refresh = ValueNotifier(false);
 
@@ -31,51 +31,58 @@ class _HomePage extends ChangeNotifier {
       }
       listProtocolo.notifyListeners();
     }
-
-    //homePageState.protocoloFilter('', response);
   }
 
   protocoloFilter(String keyword) async {
     listProtocolo.value.clear();
     listaPlacaVeiculo.value.clear();
+    chamandoApiReqState.listaPlacas.clear();
     intScroll = 2;
     if (keyword.isEmpty) {
       x = 0;
       maisDados = true;
       loadData(100);
       refresh.value = false;
-      chamandoApiReqState.listaPlacas.clear();
     } else {
       maisDados = false;
+      final bool boolVer = verificarSeIdOuPlaca(keyword);
+
       final List<Protocolo> response =
           await chamandoApiReqState.retornarProtocolos(true, 1000, 0);
+      if (boolVer) {
+        protocolosSeparados = listProtocolo.value = response
+            .where((protocolo) =>
+                (protocolo.id.toString()).toLowerCase().contains(keyword))
+            .toList();
+      } else {
+        final List<Protocolo> protocoloPorPlaca = await chamandoApiReqState
+            .getPlacasProtocoladas(keyword.toUpperCase());
 
-      listProtocolo.value = response
-          .where((protocolo) => (protocolo.id.toString() +
-                  ' - ' +
-                  DateFormat('dd/MM/yyyy - kk:mm').format(protocolo.inicio!) +
-                  ' - ' +
-                  placaPorVeiculo(protocolo.veiculo.toString()))
-              .toLowerCase()
-              .contains(keyword.toLowerCase()))
-          .toList();
+        listProtocolo.value = protocoloPorPlaca;
+      }
+
       await Future.delayed(Duration(seconds: 1));
     }
     refresh.value = false;
   }
 
   String placaPorVeiculo(String numVeiculo) {
-    String placa = '';
-    chamandoApiReqState.listaPlacas.forEach((element) {
-      if (element.veiculoId == numVeiculo) {
-        placa = element.placa.toString();
-        if (!listaPlacaVeiculo.value.contains(placa)) {
-          listaPlacaVeiculo.value.add(placa);
-        }
-      }
-    });
+    String placa = chamandoApiReqState.listaPlacas
+        .where((element) => element.veiculoId == numVeiculo)
+        .first
+        .placa
+        .toString();
 
     return placa;
+  }
+
+  bool verificarSeIdOuPlaca(String keyword) {
+    List<bool> found = [];
+    for (var i = 0; i < keyword.length; i++) {
+      bool tem = keyword[i].contains(RegExp(r'[0-9]'));
+      found.add(tem);
+    }
+    return found.every((element) => element == true);
   }
 }
 

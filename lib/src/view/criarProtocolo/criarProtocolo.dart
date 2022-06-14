@@ -36,6 +36,7 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
     criarProtocoloState.showLoadingAndButton.value = false;
     criarProtocoloState.controllerMotorista = TextEditingController();
     criarProtocoloState.controllerPlaca = TextEditingController();
+    criarProtocoloState.tamanhoVeiculo.clear();
 
     super.dispose();
     debugPrint('Dispose CriarProtocolo');

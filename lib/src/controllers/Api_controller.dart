@@ -1,28 +1,32 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:protocolo_app/src/shared/models/itensVeiculo.dart';
 import 'package:protocolo_app/src/shared/models/itens_protocolo.dart';
 import 'package:protocolo_app/src/shared/models/pessoa_motorista.dart';
 import 'package:protocolo_app/src/shared/models/placas.dart';
 import 'package:protocolo_app/src/shared/models/protocolo.dart';
 
-String BASEURL = 'http://10.1.2.218/api/view/ProtocoloFrota';
+String BASEURL = 'https://api.jupiter.com.br/api/view/ProtocoloFrota';
 
-//https://api.jupiter.com.br
 class _chamandoApiReq extends ChangeNotifier {
   List<Placas> listaPlacas = []; // exibir no homepage
   String placa = '';
   final ValueNotifier<bool> statusAnterior = ValueNotifier(false);
   List<ItensVeiculos> listaItensVeiculo = [];
   List<ItensProtocolo> listaItensProtocoloId = [];
+  final List<String> listaImagem = [];
   double scrollVeiculo = 7000.00;
 
+  Future<bool> verificarConexao() async {
+    return await InternetConnectionChecker().hasConnection;
+  }
+
   Future<List<dynamic>> retornarSeMotoOuCarro(int id) async {
-    if (id != -1) {
+    if (id != -1 && id != 0) {
       final response = await Dio().get('$BASEURL/retornarVeiculoPorId?id=$id');
 
       if (response.statusCode == 200) {
-        debugPrint('${response.data}');
         var tipo = response.data['tipo'];
 
         final responseTipo =
@@ -79,7 +83,7 @@ class _chamandoApiReq extends ChangeNotifier {
   Future<Protocolo> retornarProtocolosPorId(bool filtrado, int id) async {
     try {
       final responseProtocoloPorId = await Dio().get(
-          '${BASEURL}/retornarProtocolos?nao_finalizados=${filtrado}&id=${id}');
+          '$BASEURL/retornarProtocolos?nao_finalizados=${filtrado}&id=${id}');
       placa = responseProtocoloPorId.data['protocolos'][0]['placa'];
       return Protocolo.fromJson(responseProtocoloPorId.data['protocolos'][0]);
     } catch (e) {
@@ -130,8 +134,12 @@ class _chamandoApiReq extends ChangeNotifier {
   }
 
   Future<List<Placas>> getPlacas(String query) async {
-    final response = await Dio()
-        .get('$BASEURL/retornarVeiculosNaoProtocolados?nao_finalizados=');
+    var options = BaseOptions(
+        baseUrl: '$BASEURL/retornarVeiculosComOuSemProtocolos?nao_finalizados=',
+        connectTimeout: 3000,
+        receiveTimeout: 1000);
+    final response = await Dio(options)
+        .get('$BASEURL/retornarVeiculosComOuSemProtocolos?nao_finalizados=');
 
     if (response.statusCode == 200) {
       return (response.data as List).map((e) {
@@ -147,7 +155,21 @@ class _chamandoApiReq extends ChangeNotifier {
     }
   }
 
+  Future<List<Protocolo>> getPlacasProtocoladas(String query) async {
+    final response = await Dio().get(
+        '$BASEURL/retornarVeiculosComOuSemProtocolos?protocolados=${query}');
+
+    if (response.statusCode == 200) {
+      return (response.data as List).map((item) {
+        return Protocolo.fromJson(item);
+      }).toList();
+    } else {
+      throw Exception('Falha ao carregar as placas por protocolo');
+    }
+  }
+
   Future<List<dynamic>> retornarItensProtocoloId(int id) async {
+    listaImagem.clear();
     final responseItensProtocolosPorId =
         await Dio().get('$BASEURL/retornarItensPorProtocolo?id=${id}');
     responseItensProtocolosPorId.data['itensprotocolo'][1]['itemveiculo'] == '2'
@@ -164,9 +186,19 @@ class _chamandoApiReq extends ChangeNotifier {
       return ItensProtocolo.fromJson(element);
     }).toList();
 
+    List<String> listaOps = [];
+    List<ItensVeiculos> listaSemRepeticao = [];
+
     listaItensVeiculo = (listaItensProtocolo).map((element) {
+      if (!listaOps.contains(element['id'])) {
+        listaImagem.add(element['imagem']);
+        listaSemRepeticao.add(ItensVeiculos.fromJson(element));
+        listaOps.add(element['id']);
+      }
       return ItensVeiculos.fromJson(element);
     }).toList();
+
+    listaItensVeiculo = listaSemRepeticao;
 
     listaItensProtocoloId = listaConvertida;
 

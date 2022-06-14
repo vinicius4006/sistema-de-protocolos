@@ -22,6 +22,7 @@ class _StatusAnteriorState extends State<StatusAnterior> {
   @override
   Widget build(BuildContext context) {
     debugPrint('Build Status Anterior');
+
     return Card(
       elevation: 2,
       child: ListTile(
@@ -41,8 +42,7 @@ class _StatusAnteriorState extends State<StatusAnterior> {
                     margin: const EdgeInsets.only(bottom: 12.0),
                     child: GetImagemBase64(
                         imagem64: chamandoApiReqState
-                            .listaItensProtocoloId[widget.indexGlobal].imagem
-                            .toString()))
+                            .listaImagem[widget.indexGlobal]))
               ]));
         },
       ),

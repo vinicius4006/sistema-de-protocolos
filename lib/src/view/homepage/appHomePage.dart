@@ -64,36 +64,45 @@ class _MainHomeState extends State<HomePage> {
     }
 
     if (response.isTapConfirmButton) {
-      showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (_) {
-            return Center(
-              child: LoadingAnimationWidget.waveDots(
-                size: 80,
-                color: Colors.white,
-              ),
-            );
-          }).timeout(
-        const Duration(seconds: 2),
-        onTimeout: () => Navigator.pop(context),
-      );
-      Protocolo finalizadoOuNao =
-          await chamandoApiReqState.retornarProtocolosPorId(true, id);
-      Timer(const Duration(seconds: 2), () {
-        finalizadoOuNao.id != null
-            ? Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => Finalizacao(
-                      id: id,
-                    )))
-            : ArtSweetAlert.show(
-                context: context,
-                artDialogArgs: ArtDialogArgs(
-                    type: ArtSweetAlertType.info,
-                    title: "Protocolo já finalizado",
-                    text: "Atualize a lista!"));
-      });
-      return;
+      if (await chamandoApiReqState.verificarConexao()) {
+        showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (_) {
+              return Center(
+                child: LoadingAnimationWidget.waveDots(
+                  size: 80,
+                  color: Colors.white,
+                ),
+              );
+            }).timeout(
+          const Duration(seconds: 2),
+          onTimeout: () => Navigator.pop(context),
+        );
+        Protocolo finalizadoOuNao =
+            await chamandoApiReqState.retornarProtocolosPorId(true, id);
+        Timer(const Duration(seconds: 2), () {
+          finalizadoOuNao.id != null
+              ? Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => Finalizacao(
+                        id: id,
+                      )))
+              : ArtSweetAlert.show(
+                  context: context,
+                  artDialogArgs: ArtDialogArgs(
+                      type: ArtSweetAlertType.info,
+                      title: "Protocolo já finalizado",
+                      text: "Atualize a lista!"));
+        });
+        return;
+      } else {
+        ArtSweetAlert.show(
+            context: context,
+            artDialogArgs: ArtDialogArgs(
+                type: ArtSweetAlertType.warning,
+                title: "Sem conexão",
+                text: "Verifique se está devidamente conectado"));
+      }
     }
 
     if (response.isTapDenyButton) {
@@ -193,29 +202,13 @@ class _MainHomeState extends State<HomePage> {
                                           homePageState.listaPlacaVeiculo,
                                       builder:
                                           (context, List<String> placas, _) {
-                                        if (homePageState
-                                                .listProtocolo.value.length !=
-                                            1) {
-                                          homePageState.placaPorVeiculo(
-                                              listaProtocolo[index]
-                                                  .veiculo
-                                                  .toString());
-                                          return Text(
-                                            'Placa: ' +
-                                                '${!placas.asMap().containsKey(index) ? '...' : placas[index]}',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w700,
-                                                fontSize: 20),
-                                          );
-                                        } else {
-                                          return Text(
-                                            'Placa: ' +
-                                                '${homePageState.placaPorVeiculo(homePageState.listProtocolo.value[0].veiculo.toString())}',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w700,
-                                                fontSize: 20),
-                                          );
-                                        }
+                                        return Text(
+                                          'Placa: ' +
+                                              '${homePageState.placaPorVeiculo(listaProtocolo[index].veiculo.toString())}',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: 20),
+                                        );
                                       },
                                     ),
                                     subtitle: Text(
