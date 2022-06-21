@@ -20,7 +20,7 @@ class _FinalizacaoState extends State<Finalizacao> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    debugPrint('${chamandoApiReqState.listaPlacas}');
+
     Timer(Duration(seconds: 2),
         () => criarProtocoloState.scrollVisible.value = true);
   }

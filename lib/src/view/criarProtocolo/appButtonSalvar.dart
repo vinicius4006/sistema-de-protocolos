@@ -45,7 +45,8 @@ class _ButtonEnviarState extends State<ButtonEnviar> {
       if (criarProtocoloState.assinaturaController.value.isEmpty) {
         criarProtocoloState.colorAssinatura.value = Colors.red;
       }
-
+      debugPrint(' first: ${listaItensDoVeiculo.length}');
+      debugPrint('second: ${criarProtocoloState.tamanhoVeiculo.length}');
       if (listaItensDoVeiculo.length ==
               criarProtocoloState.tamanhoVeiculo.length &&
           criarProtocoloState.assinaturaController.value.isNotEmpty) {
@@ -75,6 +76,7 @@ class _ButtonEnviarState extends State<ButtonEnviar> {
                 veiculo: criarProtocoloState.veiculoSelecionado.value,
                 motorista: criarProtocoloState.motoristaSelecionado,
                 digitador: loginControllerState.username,
+                observacao: criarProtocoloState.obsTextController.text,
                 assinaturaInicial: assinaturaBase64));
 
             Timer(Duration(seconds: 2), (() {

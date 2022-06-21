@@ -114,6 +114,25 @@ class _InfoProtocoloState extends State<InfoProtocolo> {
                               ]));
                     },
                   ),
+                  const Divider(),
+                  ListTile(
+                    title: Text('Observações iniciais',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w500, fontSize: 18)),
+                    leading: Icon(Icons.app_registration,
+                        color: Theme.of(context).colorScheme.primary),
+                    onTap: () {
+                      ArtSweetAlert.show(
+                          context: context,
+                          artDialogArgs: ArtDialogArgs(
+                              title: "Observações Iniciais",
+                              customColumns: [
+                                Container(
+                                    margin: const EdgeInsets.only(bottom: 12.0),
+                                    child: Text('${protocolo.observacao}'))
+                              ]));
+                    },
+                  ),
                 ],
               ),
             ),

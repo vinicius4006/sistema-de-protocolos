@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:protocolo_app/src/controllers/Api_controller.dart';
 import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
 import 'package:protocolo_app/src/shared/models/itensVeiculo.dart';
+import 'package:protocolo_app/src/view/criarProtocolo/appObservacao.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/app_Card.dart';
 
 class VeiculoForm extends StatefulWidget {
@@ -29,6 +30,7 @@ class _VeiculoFormState extends State<VeiculoForm> {
     criarProtocoloState.listaCoresCard.value.clear();
     criarProtocoloState.listaKey.clear();
     criarProtocoloState.assinaturaController.clear();
+    criarProtocoloState.obsTextController.clear();
     debugPrint('Dispose VeiculoForm');
   }
 
@@ -87,9 +89,14 @@ class _VeiculoFormState extends State<VeiculoForm> {
               }).toList();
 
               return SafeArea(
-                  child: Container(
-                padding: const EdgeInsets.all(30.0),
-                child: exibirListaDeCard(data),
+                  child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(30.0),
+                    child: exibirListaDeCard(data),
+                  ),
+                  CampoTexto()
+                ],
               ));
             } else {
               return Center(

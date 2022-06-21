@@ -48,7 +48,7 @@ class _LoginController extends ChangeNotifier {
     FormData formData = FormData.fromMap({'token': token, 'senha': password});
 
     response = await dio.post(
-        'http://10.1.2.218/api/view/ProtocoloFrota/verificarAssinaturaDaToken',
+        'https://api.jupiter.com.br/api/view/ProtocoloFrota/verificarAssinaturaDaToken',
         data: formData,
         options: Options(contentType: Headers.formUrlEncodedContentType));
 

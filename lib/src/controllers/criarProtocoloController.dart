@@ -12,7 +12,7 @@ import 'package:protocolo_app/src/shared/models/itens_protocolo.dart';
 import 'package:protocolo_app/src/shared/models/protocolo.dart';
 import 'package:signature/signature.dart';
 
-const BASEURL = 'http://10.1.2.218/api/view/ProtocoloFrota';
+const BASEURL = 'https://api.jupiter.com.br/api/view/ProtocoloFrota';
 
 // 'http://10.1.2.218/api/view/ProtocoloFrota'
 // 'https://api.jupiter.com.br/api/view/ProtocoloFrota'
@@ -49,6 +49,9 @@ class _CriarProtocolo extends ChangeNotifier {
   final GlobalKey keyImagem = GlobalKey();
   final ValueNotifier<dynamic> bytesAssinatura = ValueNotifier('');
   bool mostraAssinaturaFeita = false;
+
+  //
+  TextEditingController obsTextController = TextEditingController();
 
   changeVeiculoSelecionado(int veiculoNovo) {
     tamanhoVeiculo.clear();

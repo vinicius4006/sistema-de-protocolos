@@ -57,7 +57,8 @@ class _ButtonFinalizarState extends State<ButtonFinalizar> {
         criarProtocoloState.novoProtocolo(Protocolo(
             id: widget.id,
             assinaturaFinal: assinaturaBase64,
-            digitadorFinal: loginControllerState.username));
+            digitadorFinal: loginControllerState.username,
+            observacaoFinal: criarProtocoloState.obsTextController.text));
 
         Timer(Duration(seconds: 2), (() {
           ArtSweetAlert.show(
