@@ -9,7 +9,8 @@ class _HomePage extends ChangeNotifier {
   int x = 0;
   bool maisDados = true;
   int intScroll = 2;
-  late List<Protocolo> protocolosSeparados;
+  String keywordGlobal = '';
+  bool boolVerGlobal = true;
 
   final ValueNotifier<bool> refresh = ValueNotifier(false);
 
@@ -18,9 +19,12 @@ class _HomePage extends ChangeNotifier {
       intScroll = scrollInt;
       // para que o loadData nao carregue no mesmo scroll
       const limit = 10;
-
-      final List<Protocolo> response =
-          await chamandoApiReqState.retornarProtocolos(true, limit, x);
+      late List<Protocolo> response;
+      keywordGlobal != ''
+          ? response = await chamandoApiReqState.retornarProtocolos(
+              true, limit, x + 10, keywordGlobal, boolVerGlobal)
+          : response =
+              await chamandoApiReqState.retornarProtocolos(true, limit, x);
 
       listProtocolo.value.addAll(response);
 
@@ -34,6 +38,7 @@ class _HomePage extends ChangeNotifier {
   }
 
   protocoloFilter(String keyword) async {
+    keywordGlobal = keyword;
     listProtocolo.value.clear();
     listaPlacaVeiculo.value.clear();
     chamandoApiReqState.listaPlacas.clear();
@@ -44,22 +49,14 @@ class _HomePage extends ChangeNotifier {
       loadData(100);
       refresh.value = false;
     } else {
-      maisDados = false;
+      maisDados = true;
       final bool boolVer = verificarSeIdOuPlaca(keyword);
+      boolVerGlobal = boolVer;
+      //bool true -> id// bool false -> placa
+      final List<Protocolo> response = await chamandoApiReqState
+          .retornarProtocolos(true, 10, 0, keyword, boolVer);
 
-      final List<Protocolo> response =
-          await chamandoApiReqState.retornarProtocolos(true, 1000, 0);
-      if (boolVer) {
-        protocolosSeparados = listProtocolo.value = response
-            .where((protocolo) =>
-                (protocolo.id.toString()).toLowerCase().contains(keyword))
-            .toList();
-      } else {
-        final List<Protocolo> protocoloPorPlaca = await chamandoApiReqState
-            .getPlacasProtocoladas(keyword.toUpperCase());
-
-        listProtocolo.value = protocoloPorPlaca;
-      }
+      listProtocolo.value = response;
 
       await Future.delayed(Duration(seconds: 1));
     }
@@ -76,6 +73,8 @@ class _HomePage extends ChangeNotifier {
     return placa;
   }
 
+//Por que eu não criei um modelo que pegaria também a placa?
+//O modelo já está pronto para criar o protocolo e mandar para o banco, então crio outro ramo para pegar a placa.
   bool verificarSeIdOuPlaca(String keyword) {
     List<bool> found = [];
     for (var i = 0; i < keyword.length; i++) {

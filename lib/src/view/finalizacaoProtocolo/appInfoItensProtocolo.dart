@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:protocolo_app/src/controllers/Api_controller.dart';
 import 'package:protocolo_app/src/shared/models/itens_protocolo.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/app_Assinatura.dart';
@@ -26,7 +27,8 @@ class _InfoItensProtocoloState extends State<InfoItensProtocolo> {
         future: chamandoApiReqState.retornarItensProtocoloId(widget.id),
         builder: ((context, snapshot) {
           if (!snapshot.hasData) {
-            return Text('...');
+            return LoadingAnimationWidget.waveDots(
+                color: Colors.green, size: 80);
           } else {
             List<dynamic> listaItensProtocoloId =
                 snapshot.data as List<dynamic>;

@@ -23,8 +23,8 @@ class _LoginController extends ChangeNotifier {
 
     final dio = Dio();
     Response response;
-    FormData formData = FormData.fromMap(
-        {"usuario": username.toLowerCase(), "senha": password});
+    FormData formData =
+        FormData.fromMap({"usuario": username, "senha": password});
     try {
       response = await dio.post(URL,
           data: formData,

@@ -12,7 +12,7 @@ import 'package:protocolo_app/src/shared/models/itens_protocolo.dart';
 import 'package:protocolo_app/src/shared/models/protocolo.dart';
 import 'package:signature/signature.dart';
 
-const BASEURL = 'https://api.jupiter.com.br/api/view/ProtocoloFrota';
+const BASEURL = 'http://10.1.2.218/api/view/ProtocoloFrota';
 
 // 'http://10.1.2.218/api/view/ProtocoloFrota'
 // 'https://api.jupiter.com.br/api/view/ProtocoloFrota'
@@ -53,13 +53,15 @@ class _CriarProtocolo extends ChangeNotifier {
   //
   TextEditingController obsTextController = TextEditingController();
 
-  changeVeiculoSelecionado(int veiculoNovo) {
+  changeVeiculoSelecionado(int veiculoNovo, String obs) {
     tamanhoVeiculo.clear();
+    criarProtocoloState.obsTextController.clear();
     veiculoSelecionado.value = 0;
     scrollVisible.value = false;
     showLoadingAndButton.value = true;
     Timer(Duration(seconds: 2), () {
       veiculoSelecionado.value = veiculoNovo;
+      criarProtocoloState.obsTextController.text = obs;
       Timer(Duration(seconds: 2), () => scrollVisible.value = true);
     });
   }
@@ -97,8 +99,10 @@ class _CriarProtocolo extends ChangeNotifier {
             options: Options(contentType: Headers.formUrlEncodedContentType))
         .then((response) {
       log('SUCESSO: ${response.data}');
+      return response.data['sucess'].toString().isEmpty ? false : true;
     }).catchError((onError) {
       debugPrint('Motivo do erro: $onError');
+      return false;
     });
 
     protocolo.value = protocoloNovo;

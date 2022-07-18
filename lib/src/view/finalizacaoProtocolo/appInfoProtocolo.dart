@@ -5,6 +5,8 @@ import 'package:protocolo_app/src/controllers/Api_controller.dart';
 import 'package:protocolo_app/src/shared/models/protocolo.dart';
 import 'package:protocolo_app/src/view/finalizacaoProtocolo/appGetImagem.dart';
 
+import '../../controllers/criarProtocoloController.dart';
+
 class InfoProtocolo extends StatefulWidget {
   InfoProtocolo({Key? key, required this.id}) : super(key: key);
   int id;
@@ -29,7 +31,8 @@ class _InfoProtocoloState extends State<InfoProtocolo> {
           return Text('...');
         } else {
           Protocolo protocolo = snapshot.data as Protocolo;
-
+          criarProtocoloState.obsTextController.text =
+              protocolo.observacao.toString();
           return SingleChildScrollView(
             child: Card(
               child: Column(
@@ -107,18 +110,26 @@ class _InfoProtocoloState extends State<InfoProtocolo> {
                               title: "Assinatura Inicial",
                               customColumns: [
                                 Container(
-                                    margin: const EdgeInsets.only(bottom: 12.0),
-                                    child: GetImagemBase64(
-                                        imagem64: protocolo.assinaturaInicial ??
-                                            ''.toString()))
+                                  margin: const EdgeInsets.only(bottom: 12.0),
+                                  child: GetImagemBase64(
+                                    imagem64: protocolo.assinaturaInicial ??
+                                        ''.toString(),
+                                  ),
+                                )
                               ]));
                     },
                   ),
                   const Divider(),
                   ListTile(
-                    title: Text('Observações iniciais',
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w500, fontSize: 18)),
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Observações iniciais',
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w500, fontSize: 18)),
+                        Icon(Icons.image)
+                      ],
+                    ),
                     leading: Icon(Icons.app_registration,
                         color: Theme.of(context).colorScheme.primary),
                     onTap: () {
@@ -129,7 +140,8 @@ class _InfoProtocoloState extends State<InfoProtocolo> {
                               customColumns: [
                                 Container(
                                     margin: const EdgeInsets.only(bottom: 12.0),
-                                    child: Text('${protocolo.observacao}'))
+                                    child: Text(
+                                        '${protocolo.observacao!.isEmpty ? 'Não há observações' : protocolo.observacao}'))
                               ]));
                     },
                   ),

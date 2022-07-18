@@ -22,7 +22,9 @@ class _StatusAnteriorState extends State<StatusAnterior> {
   @override
   Widget build(BuildContext context) {
     debugPrint('Build Status Anterior');
-
+    debugPrint('GLOBAL: ${widget.indexGlobal}');
+    debugPrint(
+        '${chamandoApiReqState.listaItensVeiculo[widget.indexGlobal].toJson()}');
     return Card(
       elevation: 2,
       child: ListTile(
@@ -40,9 +42,25 @@ class _StatusAnteriorState extends State<StatusAnterior> {
                   ArtDialogArgs(title: "Foto tirada", customColumns: [
                 Container(
                     margin: const EdgeInsets.only(bottom: 12.0),
-                    child: GetImagemBase64(
-                        imagem64: chamandoApiReqState
-                            .listaImagem[widget.indexGlobal]))
+                    child: FutureBuilder(
+                      future: chamandoApiReqState.retornarImagensPorProtocolo(
+                          chamandoApiReqState
+                              .listaItensProtocoloId[0].protocolo,
+                          chamandoApiReqState
+                              .listaItensVeiculo[widget.indexGlobal].id),
+                      initialData: 'wait',
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return GetImagemBase64(
+                            imagem64: snapshot.data as String,
+                          );
+                        } else {
+                          return GetImagemBase64(
+                            imagem64: 'wait',
+                          );
+                        }
+                      },
+                    ))
               ]));
         },
       ),

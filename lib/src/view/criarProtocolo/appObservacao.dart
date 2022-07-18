@@ -6,17 +6,29 @@ class CampoTexto extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        width: MediaQuery.of(context).size.width * 0.8,
-        child: TextField(
-          controller: criarProtocoloState.obsTextController,
-          keyboardType: TextInputType.text,
-          maxLines: 4,
-          decoration: InputDecoration(
-            hintText: "Observação",
-            focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(width: 1, color: Colors.green)),
-          ),
-        ));
+    debugPrint('Build CampoTexto');
+    return Column(
+      children: [
+        ElevatedButton(
+          onPressed: () => FocusScope.of(context).unfocus(),
+          child: Text('Clique AQUI para sair do campo de observação'),
+          style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.resolveWith(
+                  (states) => Colors.lightGreen)),
+        ),
+        Container(
+            width: MediaQuery.of(context).size.width * 0.8,
+            child: TextField(
+              controller: criarProtocoloState.obsTextController,
+              keyboardType: TextInputType.multiline,
+              maxLines: 4,
+              decoration: InputDecoration(
+                hintText: "Observação",
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(width: 1, color: Colors.green)),
+              ),
+            )),
+      ],
+    );
   }
 }

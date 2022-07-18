@@ -35,10 +35,10 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
 
   @override
   Widget build(BuildContext context) {
-    final _controller = TextEditingController();
     debugPrint('Build CriarProtocolo');
     return Scaffold(
         appBar: AppBar(
+          toolbarHeight: 70,
           leading: Builder(builder: (BuildContext context) {
             return IconButton(
                 onPressed: () {
@@ -47,7 +47,10 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
                 icon: const Icon(Icons.arrow_back_outlined));
           }),
           centerTitle: true,
-          title: const Text('Criação de Protocolo'),
+          title: const Text(
+            'Criação de Protocolo',
+            style: TextStyle(fontSize: 22),
+          ),
         ),
         floatingActionButton: ValueListenableBuilder(
           valueListenable: criarProtocoloState.scrollVisible,
@@ -80,8 +83,12 @@ class _CriarProtocoloState extends State<CriarProtocolo> {
               const SizedBox(
                 height: 30.0,
               ),
-              PesquisaBarra(boolSearch: true), // true para pessoas
-              PesquisaBarra(boolSearch: false), //false para placas
+              PesquisaBarra(
+                boolSearch: true,
+              ), // true para pessoas
+              PesquisaBarra(
+                boolSearch: false,
+              ), //false para placas
               const SizedBox(
                 height: 20.0,
               ),

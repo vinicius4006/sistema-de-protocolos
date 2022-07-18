@@ -20,7 +20,8 @@ class _ButtonEnviarState extends State<ButtonEnviar> {
   verificacaoForm() async {
     var listaItensDoVeiculo = criarProtocoloState.listaItensProtocolo.value;
 
-    if (criarProtocoloState.formKey.currentState!.validate()) {
+    if (criarProtocoloState.formKey.currentState!.validate() &&
+        criarProtocoloState.motoristaSelecionado != 0) {
       List<ItensProtocolo> listaOrganizada = listaItensDoVeiculo;
       List<String> listaCheckIdLista = [];
       List<String> listaCheckIdVeiculo = [];
@@ -34,9 +35,7 @@ class _ButtonEnviarState extends State<ButtonEnviar> {
       });
 
       for (var item in listaCheckIdLista.reversed) {
-        if (listaCheckIdVeiculo.contains(item)) {
-          debugPrint('True');
-        } else {
+        if (!listaCheckIdVeiculo.contains(item)) {
           criarProtocoloState.scrollTo(
               listaCheckIdLista.indexOf(item), context);
         }
@@ -45,8 +44,7 @@ class _ButtonEnviarState extends State<ButtonEnviar> {
       if (criarProtocoloState.assinaturaController.value.isEmpty) {
         criarProtocoloState.colorAssinatura.value = Colors.red;
       }
-      debugPrint(' first: ${listaItensDoVeiculo.length}');
-      debugPrint('second: ${criarProtocoloState.tamanhoVeiculo.length}');
+
       if (listaItensDoVeiculo.length ==
               criarProtocoloState.tamanhoVeiculo.length &&
           criarProtocoloState.assinaturaController.value.isNotEmpty) {
@@ -72,28 +70,42 @@ class _ButtonEnviarState extends State<ButtonEnviar> {
             await Future.delayed(Duration(milliseconds: 500));
             String assinaturaBase64 = await criarProtocoloState.capture();
 
-            criarProtocoloState.novoProtocolo(Protocolo(
-                veiculo: criarProtocoloState.veiculoSelecionado.value,
-                motorista: criarProtocoloState.motoristaSelecionado,
-                digitador: loginControllerState.username,
-                observacao: criarProtocoloState.obsTextController.text,
-                assinaturaInicial: assinaturaBase64));
-
-            Timer(Duration(seconds: 2), (() {
-              criarProtocoloState.bytesAssinatura.value = '';
+            bool sucess = await criarProtocoloState.novoProtocolo(Protocolo(
+                        veiculo: criarProtocoloState.veiculoSelecionado.value,
+                        motorista: criarProtocoloState.motoristaSelecionado,
+                        digitador: loginControllerState.username,
+                        observacao: criarProtocoloState.obsTextController.text,
+                        assinaturaInicial: assinaturaBase64)) ==
+                    null
+                ? false
+                : true;
+            if (sucess) {
+              Timer(Duration(seconds: 2), (() {
+                criarProtocoloState.bytesAssinatura.value = '';
+                ArtSweetAlert.show(
+                    context: context,
+                    artDialogArgs: ArtDialogArgs(
+                        type: ArtSweetAlertType.success,
+                        title: 'Protocolo Criado',
+                        confirmButtonText: 'OK',
+                        onConfirm: () {
+                          [1, 2, 3].forEach((element) {
+                            Navigator.pop(context);
+                          });
+                          criarProtocoloState.refreshPage();
+                        }));
+              }));
+            } else {
               ArtSweetAlert.show(
                   context: context,
                   artDialogArgs: ArtDialogArgs(
-                      type: ArtSweetAlertType.success,
-                      title: 'Protocolo Criado',
-                      confirmButtonText: 'OK',
-                      onConfirm: () {
-                        [1, 2, 3].forEach((element) {
-                          Navigator.pop(context);
-                        });
-                        criarProtocoloState.refreshPage();
-                      }));
-            }));
+                    type: ArtSweetAlertType.danger,
+                    title: 'Algo deu errado!',
+                    text:
+                        'Não conseguimos salvar seu protocolo, verifique e tente novamente',
+                    confirmButtonText: 'OK',
+                  ));
+            }
           } else {
             ArtSweetAlert.show(
                 context: context,
@@ -111,6 +123,13 @@ class _ButtonEnviarState extends State<ButtonEnviar> {
                   text: "Verifique se está devidamente conectado"));
         }
       }
+    } else {
+      ArtSweetAlert.show(
+          context: context,
+          artDialogArgs: ArtDialogArgs(
+              type: ArtSweetAlertType.danger,
+              title: "Motorista não selecionado",
+              text: "Escolha um motorista!"));
     }
   }
 

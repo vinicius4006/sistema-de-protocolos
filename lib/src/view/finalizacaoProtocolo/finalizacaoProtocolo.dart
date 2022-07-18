@@ -45,7 +45,11 @@ class _FinalizacaoState extends State<Finalizacao> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Finalização de Protocolo'),
+        toolbarHeight: 70,
+        title: const Text(
+          'Finalização de Protocolo',
+          style: TextStyle(fontSize: 22),
+        ),
         centerTitle: true,
       ),
       floatingActionButton: ValueListenableBuilder(

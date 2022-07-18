@@ -37,6 +37,9 @@ class _HomeState extends State<Home> {
   void _telaCriarProtocolo(BuildContext context) async {
     Route route = MaterialPageRoute(builder: (context) => CriarProtocolo());
     Navigator.push(context, route);
+    // var teste =
+    //     await chamandoApiReqState.retornarImagensPorProtocolo(14077, 60);
+    // debugPrint('${teste}');
   }
 
   @override
@@ -46,14 +49,17 @@ class _HomeState extends State<Home> {
         appBar: AppBar(
           leading: Builder(builder: (BuildContext context) {
             return IconButton(
+                iconSize: 35,
                 onPressed: () {
                   _telaCriarProtocolo(context);
                 },
-                icon: const Icon(Icons.add_outlined));
+                icon: const Icon(Icons.add_circle_outline_sharp));
           }),
+          toolbarHeight: 70,
           actions: <Widget>[
             Builder(builder: (BuildContext context) {
               return IconButton(
+                  iconSize: 35,
                   onPressed: () async {
                     ArtDialogResponse response = await ArtSweetAlert.show(
                         barrierDismissible: false,
@@ -83,7 +89,8 @@ class _HomeState extends State<Home> {
             }),
           ],
           centerTitle: true,
-          title: Text(widget.title),
+          title: Text(widget.title,
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600)),
         ),
         body: ValueListenableBuilder(
             valueListenable: criarProtocoloState.protocolo,

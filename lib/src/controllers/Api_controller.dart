@@ -7,7 +7,10 @@ import 'package:protocolo_app/src/shared/models/pessoa_motorista.dart';
 import 'package:protocolo_app/src/shared/models/placas.dart';
 import 'package:protocolo_app/src/shared/models/protocolo.dart';
 
-String BASEURL = 'https://api.jupiter.com.br/api/view/ProtocoloFrota';
+String BASEURL = 'http://10.1.2.218/api/view/ProtocoloFrota';
+
+//'https://api.jupiter.com.br/api/view/ProtocoloFrota';
+// 'http://10.1.2.218/api/view/ProtocoloFrota'
 
 class _chamandoApiReq extends ChangeNotifier {
   List<Placas> listaPlacas = []; // exibir no homepage
@@ -15,7 +18,7 @@ class _chamandoApiReq extends ChangeNotifier {
   final ValueNotifier<bool> statusAnterior = ValueNotifier(false);
   List<ItensVeiculos> listaItensVeiculo = [];
   List<ItensProtocolo> listaItensProtocoloId = [];
-  final List<String> listaImagem = [];
+  final List<ItensProtocolo> listaImagem = [];
   double scrollVeiculo = 7000.00;
 
   Future<bool> verificarConexao() async {
@@ -57,11 +60,18 @@ class _chamandoApiReq extends ChangeNotifier {
   }
 
   Future<List<Protocolo>> retornarProtocolos(
-      bool filtrado, int limit, int offset) async {
-    await Future.delayed(Duration(seconds: 2));
+      bool filtrado, int limit, int offset,
+      [String? keyword, bool? boolVer]) async {
+    await Future.delayed(Duration(seconds: 1));
     try {
+      String filtroQuery = boolVer != null
+          ? boolVer
+              ? '&id=${keyword}'
+              : '&placa=${keyword}'
+          : '';
       final responseTodosOsProtocolos = await Dio().get(
-          '$BASEURL/retornarProtocolos?nao_finalizados=${filtrado}&limit=${limit}&offset=${offset}');
+          '$BASEURL/retornarProtocolos?nao_finalizados=${filtrado}&limit=${limit}&offset=${offset}${filtroQuery}');
+
       listaPlacasPorProtocolo(
           responseTodosOsProtocolos.data['protocolos'] as List);
       return (responseTodosOsProtocolos.data['protocolos'] as List).map((item) {
@@ -76,14 +86,14 @@ class _chamandoApiReq extends ChangeNotifier {
   Future<void> listaPlacasPorProtocolo(List lista) async {
     var listaPlacasNew = await (lista.map((item) {
       return Placas.fromJson(item);
-    })).toList().reversed.toList();
+    })).toList();
     listaPlacas.addAll(listaPlacasNew);
   }
 
   Future<Protocolo> retornarProtocolosPorId(bool filtrado, int id) async {
     try {
       final responseProtocoloPorId = await Dio().get(
-          '$BASEURL/retornarProtocolos?nao_finalizados=${filtrado}&id=${id}');
+          '$BASEURL/retornarProtocolos?nao_finalizados=${filtrado}&limit=1&offset=0&id=${id}');
       placa = responseProtocoloPorId.data['protocolos'][0]['placa'];
       return Protocolo.fromJson(responseProtocoloPorId.data['protocolos'][0]);
     } catch (e) {
@@ -118,16 +128,11 @@ class _chamandoApiReq extends ChangeNotifier {
 
   Future<List<Pessoa>> getPessoa(String query) async {
     final responsePessoaPorMotorista =
-        await Dio().get('$BASEURL/retornarPessoaPorMotorista?nome=');
+        await Dio().get('$BASEURL/retornarPessoaPorMotorista?nome=${query}');
     if (responsePessoaPorMotorista.statusCode == 200) {
       return (responsePessoaPorMotorista.data['pessoa'] as List)
           .map((item) => Pessoa.fromJson(item))
-          .where((element) {
-        final nomeLower = element.nome!.toLowerCase();
-        final queryLower = query.toLowerCase();
-
-        return nomeLower.contains(queryLower);
-      }).toList();
+          .toList();
     } else {
       throw Exception();
     }
@@ -135,36 +140,62 @@ class _chamandoApiReq extends ChangeNotifier {
 
   Future<List<Placas>> getPlacas(String query) async {
     var options = BaseOptions(
-        baseUrl: '$BASEURL/retornarVeiculosComOuSemProtocolos?nao_finalizados=',
+        baseUrl:
+            '$BASEURL/retornarVeiculosComOuSemProtocolos?nao_iniciados=${query}',
         connectTimeout: 3000,
         receiveTimeout: 1000);
-    final response = await Dio(options)
-        .get('$BASEURL/retornarVeiculosComOuSemProtocolos?nao_finalizados=');
+    final response = await Dio(options).get(
+        '$BASEURL/retornarVeiculosComOuSemProtocolos?nao_iniciados=${query}');
 
     if (response.statusCode == 200) {
-      return (response.data as List).map((e) {
+      return (response.data['results'] as List).map((e) {
         return Placas.fromJson(e);
-      }).where((element) {
-        final placaLower = element.placa;
-        final queryUpper = query.toUpperCase();
-
-        return placaLower!.contains(queryUpper);
       }).toList();
     } else {
       throw Exception('Falha ao carregar as placas');
     }
   }
 
-  Future<List<Protocolo>> getPlacasProtocoladas(String query) async {
-    final response = await Dio().get(
-        '$BASEURL/retornarVeiculosComOuSemProtocolos?protocolados=${query}');
+  Future retornarImagensPorProtocolo(id, item) async {
+    try {
+      if (listaImagem.isEmpty) {
+        final responseRetornarImagensPorProtocolo = await Dio()
+            .get('$BASEURL/retornarImagensPorProtocolo?id=${id}&item=${item}');
+        listaImagem.add(ItensProtocolo(
+            itemveiculo: int.parse(responseRetornarImagensPorProtocolo
+                .data['imagensProtocolo'][0]['itemveiculo']),
+            imagem: responseRetornarImagensPorProtocolo.data['imagensProtocolo']
+                [0]['imagem']));
+        listaImagem.forEach((element) {
+          debugPrint('OLHA: ${element.toJson()}');
+        });
+        return responseRetornarImagensPorProtocolo.data['imagensProtocolo'][0]
+            ['imagem'];
+      } else {
+        ItensProtocolo passarImagem = listaImagem.firstWhere(
+            (element) => element.itemveiculo == item,
+            orElse: () => ItensProtocolo(valor: 0));
 
-    if (response.statusCode == 200) {
-      return (response.data as List).map((item) {
-        return Protocolo.fromJson(item);
-      }).toList();
-    } else {
-      throw Exception('Falha ao carregar as placas por protocolo');
+        if (passarImagem.valor == 0) {
+          final responseRetornarImagensPorProtocolo = await Dio().get(
+              '$BASEURL/retornarImagensPorProtocolo?id=${id}&item=${item}');
+          listaImagem.add(ItensProtocolo(
+              itemveiculo: int.parse(responseRetornarImagensPorProtocolo
+                  .data['imagensProtocolo'][0]['itemveiculo']),
+              imagem: responseRetornarImagensPorProtocolo
+                  .data['imagensProtocolo'][0]['imagem']));
+          listaImagem.forEach((element) {
+            debugPrint('OLHA: ${element.toJson()}');
+          });
+          return responseRetornarImagensPorProtocolo.data['imagensProtocolo'][0]
+              ['imagem'];
+        } else {
+          return passarImagem.imagem;
+        }
+      }
+    } catch (e) {
+      debugPrint('error imagem: $e');
+      return '';
     }
   }
 
@@ -190,8 +221,8 @@ class _chamandoApiReq extends ChangeNotifier {
     List<ItensVeiculos> listaSemRepeticao = [];
 
     listaItensVeiculo = (listaItensProtocolo).map((element) {
+      debugPrint('${ItensVeiculos.fromJson(element).toJson()}');
       if (!listaOps.contains(element['id'])) {
-        listaImagem.add(element['imagem']);
         listaSemRepeticao.add(ItensVeiculos.fromJson(element));
         listaOps.add(element['id']);
       }
@@ -199,7 +230,9 @@ class _chamandoApiReq extends ChangeNotifier {
     }).toList();
 
     listaItensVeiculo = listaSemRepeticao;
-
+    // listaItensVeiculo.forEach((element) {
+    //   debugPrint('ITENS: ${element.toJson()}');
+    // });
     listaItensProtocoloId = listaConvertida;
 
     statusAnterior.value = true;

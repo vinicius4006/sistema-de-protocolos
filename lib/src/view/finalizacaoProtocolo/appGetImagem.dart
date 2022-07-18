@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class GetImagemBase64 extends StatefulWidget {
   GetImagemBase64({Key? key, required this.imagem64}) : super(key: key);
@@ -21,7 +22,9 @@ class _GetImagemBase64State extends State<GetImagemBase64> {
   Widget build(BuildContext context) {
     debugPrint('Build GetImagemBase64');
     if (widget.imagem64.isEmpty || widget.imagem64 == '') {
-      return const Text('Não há imagem');
+      return Text('Não há imagem');
+    } else if (widget.imagem64 == 'wait') {
+      return LoadingAnimationWidget.waveDots(color: Colors.green, size: 30);
     } else {
       const Base64Codec base64 = Base64Codec();
       var bytes = base64.decode(widget.imagem64);

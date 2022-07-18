@@ -29,6 +29,8 @@ class _MainHomeState extends State<HomePage> {
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
           _scrollController.position.maxScrollExtent) {
+        debugPrint('${_scrollController.position.pixels}');
+        debugPrint('${_scrollController.position.maxScrollExtent}');
         homePageState.loadData(_scrollController.position.pixels.toInt());
       }
     });

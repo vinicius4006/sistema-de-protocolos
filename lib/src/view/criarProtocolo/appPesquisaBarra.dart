@@ -87,21 +87,12 @@ class _PesquisaBarraState extends State<PesquisaBarra> {
                 criarProtocoloState.controllerMotorista.text = pessoa.nome!;
                 criarProtocoloState
                     .changeMotoristaSelecionado(int.parse(pessoa.id!));
-
-                ScaffoldMessenger.of(context)
-                  ..removeCurrentSnackBar()
-                  ..showSnackBar(SnackBar(
-                      content: Text('Motorista selecionado: ${pessoa.nome}')));
               } else {
                 final placa = sugestao as Placas;
                 criarProtocoloState.controllerPlaca.text = placa.placa!;
 
-                criarProtocoloState.changeVeiculoSelecionado(placa.id!);
-
-                ScaffoldMessenger.of(context)
-                  ..removeCurrentSnackBar()
-                  ..showSnackBar(SnackBar(
-                      content: Text('Placa selecionada: ${placa.placa}')));
+                criarProtocoloState.changeVeiculoSelecionado(
+                    placa.id!, placa.observacaoFinal.toString());
               }
             } else {
               ArtSweetAlert.show(
