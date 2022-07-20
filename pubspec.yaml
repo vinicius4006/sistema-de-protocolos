@@ -57,6 +57,7 @@ dependencies:
   searchfield: ^0.6.5
   syncfusion_flutter_signaturepad: ^20.1.59
   internet_connection_checker: ^0.0.1+4
+  get: ^4.6.5
  
 
 

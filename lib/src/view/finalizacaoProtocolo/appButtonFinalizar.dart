@@ -98,6 +98,7 @@ class _ButtonFinalizarState extends State<ButtonFinalizar> {
           primary: Theme.of(context).colorScheme.primary),
       onPressed: () async {
         var listaItensDoVeiculo = criarProtocoloState.listaItensProtocolo.value;
+
         List<ItensProtocolo> listaOrganizada = listaItensDoVeiculo;
         List<String> listaCheckIdLista = [];
         List<String> listaCheckIdVeiculo = [];
@@ -112,7 +113,7 @@ class _ButtonFinalizarState extends State<ButtonFinalizar> {
 
         for (var item in listaCheckIdLista.reversed) {
           if (listaCheckIdVeiculo.contains(item)) {
-            debugPrint('True');
+            debugPrint('true');
           } else {
             criarProtocoloState.scrollTo(
                 listaCheckIdLista.indexOf(item), context);

@@ -18,10 +18,11 @@ class _LoginController extends ChangeNotifier {
     password = '';
   }
 
+  final dio = Dio();
+
   Future<bool> login() async {
     //conection
 
-    final dio = Dio();
     Response response;
     FormData formData =
         FormData.fromMap({"usuario": username, "senha": password});
@@ -43,7 +44,6 @@ class _LoginController extends ChangeNotifier {
   }
 
   Future<bool> verificarAssinaturaDaToken() async {
-    final dio = Dio();
     Response response;
     FormData formData = FormData.fromMap({'token': token, 'senha': password});
 

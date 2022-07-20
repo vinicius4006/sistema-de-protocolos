@@ -12,7 +12,7 @@ import 'package:protocolo_app/src/shared/models/itens_protocolo.dart';
 import 'package:protocolo_app/src/shared/models/protocolo.dart';
 import 'package:signature/signature.dart';
 
-const BASEURL = 'http://10.1.2.218/api/view/ProtocoloFrota';
+const BASEURL = 'https://api.jupiter.com.br/api/view/ProtocoloFrota';
 
 // 'http://10.1.2.218/api/view/ProtocoloFrota'
 // 'https://api.jupiter.com.br/api/view/ProtocoloFrota'
@@ -82,6 +82,8 @@ class _CriarProtocolo extends ChangeNotifier {
   }
 
   novoProtocolo(Protocolo protocoloNovo) async {
+    await Future.delayed(Duration(seconds: 20));
+    debugPrint('${protocoloNovo.toJson()}');
     listaItensProtocolo.value.sort(((a, b) =>
         (int.parse(a.itemveiculo.toString()))
             .compareTo(int.parse(b.itemveiculo.toString()))));
@@ -91,19 +93,30 @@ class _CriarProtocolo extends ChangeNotifier {
       ...protocoloNovo.toJson(),
       ...listaItens.toJson()
     };
-
-    FormData formData = FormData.fromMap(protocoloComItens);
-    final responseProtocolo = await Dio()
-        .post('$BASEURL/salvarProtocolo',
-            data: formData,
-            options: Options(contentType: Headers.formUrlEncodedContentType))
-        .then((response) {
-      log('SUCESSO: ${response.data}');
-      return response.data['sucess'].toString().isEmpty ? false : true;
-    }).catchError((onError) {
-      debugPrint('Motivo do erro: $onError');
-      return false;
+    protocoloComItens.forEach((key, value) {
+      debugPrint('Itens: $value');
     });
+
+    try {
+      FormData formData = FormData.fromMap(protocoloComItens);
+      final responseProtocolo = await Dio()
+          .post('$BASEURL/salvarProtocolo',
+              data: formData,
+              options: Options(
+                  contentType: Headers.formUrlEncodedContentType,
+                  receiveDataWhenStatusError: true,
+                  receiveTimeout: 20 * 1000,
+                  sendTimeout: 20 * 1000))
+          .then((response) {
+        log('SUCESSO: ${response.data}');
+        //return response.data['sucess'].toString().isEmpty ? false : true;
+      }).catchError((onError) {
+        debugPrint('Motivo do erro: $onError');
+        //return false;
+      });
+    } on DioError catch (e) {
+      debugPrint('Motivo do erro: $e');
+    }
 
     protocolo.value = protocoloNovo;
   }

@@ -7,7 +7,7 @@ import 'package:protocolo_app/src/shared/models/pessoa_motorista.dart';
 import 'package:protocolo_app/src/shared/models/placas.dart';
 import 'package:protocolo_app/src/shared/models/protocolo.dart';
 
-String BASEURL = 'http://10.1.2.218/api/view/ProtocoloFrota';
+String BASEURL = 'https://api.jupiter.com.br/api/view/ProtocoloFrota';
 
 //'https://api.jupiter.com.br/api/view/ProtocoloFrota';
 // 'http://10.1.2.218/api/view/ProtocoloFrota'

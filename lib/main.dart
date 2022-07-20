@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:protocolo_app/src/view/login/login.dart';
+import 'package:protocolo_app/src/view/appTeste/studyFlutter.dart';
 
 void main() async {
   runApp(const MyApp());
@@ -17,6 +17,8 @@ class MyApp extends StatelessWidget {
             //brightness: Brightness.dark,
             colorScheme: ColorScheme.fromSwatch()
                 .copyWith(primary: Colors.green, secondary: Color(0xff88c100))),
-        home: const LoginProtocolo());
+        home: StudyFlutter());
+
+    //const LoginProtocolo());
   }
 }

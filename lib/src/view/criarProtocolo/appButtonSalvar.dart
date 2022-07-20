@@ -38,6 +38,8 @@ class _ButtonEnviarState extends State<ButtonEnviar> {
         if (!listaCheckIdVeiculo.contains(item)) {
           criarProtocoloState.scrollTo(
               listaCheckIdLista.indexOf(item), context);
+        } else {
+          debugPrint('false');
         }
       }
 
@@ -70,42 +72,60 @@ class _ButtonEnviarState extends State<ButtonEnviar> {
             await Future.delayed(Duration(milliseconds: 500));
             String assinaturaBase64 = await criarProtocoloState.capture();
 
-            bool sucess = await criarProtocoloState.novoProtocolo(Protocolo(
-                        veiculo: criarProtocoloState.veiculoSelecionado.value,
-                        motorista: criarProtocoloState.motoristaSelecionado,
-                        digitador: loginControllerState.username,
-                        observacao: criarProtocoloState.obsTextController.text,
-                        assinaturaInicial: assinaturaBase64)) ==
-                    null
-                ? false
-                : true;
-            if (sucess) {
-              Timer(Duration(seconds: 2), (() {
-                criarProtocoloState.bytesAssinatura.value = '';
-                ArtSweetAlert.show(
-                    context: context,
-                    artDialogArgs: ArtDialogArgs(
-                        type: ArtSweetAlertType.success,
-                        title: 'Protocolo Criado',
-                        confirmButtonText: 'OK',
-                        onConfirm: () {
-                          [1, 2, 3].forEach((element) {
-                            Navigator.pop(context);
-                          });
-                          criarProtocoloState.refreshPage();
-                        }));
-              }));
-            } else {
+            criarProtocoloState.novoProtocolo(Protocolo(
+                veiculo: criarProtocoloState.veiculoSelecionado.value,
+                motorista: criarProtocoloState.motoristaSelecionado,
+                digitador: loginControllerState.username,
+                observacao: criarProtocoloState.obsTextController.text,
+                assinaturaInicial: assinaturaBase64));
+
+            Timer(Duration(seconds: 2), (() {
+              criarProtocoloState.bytesAssinatura.value = '';
               ArtSweetAlert.show(
                   context: context,
                   artDialogArgs: ArtDialogArgs(
-                    type: ArtSweetAlertType.danger,
-                    title: 'Algo deu errado!',
-                    text:
-                        'Não conseguimos salvar seu protocolo, verifique e tente novamente',
-                    confirmButtonText: 'OK',
-                  ));
-            }
+                      type: ArtSweetAlertType.success,
+                      title: 'Protocolo Criado',
+                      confirmButtonText: 'OK',
+                      onConfirm: () {
+                        [1, 2, 3].forEach((element) {
+                          Navigator.pop(context);
+                        });
+                        criarProtocoloState.refreshPage();
+                      }));
+            }));
+            //bool sucess = await
+            //==
+            // null
+            // ? false
+            // : true;
+            // if (sucess) {
+            //   Timer(Duration(seconds: 2), (() {
+            //     criarProtocoloState.bytesAssinatura.value = '';
+            //     ArtSweetAlert.show(
+            //         context: context,
+            //         artDialogArgs: ArtDialogArgs(
+            //             type: ArtSweetAlertType.success,
+            //             title: 'Protocolo Criado',
+            //             confirmButtonText: 'OK',
+            //             onConfirm: () {
+            //               [1, 2, 3].forEach((element) {
+            //                 Navigator.pop(context);
+            //               });
+            //               criarProtocoloState.refreshPage();
+            //             }));
+            //   }));
+            // } else {
+            //   ArtSweetAlert.show(
+            //       context: context,
+            //       artDialogArgs: ArtDialogArgs(
+            //         type: ArtSweetAlertType.danger,
+            //         title: 'Algo deu errado!',
+            //         text:
+            //             'Não conseguimos salvar seu protocolo, verifique e tente novamente',
+            //         confirmButtonText: 'OK',
+            //       ));
+            // }
           } else {
             ArtSweetAlert.show(
                 context: context,
