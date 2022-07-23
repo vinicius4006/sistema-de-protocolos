@@ -1,13 +1,14 @@
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
-import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
-import 'package:protocolo_app/src/controllers/homePageController.dart';
+import 'package:protocolo_app/src/controllers/protocolo/criarProtocoloController.dart';
+import 'package:protocolo_app/src/controllers/home/homePageController.dart';
+import 'package:protocolo_app/src/shared/models/typesWarnings.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/criarProtocolo.dart';
 
 import 'package:protocolo_app/src/view/homepage/appHomePage.dart';
 import 'package:protocolo_app/src/view/login/login.dart';
 
-import '../../controllers/login_controller.dart';
+import '../../controllers/login/login_controller.dart';
 import '../../shared/models/protocolo.dart';
 
 class Home extends StatefulWidget {
@@ -20,6 +21,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  TypesWarning typesWarning = TypesWarning();
   @override
   void dispose() {
     loginControllerState.token = '';
@@ -37,9 +39,6 @@ class _HomeState extends State<Home> {
   void _telaCriarProtocolo(BuildContext context) async {
     Route route = MaterialPageRoute(builder: (context) => CriarProtocolo());
     Navigator.push(context, route);
-    // var teste =
-    //     await chamandoApiReqState.retornarImagensPorProtocolo(14077, 60);
-    // debugPrint('${teste}');
   }
 
   @override

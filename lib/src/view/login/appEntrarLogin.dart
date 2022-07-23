@@ -1,12 +1,5 @@
-import 'dart:async';
-
-import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:protocolo_app/src/controllers/Api_controller.dart';
-import 'package:protocolo_app/src/controllers/login_controller.dart';
-
-import '../homepage/homePage.dart';
+import 'package:protocolo_app/src/controllers/login/login_controller.dart';
 
 class Entrar extends StatefulWidget {
   const Entrar({Key? key}) : super(key: key);
@@ -28,78 +21,6 @@ class _EntrarState extends State<Entrar> {
   Widget build(BuildContext context) {
     debugPrint('Build Entrar-Button');
 
-    Future entrarProtocolo() async {
-      if (await chamandoApiReqState.verificarConexao()) {
-        FocusScopeNode currentFocus = FocusScope.of(context);
-        if (!currentFocus.hasPrimaryFocus) {
-          currentFocus.unfocus();
-        }
-        if (loginControllerState.username.isEmpty ||
-            loginControllerState.password.isEmpty) {
-          ArtSweetAlert.show(
-              context: context,
-              artDialogArgs: ArtDialogArgs(
-                  type: ArtSweetAlertType.danger,
-                  title: "Oops...",
-                  text: "Algum campo não está preenchido"));
-        } else {
-          loginControllerState.login().then((value) {
-            if (value) {
-              showDialog(
-                  barrierDismissible: false,
-                  context: context,
-                  builder: (_) {
-                    return Center(
-                      child: LoadingAnimationWidget.discreteCircle(
-                          size: 80,
-                          color: Colors.orange,
-                          secondRingColor: Colors.green,
-                          thirdRingColor: Colors.indigo),
-                    );
-                  }).timeout(
-                const Duration(seconds: 2),
-                onTimeout: () => Navigator.pop(context),
-              );
-              Timer(const Duration(seconds: 2), () {
-                PageRouteBuilder route = PageRouteBuilder(
-                    transitionDuration: const Duration(seconds: 1),
-                    transitionsBuilder:
-                        (context, animation, secondaryAnimation, child) {
-                      const begin = Offset(0.0, 1.0);
-                      const end = Offset.zero;
-                      const curve = Curves.ease;
-                      var tween = Tween(begin: begin, end: end)
-                          .chain(CurveTween(curve: curve));
-                      return SlideTransition(
-                        position: animation.drive(tween),
-                        child: child,
-                      );
-                    },
-                    pageBuilder: ((context, animation, secondaryAnimation) {
-                      return const Home(title: 'Sistema de Protocolos');
-                    }));
-                Navigator.push(context, route);
-              });
-            } else {
-              ArtSweetAlert.show(
-                  context: context,
-                  artDialogArgs: ArtDialogArgs(
-                      type: ArtSweetAlertType.danger,
-                      title: "Usuário ou senha incorreta",
-                      text: "Se o problema persistir consulte o departamento"));
-            }
-          });
-        }
-      } else {
-        ArtSweetAlert.show(
-            context: context,
-            artDialogArgs: ArtDialogArgs(
-                type: ArtSweetAlertType.warning,
-                title: "Sem conexão",
-                text: "Verifique se você está realmente conectado"));
-      }
-    }
-
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 25),
       width: double.infinity,
@@ -111,7 +32,7 @@ class _EntrarState extends State<Entrar> {
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             primary: Colors.white),
         onPressed: (() {
-          entrarProtocolo();
+          loginControllerState.entrarProtocolo(context);
         }),
         child: const Text(
           'Entrar',

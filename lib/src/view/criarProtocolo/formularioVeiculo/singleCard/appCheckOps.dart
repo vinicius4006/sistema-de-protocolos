@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:getwidget/components/checkbox/gf_checkbox.dart';
-import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
+import 'package:protocolo_app/src/controllers/protocolo/criarProtocoloController.dart';
 import 'package:protocolo_app/src/shared/models/itens_protocolo.dart';
 
 class CheckOps extends StatefulWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:protocolo_app/src/controllers/login_controller.dart';
+import 'package:protocolo_app/src/controllers/login/login_controller.dart';
 
 class Username extends StatelessWidget {
   const Username({Key? key}) : super(key: key);
@@ -31,6 +31,7 @@ class Username extends StatelessWidget {
             valueListenable: loginControllerState.controllerUsername,
             builder: (context, TextEditingController controllerUsername, _) =>
                 TextField(
+              key: Key('username'),
               controller: controllerUsername,
               onChanged: (text) => loginControllerState.username = text,
               keyboardType: TextInputType.emailAddress,

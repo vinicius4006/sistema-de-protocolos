@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:protocolo_app/src/controllers/login_controller.dart';
+import 'package:protocolo_app/src/controllers/login/login_controller.dart';
 
 class Password extends StatelessWidget {
   const Password({Key? key}) : super(key: key);
@@ -31,6 +31,7 @@ class Password extends StatelessWidget {
             valueListenable: loginControllerState.controllerPassword,
             builder: (context, TextEditingController controllerPassword, _) =>
                 TextField(
+              key: Key('password'),
               controller: controllerPassword,
               onChanged: (text) => loginControllerState.password = text,
               obscureText: true,

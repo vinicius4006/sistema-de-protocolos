@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
+import 'package:protocolo_app/src/controllers/protocolo/criarProtocoloController.dart';
 import 'package:signature/signature.dart';
 
 class Assinatura extends StatefulWidget {

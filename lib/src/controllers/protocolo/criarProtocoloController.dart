@@ -6,7 +6,7 @@ import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:protocolo_app/src/controllers/Api_controller.dart';
+import 'package:protocolo_app/src/controllers/api/Api_controller.dart';
 
 import 'package:protocolo_app/src/shared/models/itens_protocolo.dart';
 import 'package:protocolo_app/src/shared/models/protocolo.dart';
@@ -81,8 +81,8 @@ class _CriarProtocolo extends ChangeNotifier {
     protocolo.notifyListeners();
   }
 
-  novoProtocolo(Protocolo protocoloNovo) async {
-    await Future.delayed(Duration(seconds: 20));
+  Future<bool> novoProtocolo(Protocolo protocoloNovo) async {
+    bool sucess = false;
     debugPrint('${protocoloNovo.toJson()}');
     listaItensProtocolo.value.sort(((a, b) =>
         (int.parse(a.itemveiculo.toString()))
@@ -105,20 +105,26 @@ class _CriarProtocolo extends ChangeNotifier {
               options: Options(
                   contentType: Headers.formUrlEncodedContentType,
                   receiveDataWhenStatusError: true,
-                  receiveTimeout: 20 * 1000,
-                  sendTimeout: 20 * 1000))
+                  receiveTimeout: 3 * 1000,
+                  sendTimeout: 3 * 1000))
           .then((response) {
-        log('SUCESSO: ${response.data}');
-        //return response.data['sucess'].toString().isEmpty ? false : true;
+        log('ENVIO DE PROTOCOLO: ${response.data}');
+        sucess = !(json.decode(response.data) as Map)
+            .values
+            .first
+            .toString()
+            .isEmpty;
       }).catchError((onError) {
         debugPrint('Motivo do erro: $onError');
-        //return false;
       });
     } on DioError catch (e) {
       debugPrint('Motivo do erro: $e');
     }
+    if (sucess) {
+      protocolo.value = protocoloNovo;
+    }
 
-    protocolo.value = protocoloNovo;
+    return sucess;
   }
 
   addFormItensProtocolo(ItensProtocolo itensProtocolo) async {

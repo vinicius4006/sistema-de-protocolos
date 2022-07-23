@@ -4,8 +4,9 @@ import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:protocolo_app/src/controllers/Api_controller.dart';
-import 'package:protocolo_app/src/controllers/homePageController.dart';
+import 'package:protocolo_app/src/controllers/api/Api_controller.dart';
+import 'package:protocolo_app/src/controllers/home/homePageController.dart';
+import 'package:protocolo_app/src/shared/models/typesWarnings.dart';
 import 'package:protocolo_app/src/view/finalizacaoProtocolo/finalizacaoProtocolo.dart';
 
 import '../../shared/models/protocolo.dart';
@@ -20,6 +21,7 @@ class HomePage extends StatefulWidget {
 class _MainHomeState extends State<HomePage> {
   final _scrollController = ScrollController();
   final _controllerTextFilter = TextEditingController();
+  final typesWarning = TypesWarning();
 
   @override
   void initState() {
@@ -29,8 +31,6 @@ class _MainHomeState extends State<HomePage> {
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
           _scrollController.position.maxScrollExtent) {
-        debugPrint('${_scrollController.position.pixels}');
-        debugPrint('${_scrollController.position.maxScrollExtent}');
         homePageState.loadData(_scrollController.position.pixels.toInt());
       }
     });
@@ -66,45 +66,39 @@ class _MainHomeState extends State<HomePage> {
     }
 
     if (response.isTapConfirmButton) {
-      if (await chamandoApiReqState.verificarConexao()) {
-        showDialog(
-            barrierDismissible: false,
-            context: context,
-            builder: (_) {
-              return Center(
-                child: LoadingAnimationWidget.waveDots(
-                  size: 80,
-                  color: Colors.white,
-                ),
-              );
-            }).timeout(
-          const Duration(seconds: 2),
-          onTimeout: () => Navigator.pop(context),
-        );
-        Protocolo finalizadoOuNao =
-            await chamandoApiReqState.retornarProtocolosPorId(true, id);
-        Timer(const Duration(seconds: 2), () {
-          finalizadoOuNao.id != null
-              ? Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => Finalizacao(
-                        id: id,
-                      )))
-              : ArtSweetAlert.show(
-                  context: context,
-                  artDialogArgs: ArtDialogArgs(
-                      type: ArtSweetAlertType.info,
-                      title: "Protocolo já finalizado",
-                      text: "Atualize a lista!"));
-        });
-        return;
-      } else {
-        ArtSweetAlert.show(
-            context: context,
-            artDialogArgs: ArtDialogArgs(
-                type: ArtSweetAlertType.warning,
-                title: "Sem conexão",
-                text: "Verifique se está devidamente conectado"));
-      }
+      showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (_) {
+            return Center(
+              child: LoadingAnimationWidget.waveDots(
+                size: 80,
+                color: Colors.white,
+              ),
+            );
+          });
+      Timer(Duration(seconds: 2), () async {
+        if (await chamandoApiReqState.verificarConexao()) {
+          Protocolo finalizadoOuNao =
+              await chamandoApiReqState.retornarProtocolosPorId(true, id);
+          if (finalizadoOuNao.id != null) {
+            Navigator.pop(context);
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => Finalizacao(
+                      id: id,
+                    )));
+          } else {
+            Navigator.pop(context);
+            typesWarning.showWarning(context, "Houve algum problema!",
+                "Atualize a lista e tente novamente");
+          }
+          return;
+        } else {
+          Navigator.pop(context);
+          typesWarning.showWarning(context, "Sem conexão",
+              "Verifique se está devidamente conectado");
+        }
+      });
     }
 
     if (response.isTapDenyButton) {

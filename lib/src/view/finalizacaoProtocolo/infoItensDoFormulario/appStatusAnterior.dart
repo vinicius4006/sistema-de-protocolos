@@ -1,8 +1,8 @@
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
-import 'package:protocolo_app/src/controllers/Api_controller.dart';
-import 'package:protocolo_app/src/view/finalizacaoProtocolo/appEditarStatus.dart';
-import 'package:protocolo_app/src/view/finalizacaoProtocolo/appGetImagem.dart';
+import 'package:protocolo_app/src/controllers/api/Api_controller.dart';
+import 'package:protocolo_app/src/view/finalizacaoProtocolo/infoItensDoFormulario/appEditarStatus.dart';
+import 'package:protocolo_app/src/view/finalizacaoProtocolo/infoItensDoFormulario/appGetImagem.dart';
 
 class StatusAnterior extends StatefulWidget {
   StatusAnterior({Key? key, required this.indexGlobal}) : super(key: key);
@@ -21,10 +21,8 @@ class _StatusAnteriorState extends State<StatusAnterior> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('Build Status Anterior');
-    debugPrint('GLOBAL: ${widget.indexGlobal}');
-    debugPrint(
-        '${chamandoApiReqState.listaItensVeiculo[widget.indexGlobal].toJson()}');
+    // debugPrint(
+    //     'AQUI: ${chamandoApiReqState.listaItensVeiculo[widget.indexGlobal].toJson()}');
     return Card(
       elevation: 2,
       child: ListTile(

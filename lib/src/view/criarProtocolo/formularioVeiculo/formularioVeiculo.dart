@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:protocolo_app/src/controllers/Api_controller.dart';
-import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
+import 'package:protocolo_app/src/controllers/api/Api_controller.dart';
+import 'package:protocolo_app/src/controllers/protocolo/criarProtocoloController.dart';
 import 'package:protocolo_app/src/shared/models/itensVeiculo.dart';
-import 'package:protocolo_app/src/view/criarProtocolo/appObservacao.dart';
-import 'package:protocolo_app/src/view/criarProtocolo/app_Card.dart';
+import 'package:protocolo_app/src/view/criarProtocolo/formularioVeiculo/appObservacao.dart';
+import 'package:protocolo_app/src/view/criarProtocolo/formularioVeiculo/singleCard/card.dart';
 
 class VeiculoForm extends StatefulWidget {
   VeiculoForm({Key? key, this.veiculo}) : super(key: key);
@@ -95,7 +95,7 @@ class _VeiculoFormState extends State<VeiculoForm> {
                     padding: const EdgeInsets.all(30.0),
                     child: exibirListaDeCard(data),
                   ),
-                  CampoTexto()
+                  snapshot.hasData == [] ? Container() : CampoTexto()
                 ],
               ));
             } else {

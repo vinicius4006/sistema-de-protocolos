@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
+import 'package:protocolo_app/src/controllers/protocolo/criarProtocoloController.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/appButtonSalvar.dart';
 import 'package:protocolo_app/src/view/criarProtocolo/appPesquisaBarra.dart';
-import 'package:protocolo_app/src/view/criarProtocolo/app_Assinatura.dart';
-import 'package:protocolo_app/src/view/criarProtocolo/app_formVeiculo.dart';
+import 'package:protocolo_app/src/view/criarProtocolo/formularioVeiculo/app_Assinatura.dart';
+import 'package:protocolo_app/src/view/criarProtocolo/formularioVeiculo/formularioVeiculo.dart';
 
 class CriarProtocolo extends StatefulWidget {
   const CriarProtocolo({Key? key}) : super(key: key);

@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:protocolo_app/src/controllers/Api_controller.dart';
-import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
-import 'package:protocolo_app/src/view/finalizacaoProtocolo/appInfoItensProtocolo.dart';
-import 'package:protocolo_app/src/view/finalizacaoProtocolo/appInfoProtocolo.dart';
+import 'package:protocolo_app/src/controllers/api/Api_controller.dart';
+import 'package:protocolo_app/src/controllers/protocolo/criarProtocoloController.dart';
+import 'package:protocolo_app/src/view/finalizacaoProtocolo/infoItensDoFormulario/infoItensProtocolo.dart';
+import 'package:protocolo_app/src/view/finalizacaoProtocolo/infoGeral/infoProtocolo.dart';
 
 class Finalizacao extends StatefulWidget {
   Finalizacao({Key? key, required this.id}) : super(key: key);
@@ -20,7 +20,9 @@ class _FinalizacaoState extends State<Finalizacao> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
+    criarProtocoloState.motoristaSelecionado =
+        1; //para finalizar o protocolo, assim
+    //será aceito no verificador de protocolo
     Timer(Duration(seconds: 2),
         () => criarProtocoloState.scrollVisible.value = true);
   }
@@ -34,7 +36,7 @@ class _FinalizacaoState extends State<Finalizacao> {
     criarProtocoloState.listaInput.clear();
     criarProtocoloState.assinaturaController.value.clear();
     criarProtocoloState.tamanhoVeiculo.clear();
-
+    criarProtocoloState.motoristaSelecionado = 0;
     super.dispose();
   }
 

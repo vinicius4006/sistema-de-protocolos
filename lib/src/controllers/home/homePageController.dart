@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:protocolo_app/src/controllers/Api_controller.dart';
+import 'package:protocolo_app/src/controllers/api/Api_controller.dart';
 import 'package:protocolo_app/src/shared/models/protocolo.dart';
 
 class _HomePage extends ChangeNotifier {
@@ -59,6 +59,9 @@ class _HomePage extends ChangeNotifier {
       listProtocolo.value = response;
 
       await Future.delayed(Duration(seconds: 1));
+      if (response.length < 10) {
+        maisDados = false;
+      }
     }
     refresh.value = false;
   }
@@ -74,7 +77,8 @@ class _HomePage extends ChangeNotifier {
   }
 
 //Por que eu não criei um modelo que pegaria também a placa?
-//O modelo já está pronto para criar o protocolo e mandar para o banco, então crio outro ramo para pegar a placa.
+//O modelo já está pronto para criar o protocolo e
+//mandar para o banco, então crio outro ramo para pegar a placa.
   bool verificarSeIdOuPlaca(String keyword) {
     List<bool> found = [];
     for (var i = 0; i < keyword.length; i++) {

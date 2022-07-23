@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
+import 'package:protocolo_app/src/controllers/protocolo/criarProtocoloController.dart';
 import 'package:protocolo_app/src/shared/models/itensVeiculo.dart';
 import 'package:protocolo_app/src/shared/models/itens_protocolo.dart';
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:protocolo_app/src/controllers/criarProtocoloController.dart';
+import 'package:protocolo_app/src/controllers/protocolo/criarProtocoloController.dart';
 
 class CampoTexto extends StatelessWidget {
   const CampoTexto({Key? key}) : super(key: key);
